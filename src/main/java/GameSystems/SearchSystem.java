@@ -1,17 +1,13 @@
 package GameSystems;
 
 import Conversation.ViewModels.ItemViewModel;
+import Data.Repository.LootTableRepository;
 import Data.Repository.PlayerRepository;
+import Data.Repository.SearchSiteRepository;
 import Entities.*;
-import Enumerations.AbilityType;
-import Enumerations.ProfessionType;
-import Enumerations.QuestID;
-import GameObject.ItemGO;
 import GameObject.PlayerGO;
 import Helper.ColorToken;
 import Helper.LocalVariableHelper;
-import Data.Repository.LootTableRepository;
-import Data.Repository.SearchSiteRepository;
 import Helper.MathHelper;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -103,14 +99,6 @@ public class SearchSystem {
 
         if(numberOfSearches <= 0) numberOfSearches = 1;
 
-        if(playerEntity.getProfessionID() == ProfessionType.Cartographer)
-        {
-            if(ThreadLocalRandom.current().nextInt(0, 100) <= 15)
-            {
-                numberOfSearches++;
-            }
-        }
-
         if(searchEntity != null)
         {
             timeLock = new DateTime(searchEntity.getUnlockDateTime());
@@ -127,37 +115,13 @@ public class SearchSystem {
         {
             int dc = NWScript.getLocalInt(oChest, SearchSiteDCVariableName);
 
-            // Good Eye ability occasionally grants +1 search attempt.
-            if(MagicSystem.IsAbilityEquipped(oPC, AbilityType.GoodEye))
-            {
-                if(ThreadLocalRandom.current().nextInt(0, 100) <= 10)
-                {
-                    numberOfSearches++;
-                }
-            }
-
             for(int search = 1; search <= numberOfSearches; search++)
             {
                 RunSearchCycle(oPC, oChest, dc);
                 dc += NWScript.random(3) + 1;
             }
 
-            // Merchants occasionally find additional gold in search sites.
-            if(playerEntity.getProfessionID() == ProfessionType.Merchant)
-            {
-                if(ThreadLocalRandom.current().nextInt(0, 100) <= 10)
-                {
-                    int goldAmount = ThreadLocalRandom.current().nextInt(1, 10);
-                    NWScript.createItemOnObject("nw_it_gold001", oChest, goldAmount, "");
-                }
-            }
-
             SaveChestInventory(oPC, oChest, false);
-
-            if(QuestSystem.GetPlayerQuestJournalID(oPC, QuestID.BootCampSearching) == 1)
-            {
-                QuestSystem.AdvanceQuestState(oPC, QuestID.BootCampSearching);
-            }
         }
         else
         {

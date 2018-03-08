@@ -3,7 +3,6 @@ package GameSystems;
 import Bioware.AddItemPropertyPolicy;
 import Bioware.XP2;
 import Common.Constants;
-import Enumerations.CustomItemProperty;
 import NWNX.NWNX_Creature;
 import org.nwnx.nwnx2.jvm.NWItemProperty;
 import org.nwnx.nwnx2.jvm.NWObject;
@@ -63,18 +62,7 @@ public class ArmorSystem {
 
             if(!oItem.equals(NWObject.INVALID))
             {
-                int itemAC = 0;
-                for(NWItemProperty ip : NWScript.getItemProperties(oItem))
-                {
-                    if(NWScript.getItemPropertyType(ip) == CustomItemProperty.AC)
-                    {
-                        int count = NWScript.getItemPropertyCostTableValue(ip);
-                        if(count > itemAC)
-                        {
-                            itemAC = count;
-                        }
-                    }
-                }
+                int itemAC = NWScript.getLocalInt(oItem, "ARMOR_AC");
 
                 ac += itemAC;
             }

@@ -1,7 +1,6 @@
 package GameSystems;
 
 import Entities.*;
-import Enumerations.AbilityType;
 import GameObject.PlayerGO;
 import Helper.ColorToken;
 import Helper.ErrorHelper;
@@ -44,11 +43,7 @@ public class CraftSystem {
 
         if(allComponentsFound)
         {
-            // Speedy Crafter grants 80% crafting speed bonus.
-            boolean hasAbility = MagicSystem.IsAbilityEquipped(oPC, AbilityType.SpeedyCrafter);
-            final float modifiedCraftDelay = hasAbility ?
-                    CraftDelay * 0.20f :
-                    CraftDelay;
+            final float modifiedCraftDelay = CraftDelay;
 
             NWScript.applyEffectToObject(DurationType.TEMPORARY, NWScript.effectCutsceneImmobilize(), oPC, modifiedCraftDelay + 0.1f);
             Scheduler.assign(oPC, () -> {
@@ -151,11 +146,6 @@ public class CraftSystem {
             // Failure...
             NWObject[] items = NWScript.getItemsInInventory(tempStorage);
             int chanceToLoseItems = 20;
-
-            if(MagicSystem.IsAbilityEquipped(oPC, AbilityType.CarefulHands))
-            {
-                chanceToLoseItems -= 5;
-            }
 
             for(NWObject item : items)
             {
@@ -311,7 +301,7 @@ public class CraftSystem {
     }
 
 
-    public static void GiveCraftingExperience(NWObject oPC, int craftID, int experience)
+    private static void GiveCraftingExperience(NWObject oPC, int craftID, int experience)
     {
         if(experience <= 0 || !NWScript.getIsPC(oPC) || NWScript.getIsDM(oPC)) return;
 

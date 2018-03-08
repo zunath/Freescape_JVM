@@ -3,11 +3,11 @@ package GameObject;
 import Common.Constants;
 import Data.Repository.PlayerRepository;
 import Entities.PlayerEntity;
-import Enumerations.CustomItemProperty;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.nwnx.nwnx2.jvm.*;
 import org.nwnx.nwnx2.jvm.constants.Inventory;
+
 import java.util.Date;
 import java.util.UUID;
 
@@ -210,22 +210,7 @@ public class PlayerGO {
         for(int itemSlot = 0; itemSlot < Constants.NumberOfInventorySlots; itemSlot++)
         {
             NWObject item = NWScript.getItemInSlot(itemSlot, _pc);
-
-            for(NWItemProperty ip : NWScript.getItemProperties(item))
-            {
-                int ipType = NWScript.getItemPropertyType(ip);
-
-                if(ipType == CustomItemProperty.CastingSpeedBonus)
-                {
-                    int amount = 100 - NWScript.getItemPropertyCostTableValue(ip);
-                    castingSpeed -= amount;
-                }
-                else if(ipType == CustomItemProperty.CastingSpeedPenalty)
-                {
-                    int amount = 100 - NWScript.getItemPropertyCostTableValue(ip);
-                    castingSpeed += amount;
-                }
-            }
+            castingSpeed = castingSpeed + NWScript.getLocalInt(item, "CASTING_SPEED");
         }
 
         if(castingSpeed < -99)
@@ -236,41 +221,5 @@ public class PlayerGO {
         return castingSpeed;
     }
 
-    public int CalculateEvocationBonus()
-    {
-        return CalculateSpellBonus(CustomItemProperty.EvocationBonus);
-    }
-
-    public int CalculateEnhancementBonus()
-    {
-        return CalculateSpellBonus(CustomItemProperty.EnhancementBonus);
-    }
-
-    public int CalculateHolyBonus()
-    {
-        return CalculateSpellBonus(CustomItemProperty.HolyBonus);
-    }
-
-    private int CalculateSpellBonus(int ipID)
-    {
-        int spellBonus = 0;
-
-        for(int itemSlot = 0; itemSlot < Constants.NumberOfInventorySlots; itemSlot++)
-        {
-            NWObject item = NWScript.getItemInSlot(itemSlot, _pc);
-
-            for(NWItemProperty ip : NWScript.getItemProperties(item))
-            {
-                int ipType = NWScript.getItemPropertyType(ip);
-                if(ipType == ipID)
-                {
-                    int amount = NWScript.getItemPropertyCostTableValue(ip);
-                    spellBonus += amount;
-                }
-            }
-        }
-
-        return spellBonus;
-    }
 
 }

@@ -1,10 +1,7 @@
 package Item.Repair;
 
 import Common.IScriptEventHandler;
-import Enumerations.AbilityType;
 import GameSystems.DurabilitySystem;
-import GameSystems.MagicSystem;
-import GameSystems.ProgressionSystem;
 import Helper.ItemHelper;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.NWScript;
@@ -16,19 +13,14 @@ public class FirearmRepairKit implements IScriptEventHandler {
         NWObject target = NWScript.getItemActivatedTarget();
         NWObject item = NWScript.getItemActivated();
 
-        if(!ItemHelper.IsFirearm(target))
+        if(!ItemHelper.IsRanged(target))
         {
             NWScript.sendMessageToPC(oPC, "You cannot repair that item with this kit.");
             return;
         }
 
-        int skill = ProgressionSystem.GetPlayerSkillLevel(oPC, ProgressionSystem.SkillType_ITEM_REPAIR) * 2;
+        int skill = 0; // TODO: Skill system check
         float repairAmount = 10.0f + skill;
-
-        if(MagicSystem.IsAbilityEquipped(oPC, AbilityType.Fixer))
-        {
-            repairAmount *= 1.25f;
-        }
 
         DurabilitySystem.RunItemRepair(oPC, item, repairAmount);
 

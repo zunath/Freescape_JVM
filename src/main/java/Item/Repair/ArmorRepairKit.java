@@ -1,17 +1,13 @@
 package Item.Repair;
 
 import Common.IScriptEventHandler;
-import Enumerations.AbilityType;
 import GameSystems.DurabilitySystem;
-import GameSystems.MagicSystem;
-import GameSystems.ProgressionSystem;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.NWScript;
 import org.nwnx.nwnx2.jvm.constants.BaseItem;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.concurrent.ThreadLocalRandom;
 
 @SuppressWarnings("unused")
 public class ArmorRepairKit implements IScriptEventHandler {
@@ -30,13 +26,8 @@ public class ArmorRepairKit implements IScriptEventHandler {
             return;
         }
 
-        int skill = ProgressionSystem.GetPlayerSkillLevel(oPC, ProgressionSystem.SkillType_ITEM_REPAIR) * 2;
+        int skill = 0; // TODO: Skill system check
         float repairAmount = 10.0f + skill;
-
-        if(MagicSystem.IsAbilityEquipped(oPC, AbilityType.Fixer))
-        {
-            repairAmount *= 1.25f;
-        }
 
         DurabilitySystem.RunItemRepair(oPC, item, repairAmount);
 

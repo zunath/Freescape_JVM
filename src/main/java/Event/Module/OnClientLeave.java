@@ -4,14 +4,12 @@ import GameObject.PlayerGO;
 import Common.IScriptEventHandler;
 import Data.Repository.PlayerRepository;
 import GameSystems.ActivityLoggingSystem;
-import GameSystems.RadioSystem;
 import org.nwnx.nwnx2.jvm.*;
 
 @SuppressWarnings("unused")
 public class OnClientLeave implements IScriptEventHandler {
 	@Override
 	public void runScript(NWObject objSelf) {
-		RadioSystem radioSystem = new RadioSystem();
 		NWObject pc = NWScript.getExitingObject();
 
 		if(NWScript.getIsPC(pc))

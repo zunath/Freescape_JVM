@@ -1,9 +1,7 @@
 package Placeable.StructureSystem.Resource;
 
 import Common.IScriptEventHandler;
-import Enumerations.AbilityType;
 import GameSystems.DurabilitySystem;
-import GameSystems.MagicSystem;
 import org.nwnx.nwnx2.jvm.NWLocation;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.NWScript;
@@ -24,7 +22,6 @@ public class OnDamaged implements IScriptEventHandler {
         String resourceName = NWScript.getLocalString(objSelf, "RESOURCE_NAME");
         int resourceCount = NWScript.getLocalInt(objSelf, "RESOURCE_COUNT");
         String resourceProp = NWScript.getLocalString(objSelf, "RESOURCE_PROP");
-        int abilityID;
 
         if(NWScript.getLocalInt(oPC, "NOT_USING_CORRECT_WEAPON") == 1)
         {
@@ -33,38 +30,16 @@ public class OnDamaged implements IScriptEventHandler {
         }
 
         int baseDurabilityChance = 100;
-        int durabilityChanceReduction;
+        int durabilityChanceReduction = 0;
         int weaponChanceBonus;
-        boolean createSecondItem = false;
 
         if(activityID == 1) // 1 = Logging
         {
-            abilityID = AbilityType.Lumberjack;
-            durabilityChanceReduction = MagicSystem.IsAbilityEquipped(oPC, AbilityType.ToolExpertLogging) ? 50 : 0;
             weaponChanceBonus = NWScript.getLocalInt(oWeapon, "LOGGING_BONUS");
-
-            if(MagicSystem.IsAbilityEquipped(oPC, AbilityType.LumberCollector))
-            {
-                if(ThreadLocalRandom.current().nextInt(1, 100) <= 5)
-                {
-                    createSecondItem = true;
-                }
-            }
-
         }
         else if(activityID == 2) // Mining
         {
-            abilityID = AbilityType.Miner;
-            durabilityChanceReduction = MagicSystem.IsAbilityEquipped(oPC, AbilityType.ToolExpertMining) ? 50 : 0;
             weaponChanceBonus = NWScript.getLocalInt(oWeapon, "MINING_BONUS");
-
-            if(MagicSystem.IsAbilityEquipped(oPC, AbilityType.IronCollector))
-            {
-                if(ThreadLocalRandom.current().nextInt(1, 100) <= 5)
-                {
-                    createSecondItem = true;
-                }
-            }
         }
         else return;
 
@@ -76,18 +51,11 @@ public class OnDamaged implements IScriptEventHandler {
         }
 
         int baseChance = 10;
-        int bonusChance = MagicSystem.IsAbilityEquipped(oPC, abilityID) ? 10 : 0;
-        int chance = baseChance + bonusChance + weaponChanceBonus;
+        int chance = baseChance + weaponChanceBonus;
 
         if(ThreadLocalRandom.current().nextInt(100) <= chance)
         {
             NWScript.createObject(ObjectType.ITEM, resourceItemResref, location, false, "");
-
-            if(createSecondItem)
-            {
-                NWScript.createObject(ObjectType.ITEM, resourceItemResref, location, false, "");
-            }
-
 
             NWScript.floatingTextStringOnCreature("You break off some " + resourceName + ".", oPC, false);
             NWScript.setLocalInt(objSelf, "RESOURCE_COUNT", --resourceCount);

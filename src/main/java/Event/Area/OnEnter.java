@@ -6,8 +6,6 @@ import Common.IScriptEventHandler;
 import Data.Repository.PlayerRepository;
 import GameSystems.KeyItemSystem;
 import GameSystems.MigrationSystem;
-import GameSystems.ProfessionSystem;
-import GameSystems.SpawnSystem;
 import org.nwnx.nwnx2.jvm.*;
 import org.nwnx.nwnx2.jvm.constants.*;
 
@@ -17,17 +15,13 @@ import java.util.Objects;
 public class OnEnter implements IScriptEventHandler {
     @Override
     public void runScript(NWObject oArea) {
-        SpawnSystem spawnSystem = new SpawnSystem();
-
         NWObject oPC = NWScript.getEnteringObject();
         MigrationSystem.OnAreaEnter(oPC);
 
         LoadLocation(oPC, oArea);
         SaveLocation(oPC, oArea);
         ApplySanctuaryEffects(oPC);
-        spawnSystem.OnAreaEnter(oArea);
         AdjustCamera(oPC);
-        ProfessionSystem.OnAreaEnter(oArea);
 
         if(NWScript.getIsObjectValid(oPC) && NWScript.getIsPC(oPC) && !NWScript.getIsDM(oPC))
             NWScript.exportSingleCharacter(oPC);

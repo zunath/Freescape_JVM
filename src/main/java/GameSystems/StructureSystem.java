@@ -229,11 +229,6 @@ public class StructureSystem {
             NWEffect eGhostWalk = NWScript.effectCutsceneGhost();
             NWScript.applyEffectToObject(Duration.TYPE_PERMANENT, eGhostWalk, constructionSite, 0.0f);
 
-            if(QuestSystem.GetPlayerQuestJournalID(oPC, QuestID.BootCampBuildingStructures) == 1)
-            {
-                QuestSystem.AdvanceQuestState(oPC, QuestID.BootCampBuildingStructures);
-            }
-
             NWScript.floatingTextStringOnCreature("Construction site created! Use the construction site to select a blueprint.", oPC, false);
         }
         else if(buildStatus == 2) // 2 = Territory can't hold any more structures.

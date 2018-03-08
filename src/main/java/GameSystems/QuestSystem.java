@@ -279,7 +279,7 @@ public class QuestSystem {
 
         if(quest.getRewardXP() > 0)
         {
-            ProgressionSystem.GiveExperienceToPC(oPC, quest.getRewardXP());
+            // TODO: Skill-related exp rewards??
         }
 
         if(quest.getRewardKeyItem() != null)

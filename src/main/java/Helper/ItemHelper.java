@@ -1,6 +1,5 @@
 package Helper;
 
-import Enumerations.CustomBaseItemType;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.NWScript;
 import org.nwnx.nwnx2.jvm.constants.BaseItem;
@@ -44,9 +43,7 @@ public class ItemHelper {
                 BaseItem.SCIMITAR,
                 BaseItem.SCYTHE,
                 BaseItem.SHORTSWORD,
-                BaseItem.TWOBLADEDSWORD,
-                CustomBaseItemType.LightPick,
-                CustomBaseItemType.HeavyPick
+                BaseItem.TWOBLADEDSWORD
         };
 
         return Arrays.asList(allowedWeaponTypes).contains(itemType);
@@ -72,19 +69,11 @@ public class ItemHelper {
         return Arrays.asList(allowedWeaponTypes).contains(itemType);
     }
 
-    public static boolean IsFirearm(NWObject item)
+    public static boolean IsRanged(NWObject item)
     {
         int itemType = NWScript.getBaseItemType(item);
 
         Integer[] allowedWeaponTypes = {
-                CustomBaseItemType.HeavyWeapon,
-                CustomBaseItemType.Longarm,
-                CustomBaseItemType.SmallArmD6,
-                CustomBaseItemType.SmallArmD6_2,
-                CustomBaseItemType.SmallArmD8,
-                CustomBaseItemType.D20HeavyWeapon,
-                CustomBaseItemType.D20SmallArms6,
-                CustomBaseItemType.MZS3Handgun,
                 BaseItem.HEAVYCROSSBOW,
                 BaseItem.LIGHTCROSSBOW,
                 BaseItem.LONGBOW,
@@ -106,11 +95,4 @@ public class ItemHelper {
 
         return Arrays.asList(allowedWeaponTypes).contains(itemType);
     }
-
-    public static boolean IsArmor(NWObject item)
-    {
-        int itemType = NWScript.getBaseItemType(item);
-        return itemType == BaseItem.BELT;
-    }
-
 }

@@ -1,6 +1,5 @@
 package Event.Module;
 import Common.IScriptEventHandler;
-import GameSystems.InventorySystem;
 import Helper.ScriptHelper;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.NWScript;
@@ -29,8 +28,6 @@ public class OnActivateItem implements IScriptEventHandler {
 		if(className.startsWith("Item."))
 			className = className.substring(5);
 		ScriptHelper.RunJavaScript(oPC, "Item." + className);
-
-		Scheduler.delay(oPC, 1, () -> InventorySystem.RunItemLimitCheck(oPC));
 	}
 
 }

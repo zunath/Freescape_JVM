@@ -2,9 +2,6 @@ package GameSystems;
 
 import Bioware.AddItemPropertyPolicy;
 import Bioware.XP2;
-import Common.Constants;
-import Enumerations.CustomBaseItemType;
-import Enumerations.CustomItemProperty;
 import Helper.ColorToken;
 import org.nwnx.nwnx2.jvm.NWItemProperty;
 import org.nwnx.nwnx2.jvm.NWObject;
@@ -98,8 +95,6 @@ public class DurabilitySystem {
             NWObject oCopy = NWScript.copyItem(oItem, oPC, true);
             NWScript.destroyObject(oItem, 0.0f);
             SetItemDurability(oCopy, 0);
-
-            NWScript.deleteLocalInt(oCopy, Constants.GunEquippedTemporaryVariable);
             NWScript.sendMessageToPC(oPC, ColorToken.Red() + "Your " + sItemName + " has broken!" + ColorToken.End());
         }
         else {
@@ -166,7 +161,6 @@ public class DurabilitySystem {
 
     private static void InitializeDurability(NWObject item)
     {
-        RemoveOldItemProperty(item);
         if(!DurabilitySystem.GetValidDurabilityTypes().contains(NWScript.getBaseItemType(item))) return;
 
         // If item hasn't been initialized and doesn't have a current durability value,
@@ -179,20 +173,6 @@ public class DurabilitySystem {
             NWScript.setLocalFloat(item, CurrentDurabilityVariable, maxDurability);
         }
         NWScript.setLocalInt(item, InitializedDurabilityVariable, 1);
-    }
-
-    private static void RemoveOldItemProperty(NWObject item)
-    {
-        // NOTE: When we moved to NWN: EE, we had to rewrite the durability system as it was not compatible with the new NWNX version.
-        // This check is done to remove the old item property since we now store durability as a variable on the item instead.
-        for(NWItemProperty ip : NWScript.getItemProperties(item))
-        {
-            if(NWScript.getItemPropertyType(ip) == CustomItemProperty.ItemDurability)
-            {
-                NWScript.removeItemProperty(item, ip);
-            }
-        }
-
     }
 
     private static List<Integer> GetValidDurabilityTypes() {
@@ -243,17 +223,7 @@ public class DurabilitySystem {
                 BaseItem.TRIDENT,
                 BaseItem.TWOBLADEDSWORD,
                 BaseItem.WARHAMMER,
-                BaseItem.WHIP,
-                CustomBaseItemType.HeavyWeapon,
-                CustomBaseItemType.Longarm,
-                CustomBaseItemType.SmallArmD6,
-                CustomBaseItemType.SmallArmD6_2,
-                CustomBaseItemType.SmallArmD8,
-                CustomBaseItemType.D20HeavyWeapon,
-                CustomBaseItemType.D20SmallArms6,
-                CustomBaseItemType.MZS3Handgun,
-                CustomBaseItemType.LightPick,
-                CustomBaseItemType.HeavyPick
+                BaseItem.WHIP
         };
 
         return Arrays.asList(result);

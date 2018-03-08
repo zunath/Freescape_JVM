@@ -7,9 +7,7 @@ import Data.Repository.ResearchRepository;
 import Data.Repository.StructureRepository;
 import Dialog.*;
 import Entities.*;
-import Enumerations.AbilityType;
 import GameSystems.MagicSystem;
-import GameSystems.ProgressionSystem;
 import GameSystems.StructureSystem;
 import Helper.ColorToken;
 import Helper.TimeHelper;
@@ -91,7 +89,7 @@ public class ResearchTerminal extends DialogBase implements IDialogHandler {
         }
 
         ResearchTerminalViewModel model = new ResearchTerminalViewModel();
-        int researchLevel = ProgressionSystem.GetPlayerSkillLevel(oPC,ProgressionSystem.SkillType_RESEARCHING);
+        int researchLevel = 0; // TODO: Skill system check
         model.setPlayerResearchLevel(researchLevel);
         SetDialogCustomData(model);
 
@@ -401,11 +399,6 @@ public class ResearchTerminal extends DialogBase implements IDialogHandler {
         int defaultPrice = bp.getPrice();
         int adjustedPrice = bp.getPrice();
 
-        if(MagicSystem.IsAbilityEquipped(GetPC(), AbilityType.ResearchEfficiency))
-        {
-            adjustedPrice *= 0.90f;
-        }
-
         String header = ColorToken.Green() + "Blueprint: " + ColorToken.End() + bp.getCraftBlueprint().getItemName() + "\n";
         header += ColorToken.Green() + "Price: " + ColorToken.End() +  defaultPrice  + "\n";
         if(defaultPrice != adjustedPrice)
@@ -472,12 +465,6 @@ public class ResearchTerminal extends DialogBase implements IDialogHandler {
         ResearchRepository repo = new ResearchRepository();
         ResearchBlueprintEntity bp = repo.GetResearchBlueprintByID(model.getSelectedBlueprintID());
         int finalPrice = bp.getPrice();
-
-        if(MagicSystem.IsAbilityEquipped(oPC, AbilityType.ResearchEfficiency))
-        {
-            finalPrice *= 0.90f;
-        }
-
 
         if(gold < finalPrice)
         {
