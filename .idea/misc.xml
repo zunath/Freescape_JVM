@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="MavenProjectsManager">
+    <option name="originalFiles">
+      <list>
+        <option value="$PROJECT_DIR$/pom.xml" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectPlainTextFileTypeManager">
+    <file url="file://$PROJECT_DIR$/nwn/database/czs-db-prod-2018-02-19.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/db-updates/GH37-LoggingUpdates.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/ActivityLogging/GetChatChannelByID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/AuthorizedDM/GetDMByCDKey.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Badge/GetBadgeByID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Badge/GetPCBadgeByBadgeID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Badge/GetPCBadgeByPlayerID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Craft/GetAllCrafts.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Craft/GetBlueprintByID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Craft/GetCraftByID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Craft/GetCraftCategoriesAvailableToPC.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Craft/GetCraftCategoriesAvailableToPCByCraftID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Craft/GetCraftLevelByLevel.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Craft/GetCraftMaxLevel.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Craft/GetPCBlueprintByID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Craft/GetPCBlueprintsByCategoryID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Craft/GetPCBlueprintsForCraftByCategoryID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Craft/GetPCCraftByID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/CustomEffect/GetEffectByID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/CustomEffect/GetPCEffectByID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/CustomEffect/GetPCEffects.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Database/KeepAlive.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Fame/GetFameRegionByID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Fame/GetPCFameByID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/KeyItem/GetKeyItemByID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/KeyItem/GetListOfPCKeyItemIDs.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/KeyItem/GetPCKeyItemByKeyItemID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/KeyItem/GetPlayerKeyItemsByCategory.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/LootTable/GetByLootTableID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Magic/GetAbilityByFeatID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Magic/GetAbilityByID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Magic/GetActiveAbilityCategories.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Magic/GetPCCooldownByID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Magic/GetPCEquippedAbilities.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Magic/GetPCLearnedAbilitiesByCategoryID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Magic/GetPCLearnedAbilityByID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/OverflowItem/DeleteByID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/OverflowItem/GetAllByPlayerID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/OverflowItem/GetPlayerOverflowItemCount.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/PCAuthorizedCDKeys/GetByAccountName.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/PCCorpse/GetAll.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/PCCorpse/GetByID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/PCMigration/GetByMigrationID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/PCOutfit/GetByUUID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Player/GetByPlayerID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/PlayerProgressionSkills/DeleteAllByPlayerID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/PlayerProgressionSkills/GetByPlayerIDAndSkillID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Portrait/GetBy2DAID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Portrait/GetByPortraitID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Portrait/GetByResref.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Portrait/GetNumberOfPortraits.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Profession/GetActiveProfessions.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/ProgressionLevel/GetAllProgressionLevels.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/ProgressionLevel/GetProgressionLevelByLevel.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/ProgressionSkill/GetProgressionSkillByID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Quest/GetAllCompletedQuestIDs.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Quest/GetAllPCQuestStatusesByID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Quest/GetPCQuestStatusByID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Quest/GetPlayerKillTargetsByID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Quest/GetQuestByID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Quest/GetQuestKillTargetsByQuestSequenceID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Research/DeleteAllByStructureID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Research/GetResearchBlueprintByID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Research/GetResearchBlueprintsForCategory.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Research/GetResearchCategoriesAvailableForCraftAndLevel.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Research/GetResearchJobInQueueForSlot.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Research/GetResearchJobsInQueue.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/SearchSite/GetSearchSiteByID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/ServerConfiguration/GetServerConfiguration.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/SpawnTable/GetBySpawnTableID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Storage/GetByContainerID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Structure/GetAllConstructionSites.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Structure/GetAllFlagsInArea.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Structure/GetAllTerritoryFlags.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Structure/GetAllTerritorySelectablePermissions.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Structure/GetConstructionSiteByID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Structure/GetNumberOfStructuresInTerritory.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Structure/GetPCStructureByID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Structure/GetPCTerritoryFlagByID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Structure/GetPermissionByID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Structure/GetPermissionsByFlagID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Structure/GetPermissionsByPlayerID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Structure/GetStructureBlueprintByID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Structure/GetStructureCategoriesByType.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Structure/GetStructuresByCategoryID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Structure/GetTerritoryPermissionByID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/ZombieClothes/GetAllZombieClothes.sql" />
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="false" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/out" />
+  </component>
+</project>
