@@ -113,6 +113,8 @@ public class DataAccess {
         _configuration.addAnnotatedClass(QuestTypeEntity.class);
         _configuration.addAnnotatedClass(ResearchBlueprintEntity.class);
         _configuration.addAnnotatedClass(ServerConfigurationEntity.class);
+        _configuration.addAnnotatedClass(SkillCategoryEntity.class);
+        _configuration.addAnnotatedClass(SkillEntity.class);
         _configuration.addAnnotatedClass(SpawnTableCreatureEntity.class);
         _configuration.addAnnotatedClass(SpawnTableEntity.class);
         _configuration.addAnnotatedClass(StorageContainerEntity.class);
