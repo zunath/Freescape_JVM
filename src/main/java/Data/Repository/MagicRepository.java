@@ -56,24 +56,6 @@ public class MagicRepository {
         return addedSuccessfully;
     }
 
-    public List<AbilityCategoryEntity> GetActiveAbilityCategories()
-    {
-        try(DataContext context = new DataContext())
-        {
-            return context.executeSQLList("Magic/GetActiveAbilityCategories", AbilityCategoryEntity.class);
-        }
-    }
-
-    public List<PCLearnedAbilityEntity> GetPCLearnedAbilitiesByCategoryID(String uuid, int categoryID)
-    {
-        try(DataContext context = new DataContext())
-        {
-            return context.executeSQLList("Magic/GetPCLearnedAbilitiesByCategoryID", PCLearnedAbilityEntity.class,
-                    new SqlParameter("playerID", uuid),
-                    new SqlParameter("abilityCategoryID", categoryID));
-        }
-    }
-
     public PCAbilityCooldownEntity GetPCCooldownByID(String uuid, int cooldownCategoryID)
     {
         PCAbilityCooldownEntity entity;

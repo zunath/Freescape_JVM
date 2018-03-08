@@ -95,6 +95,7 @@ public class DataAccess {
         _configuration.addAnnotatedClass(PCRegionalFameEntity.class);
         _configuration.addAnnotatedClass(PCSearchSiteEntity.class);
         _configuration.addAnnotatedClass(PCSearchSiteItemEntity.class);
+        _configuration.addAnnotatedClass(PCSkillEntity.class);
         _configuration.addAnnotatedClass(PCTerritoryFlagEntity.class);
         _configuration.addAnnotatedClass(PCTerritoryFlagPermissionEntity.class);
         _configuration.addAnnotatedClass(PCTerritoryFlagsStructuresResearchQueueEntity.class);
@@ -115,6 +116,7 @@ public class DataAccess {
         _configuration.addAnnotatedClass(ServerConfigurationEntity.class);
         _configuration.addAnnotatedClass(SkillCategoryEntity.class);
         _configuration.addAnnotatedClass(SkillEntity.class);
+        _configuration.addAnnotatedClass(SkillXPRequirementEntity.class);
         _configuration.addAnnotatedClass(SpawnTableCreatureEntity.class);
         _configuration.addAnnotatedClass(SpawnTableEntity.class);
         _configuration.addAnnotatedClass(StorageContainerEntity.class);

@@ -26,13 +26,13 @@ public class SkillEntity {
     @Column(name = "Description")
     private String description;
 
-    @Column(name = "Primary")
+    @Column(name = "[Primary]")
     private int primary;
 
-    @Column(name = "Secondary")
+    @Column(name = "[Secondary]")
     private int secondary;
 
-    @Column(name = "Tertiary")
+    @Column(name = "[Tertiary]")
     private int tertiary;
 
     public int getSkillID() {

@@ -97,6 +97,30 @@ public abstract class DialogBase {
         page.getResponses().get(responseID - 1).setActive(isVisible);
     }
 
+    protected void AddResponseToPage(String pageName, String text, boolean isVisible)
+    {
+        PlayerGO pcGO = new PlayerGO(GetPC());
+        PlayerDialog dialog = DialogManager.loadPlayerDialog(pcGO.getUUID());
+        DialogPage page = dialog.getPageByName(pageName);
+        page.addResponse(text, isVisible);
+    }
+
+    protected void AddResponseToPage(String pageName, String text, boolean isVisible, Object customData)
+    {
+        PlayerGO pcGO = new PlayerGO(GetPC());
+        PlayerDialog dialog = DialogManager.loadPlayerDialog(pcGO.getUUID());
+        DialogPage page = dialog.getPageByName(pageName);
+        page.addResponse(text, isVisible, customData);
+    }
+
+    protected void ClearPageResponses(String pageName)
+    {
+        PlayerGO pcGO = new PlayerGO(GetPC());
+        PlayerDialog dialog = DialogManager.loadPlayerDialog(pcGO.getUUID());
+        DialogPage page = dialog.getPageByName(pageName);
+        page.getResponses().clear();
+    }
+
     protected void SwitchConversation(String conversationName)
     {
         NWObject oPC = GetPC();

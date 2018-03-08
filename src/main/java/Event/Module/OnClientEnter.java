@@ -9,6 +9,7 @@ import Entities.ServerConfigurationEntity;
 import GameObject.PlayerGO;
 import GameSystems.ActivityLoggingSystem;
 import GameSystems.QuestSystem;
+import GameSystems.SkillSystem;
 import Helper.ColorToken;
 import org.nwnx.nwnx2.jvm.NWEffect;
 import org.nwnx.nwnx2.jvm.NWObject;
@@ -25,6 +26,7 @@ public class OnClientEnter implements IScriptEventHandler {
         // Bioware Default
         NWScript.executeScript("x3_mod_def_enter", objSelf);
         InitializeNewCharacter();
+        SkillSystem.OnModuleEnter();
         LoadCharacter();
         ShowMOTD();
         ApplyGhostwalk();
