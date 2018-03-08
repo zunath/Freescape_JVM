@@ -26,12 +26,6 @@ public class PlayerEntity {
     private float locationOrientation;
     @Column(name="CreateTimestamp")
     private Date createTimestamp;
-    @Column(name="InfectionCap")
-    private int infectionCap;
-    @Column(name="CurrentInfection")
-    private int currentInfection;
-    @Column(name="InfectionRemovalTick")
-    private int infectionRemovalTick;
     @Column(name="MaxHunger")
     private int maxHunger;
     @Column(name="CurrentHunger")
@@ -40,10 +34,6 @@ public class PlayerEntity {
     private int currentHungerTick;
     @Column(name = "UnallocatedSP")
     private int unallocatedSP;
-    @Column(name = "Level")
-    private int level;
-    @Column(name = "Experience")
-    private int experience;
     @Column(name ="NextSPResetDate")
     private Date nextSPResetDate;
     @Column(name="NumberOfSPResets")
@@ -54,14 +44,10 @@ public class PlayerEntity {
     private Date nextResetTokenReceiveDate;
     @Column(name="HPRegenerationAmount")
     private int hpRegenerationAmount;
-    @Column(name="InventorySpaceBonus")
-    private int inventorySpaceBonus;
     @Column(name="RegenerationTick")
     private int regenerationTick;
     @Column(name="RegenerationRate")
     private int regenerationRate;
-    @Column(name="ZombieKillCount")
-    private int zombieKillCount;
     @Column(name = "VersionNumber")
     private int versionNumber;
     @Column(name="MaxMana")
@@ -70,8 +56,6 @@ public class PlayerEntity {
     private int currentMana;
     @Column(name="CurrentManaTick")
     private int currentManaTick;
-    @Column(name = "ProfessionID")
-    private int professionID;
     @Column(name = "RevivalStoneCount")
     private int revivalStoneCount;
 
@@ -174,15 +158,6 @@ public class PlayerEntity {
         this.createTimestamp = _createTimestamp;
     }
 
-    public int getInfectionCap(){
-        return infectionCap;
-    }
-
-    public void setInfectionCap(int value)
-    {
-        infectionCap = value;
-    }
-
     public int getMaxHunger() {
         return maxHunger;
     }
@@ -201,47 +176,12 @@ public class PlayerEntity {
         this.currentHunger = currentHunger;
     }
 
-    public int getInfectionRemovalTick() {
-        return infectionRemovalTick;
-    }
-
-    public void setInfectionRemovalTick(int infectionRemovalTick) {
-        this.infectionRemovalTick = infectionRemovalTick;
-    }
-
-    public int getCurrentInfection() {
-        return currentInfection;
-    }
-
-    public void setCurrentInfection(int currentInfection) {
-        if(currentInfection < 0) currentInfection = 0;
-        else if(currentInfection > infectionCap) currentInfection = infectionCap;
-
-        this.currentInfection = currentInfection;
-    }
-
     public int getUnallocatedSP() {
         return unallocatedSP;
     }
 
     public void setUnallocatedSP(int unallocatedSP) {
         this.unallocatedSP = unallocatedSP;
-    }
-
-    public int getLevel() {
-        return level;
-    }
-
-    public void setLevel(int level) {
-        this.level = level;
-    }
-
-    public int getExperience() {
-        return experience;
-    }
-
-    public void setExperience(int experience) {
-        this.experience = experience;
     }
 
     public Date getNextSPResetDate() {
@@ -268,14 +208,6 @@ public class PlayerEntity {
         this.hpRegenerationAmount = hpRegenerationAmount;
     }
 
-    public int getInventorySpaceBonus() {
-        return inventorySpaceBonus;
-    }
-
-    public void setInventorySpaceBonus(int inventorySpaceBonus) {
-        this.inventorySpaceBonus = inventorySpaceBonus;
-    }
-
     public int getRegenerationTick() {
         return regenerationTick;
     }
@@ -298,14 +230,6 @@ public class PlayerEntity {
 
     public void setRegenerationRate(int regenerationRate) {
         this.regenerationRate = regenerationRate;
-    }
-
-    public int getZombieKillCount() {
-        return zombieKillCount;
-    }
-
-    public void setZombieKillCount(int zombieKillCount) {
-        this.zombieKillCount = zombieKillCount;
     }
 
     public int getVersionNumber() {
@@ -355,16 +279,6 @@ public class PlayerEntity {
 
     public void setCurrentManaTick(int currentManaTick){
         this.currentManaTick = currentManaTick;
-    }
-
-    public int getProfessionID()
-    {
-        return professionID;
-    }
-
-    public void setProfessionID(int professionID)
-    {
-        this.professionID = professionID;
     }
 
     public int getRevivalStoneCount()

@@ -58,7 +58,6 @@ public class DataAccess {
         _configuration.addAnnotatedClass(AbilityEntity.class);
         _configuration.addAnnotatedClass(ActivePlayerEntity.class);
         _configuration.addAnnotatedClass(AuthorizedDMEntity.class);
-        _configuration.addAnnotatedClass(BadgeEntity.class);
         _configuration.addAnnotatedClass(BaseItemTypeEntity.class);
         _configuration.addAnnotatedClass(BuildPrivacyEntity.class);
         _configuration.addAnnotatedClass(ChatChannelEntity.class);
@@ -74,16 +73,13 @@ public class DataAccess {
         _configuration.addAnnotatedClass(CustomEffectEntity.class);
         _configuration.addAnnotatedClass(DatabaseRepository.class);
         _configuration.addAnnotatedClass(DMRoleEntity.class);
-        _configuration.addAnnotatedClass(ForcedSPResetEntity.class);
         _configuration.addAnnotatedClass(ItemCombinationEntity.class);
         _configuration.addAnnotatedClass(KeyItemCategoryEntity.class);
         _configuration.addAnnotatedClass(KeyItemEntity.class);
         _configuration.addAnnotatedClass(LootTableEntity.class);
         _configuration.addAnnotatedClass(LootTableItemEntity.class);
         _configuration.addAnnotatedClass(PCAbilityCooldownEntity.class);
-        _configuration.addAnnotatedClass(PCAuthorizedCDKeyEntity.class);
         _configuration.addAnnotatedClass(PCLearnedAbilityEntity.class);
-        _configuration.addAnnotatedClass(PCBadgeEntity.class);
         _configuration.addAnnotatedClass(PCBlueprintEntity.class);
         _configuration.addAnnotatedClass(PCKeyItemEntity.class);
         _configuration.addAnnotatedClass(PCMigrationEntity.class);
@@ -92,7 +88,6 @@ public class DataAccess {
         _configuration.addAnnotatedClass(PCCorpseItemEntity.class);
         _configuration.addAnnotatedClass(PCCraftEntity.class);
         _configuration.addAnnotatedClass(PCCustomEffectEntity.class);
-        _configuration.addAnnotatedClass(PCEquippedAbilityEntity.class);
         _configuration.addAnnotatedClass(PCOutfitEntity.class);
         _configuration.addAnnotatedClass(PCOverflowItemEntity.class);
         _configuration.addAnnotatedClass(PCQuestKillTargetProgressEntity.class);
@@ -106,11 +101,6 @@ public class DataAccess {
         _configuration.addAnnotatedClass(PCTerritoryFlagStructureEntity.class);
         _configuration.addAnnotatedClass(PCTerritoryFlagStructureItemEntity.class);
         _configuration.addAnnotatedClass(PlayerEntity.class);
-        _configuration.addAnnotatedClass(PlayerProgressionSkillEntity.class);
-        _configuration.addAnnotatedClass(PortraitEntity.class);
-        _configuration.addAnnotatedClass(ProfessionEntity.class);
-        _configuration.addAnnotatedClass(ProgressionLevelEntity.class);
-        _configuration.addAnnotatedClass(ProgressionSkillEntity.class);
         _configuration.addAnnotatedClass(QuestEntity.class);
         _configuration.addAnnotatedClass(FameRegionEntity.class);
         _configuration.addAnnotatedClass(QuestKillTargetListEntity.class);
@@ -131,7 +121,6 @@ public class DataAccess {
         _configuration.addAnnotatedClass(StructureBlueprintEntity.class);
         _configuration.addAnnotatedClass(StructureQuickBuildAuditEntity.class);
         _configuration.addAnnotatedClass(TerritoryFlagPermissionEntity.class);
-        _configuration.addAnnotatedClass(ZombieClothesEntity.class);
 
         ServiceRegistry _serviceRegistry = new StandardServiceRegistryBuilder().applySettings(
                 _configuration.getProperties()).build();

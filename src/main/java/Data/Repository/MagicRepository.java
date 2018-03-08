@@ -56,24 +56,6 @@ public class MagicRepository {
         return addedSuccessfully;
     }
 
-    public PCEquippedAbilityEntity GetPCEquippedAbilities(String uuid)
-    {
-        try(DataContext context = new DataContext())
-        {
-            PCEquippedAbilityEntity entity = context.executeSQLSingle("Magic/GetPCEquippedAbilities", PCEquippedAbilityEntity.class,
-                    new SqlParameter("playerID", uuid));
-
-            if(entity == null)
-            {
-                entity = new PCEquippedAbilityEntity();
-                entity.setPlayerID(uuid);
-                context.getSession().saveOrUpdate(entity);
-            }
-
-            return entity;
-        }
-    }
-
     public List<AbilityCategoryEntity> GetActiveAbilityCategories()
     {
         try(DataContext context = new DataContext())
@@ -112,14 +94,6 @@ public class MagicRepository {
         }
 
         return entity;
-    }
-
-    public void Save(PCEquippedAbilityEntity entity)
-    {
-        try(DataContext context = new DataContext())
-        {
-            context.getSession().saveOrUpdate(entity);
-        }
     }
 
     public void Save(PCAbilityCooldownEntity entity)

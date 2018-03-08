@@ -10,7 +10,6 @@ import Helper.ColorToken;
 import Helper.MenuHelper;
 import Data.Repository.OverflowItemRepository;
 import Data.Repository.PlayerRepository;
-import Data.Repository.ProgressionLevelRepository;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.NWScript;
 import org.nwnx.nwnx2.jvm.Scheduler;
@@ -110,12 +109,9 @@ public class RestMenu extends DialogBase implements IDialogHandler {
     {
         PlayerGO pcGO = new PlayerGO(oPC);
         PlayerRepository repo = new PlayerRepository();
-        ProgressionLevelRepository levelRepo = new ProgressionLevelRepository();
         PlayerEntity entity = repo.GetByPlayerID(pcGO.getUUID());
-        int requiredExp = levelRepo.GetProgressionLevelByLevel(entity.getLevel()).getExperience();
 
         String header = ColorToken.Green() + "Name: " + ColorToken.End() + NWScript.getName(oPC, false) + "\n\n";
-        header += ColorToken.Green() + "Exp:         " + ColorToken.End() + MenuHelper.BuildBar(entity.getExperience(), requiredExp, 100) + "\n";
         header += ColorToken.Green() + "Hunger:   " + ColorToken.End() + MenuHelper.BuildBar(entity.getCurrentHunger(), entity.getMaxHunger(), 100) + "\n";
         header += ColorToken.Green() + "Mana:      " + ColorToken.End() + MenuHelper.BuildBar(entity.getCurrentMana(), entity.getMaxMana(), 100, ColorToken.Custom(32, 223, 219)) + "\n";
         header += ColorToken.Green() + "Revival Stones: " + ColorToken.End() + entity.getRevivalStoneCount() + "\n";

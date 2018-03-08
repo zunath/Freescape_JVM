@@ -68,14 +68,10 @@ public class PlayerGO {
         entity.setLocationX(location.getX());
         entity.setLocationY(location.getY());
         entity.setLocationZ(location.getZ());
-        entity.setInfectionCap(100);
         entity.setMaxHunger(100);
         entity.setCurrentHunger(100);
-        entity.setInfectionRemovalTick(600);
         entity.setCreateTimestamp(new Date());
         entity.setUnallocatedSP(10);
-        entity.setLevel(1);
-        entity.setExperience(0);
         entity.setNextSPResetDate(null);
         entity.setNumberOfSPResets(0);
         entity.setVersionNumber(Constants.PlayerVersionNumber);
