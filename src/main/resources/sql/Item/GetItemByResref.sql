@@ -1,5 +1,5 @@
 SELECT Resref ,
        AC ,
-       ItemType
+       ItemTypeID
 FROM dbo.Items
 WHERE Resref = :resref

@@ -70,6 +70,7 @@ public class DataAccess {
         _configuration.addAnnotatedClass(CraftComponentEntity.class);
         _configuration.addAnnotatedClass(CraftEntity.class);
         _configuration.addAnnotatedClass(CraftLevelEntity.class);
+        _configuration.addAnnotatedClass(CreatureEntity.class);
         _configuration.addAnnotatedClass(CustomEffectEntity.class);
         _configuration.addAnnotatedClass(DatabaseRepository.class);
         _configuration.addAnnotatedClass(DMRoleEntity.class);

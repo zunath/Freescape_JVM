@@ -4,6 +4,7 @@ import GameObject.PlayerGO;
 import Common.IScriptEventHandler;
 import Data.Repository.PlayerRepository;
 import GameSystems.ActivityLoggingSystem;
+import GameSystems.SkillSystem;
 import org.nwnx.nwnx2.jvm.*;
 
 @SuppressWarnings("unused")
@@ -19,6 +20,7 @@ public class OnClientLeave implements IScriptEventHandler {
 
 		SaveCharacter(pc);
 		ActivityLoggingSystem.OnModuleClientLeave();
+		SkillSystem.OnModuleLeave();
 	}
 
 	private void SaveCharacter(NWObject pc) {

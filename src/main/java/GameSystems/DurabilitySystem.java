@@ -8,8 +8,6 @@ import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.NWScript;
 import org.nwnx.nwnx2.jvm.Scheduler;
 import org.nwnx.nwnx2.jvm.constants.BaseItem;
-import org.nwnx.nwnx2.jvm.constants.IpConst;
-import org.nwnx.nwnx2.jvm.constants.ItemProperty;
 
 import java.text.DecimalFormat;
 import java.util.Arrays;
@@ -32,25 +30,6 @@ public class DurabilitySystem {
             });
 
             NWScript.floatingTextStringOnCreature(ColorToken.Red() + "That item is broken and must be repaired before you can use it." + ColorToken.End(), oPC, false);
-        }
-
-        if(GetValidDurabilityTypes().contains(NWScript.getBaseItemType(oItem)))
-        {
-            boolean hasProperty = false;
-            for(NWItemProperty ip : NWScript.getItemProperties(oItem))
-            {
-               if(NWScript.getItemPropertyType(ip) == ItemProperty.ONHITCASTSPELL)
-               {
-                   hasProperty = true;
-                   break;
-               }
-            }
-
-            // If item doesn't have on hit cast spell, give it to it.
-            if(!hasProperty)
-            {
-                XP2.IPSafeAddItemProperty(oItem, NWScript.itemPropertyOnHitCastSpell(IpConst.ONHIT_CASTSPELL_ONHIT_UNIQUEPOWER, 40), 0.0f, AddItemPropertyPolicy.ReplaceExisting, true, true);
-            }
         }
     }
 

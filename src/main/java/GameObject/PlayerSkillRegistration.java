@@ -1,19 +1,20 @@
 package GameObject;
 
 import com.sun.tools.javac.util.Pair;
+import org.nwnx.nwnx2.jvm.NWObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class PlayerSkillRegistration {
 
-    private String playerUUID;
+    private NWObject pc;
     private HashMap<Integer, Integer> skillPoints;
 
-    public PlayerSkillRegistration(String playerUUID)
+    public PlayerSkillRegistration(NWObject oPC)
     {
         skillPoints = new HashMap<>();
-        this.playerUUID = playerUUID;
+        pc = oPC;
     }
 
     public void AddSkillPointRegistration(int skillID)
@@ -50,8 +51,7 @@ public class PlayerSkillRegistration {
         return totalPoints;
     }
 
-    public String getPlayerUUID() {
-        return playerUUID;
+    public NWObject getPC() {
+        return pc;
     }
-
 }

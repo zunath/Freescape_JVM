@@ -14,6 +14,7 @@ public class OnPlayerEquipItem implements IScriptEventHandler {
 		NWScript.executeScript("x2_mod_def_equ", objSelf);
         DurabilitySystem.OnModuleEquip();
 		ArmorSystem.OnModuleEquipItem();
+		ItemSystem.OnModuleEquipItem();
 		HandleEquipmentSwappingDelay();
 	}
 
