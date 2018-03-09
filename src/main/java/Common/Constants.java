@@ -6,7 +6,6 @@ public class Constants {
 	// Name of the unique PC ID number variable (stored on PC's database item)
 	public static final String PCIDNumberVariable = "PC_ID_NUMBER";
 
-	public static final int BaseHPRegenAmount = 1;
 	public static final int BaseHPRegenRate = 20;
 	public static final int BaseManaRegenAmount = 1;
 	public static final int BaseManaRegenRate = 20;

@@ -71,6 +71,12 @@ public class PlayerGO {
         entity.setLocationZ(location.getZ());
         entity.setMaxHunger(100);
         entity.setCurrentHunger(100);
+        entity.setMaxMana(20);
+        entity.setCurrentMana(10);
+        entity.setCurrentManaTick(20);
+        entity.setHitPoints(NWScript.getMaxHitPoints(_pc));
+        entity.setRegenerationTick(20);
+        entity.setHpRegenerationAmount(1);
         entity.setCreateTimestamp(new Date());
         entity.setUnallocatedSP(5);
         entity.setNextSPResetDate(null);

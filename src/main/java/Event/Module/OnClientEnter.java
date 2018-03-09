@@ -8,6 +8,7 @@ import Entities.PlayerEntity;
 import Entities.ServerConfigurationEntity;
 import GameObject.PlayerGO;
 import GameSystems.ActivityLoggingSystem;
+import GameSystems.PlayerInitializationSystem;
 import GameSystems.QuestSystem;
 import GameSystems.SkillSystem;
 import Helper.ColorToken;
@@ -25,7 +26,7 @@ public class OnClientEnter implements IScriptEventHandler {
 
         // Bioware Default
         NWScript.executeScript("x3_mod_def_enter", objSelf);
-        InitializeNewCharacter();
+        PlayerInitializationSystem.OnModuleEnter();
         SkillSystem.OnModuleEnter();
         LoadCharacter();
         ShowMOTD();
@@ -46,52 +47,6 @@ public class OnClientEnter implements IScriptEventHandler {
         NWEffect eGhostWalk = NWScript.effectCutsceneGhost();
         NWScript.applyEffectToObject(Duration.TYPE_PERMANENT, eGhostWalk, oPC, 0.0f);
 
-    }
-
-    private void InitializeNewCharacter()
-    {
-        final NWObject oPC = NWScript.getEnteringObject();
-
-        if(!NWScript.getIsPC(oPC) || NWScript.getIsDM(oPC)) return;
-
-        PlayerGO pcGO = new PlayerGO(oPC);
-        NWObject oDatabase = pcGO.GetDatabaseItem();
-
-        boolean missingStringID = NWScript.getLocalString(oDatabase, Constants.PCIDNumberVariable).equals("");
-
-        if(oDatabase == NWObject.INVALID || missingStringID)
-        {
-            pcGO.destroyAllEquippedItems();
-            pcGO.destroyAllInventoryItems(true);
-
-            NWScript.createItemOnObject(Constants.PCDatabaseTag, oPC, 1, "");
-
-            Scheduler.assign(oPC, () -> {
-                NWScript.takeGoldFromCreature(NWScript.getGold(oPC), oPC, true);
-                NWScript.giveGoldToCreature(oPC, 10);
-            });
-
-            NWObject bread = NWScript.createItemOnObject("food_bread", oPC, 1, "");
-            NWScript.setName(bread, "Starting Bread");
-            NWScript.setItemCursedFlag(bread, true);
-            NWScript.createItemOnObject("combat_knife", oPC, 1, "");
-
-            NWObject darts = NWScript.createItemOnObject("nw_wthdt001", oPC, 50, ""); // 50x Dart
-            NWScript.setName(darts, "Starting Darts");
-            NWScript.setItemCursedFlag(darts, true);
-
-            Scheduler.assign(oPC, () -> {
-                NWObject oClothes = NWScript.createItemOnObject("starting_shirt", oPC, 1, "");
-                NWScript.actionEquipItem(oClothes, InventorySlot.CHEST);
-            });
-
-            // Save to database
-            PlayerRepository repo = new PlayerRepository();
-            PlayerEntity entity = pcGO.createEntity();
-            repo.save(entity);
-
-            Scheduler.delay(oPC, 1000, () -> NWScript.applyEffectToObject(DurationType.INSTANT, NWScript.effectHeal(999), oPC, 0.0f));
-        }
     }
 
     private void ShowMOTD()
