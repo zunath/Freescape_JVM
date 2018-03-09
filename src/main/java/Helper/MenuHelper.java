@@ -9,7 +9,7 @@ public class MenuHelper {
         String xpBar = "";
         int highlightedBars = NWScript.floatToInt((float) currentValue / (float) requiredValue * numberOfBars);
 
-        for(int bar = 1; bar <= 100; bar++)
+        for(int bar = 1; bar <= numberOfBars; bar++)
         {
             if(bar <= highlightedBars)
             {

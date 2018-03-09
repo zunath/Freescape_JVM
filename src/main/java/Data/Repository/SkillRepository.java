@@ -55,4 +55,21 @@ public class SkillRepository {
                     new SqlParameter("rank", rank));
         }
     }
+
+    public Integer GetSkillMaxRank(int skillID)
+    {
+        try(DataContext context = new DataContext())
+        {
+            return context.executeSQLSingle("Skills/GetSkillMaxRank",
+                    new SqlParameter("skillID", skillID));
+        }
+    }
+
+    public void Save(PCSkillEntity entity)
+    {
+        try(DataContext context = new DataContext())
+        {
+            context.getSession().saveOrUpdate(entity);
+        }
+    }
 }

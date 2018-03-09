@@ -12,7 +12,6 @@ import Helper.ColorToken;
 import Helper.MenuHelper;
 import org.nwnx.nwnx2.jvm.NWObject;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ViewSkills extends DialogBase implements IDialogHandler {
@@ -100,7 +99,7 @@ public class ViewSkills extends DialogBase implements IDialogHandler {
         return
                 ColorToken.Green() + "Skill: " + ColorToken.End() + pcSkill.getSkill().getName() + "\n" +
                 ColorToken.Green() + "Rank: " + ColorToken.End() + title + "\n" +
-                ColorToken.Green() + "Exp: " + ColorToken.End() + MenuHelper.BuildBar(pcSkill.getXp(), req.getXp(), 20, ColorToken.Orange()) + "\n\n" +
+                ColorToken.Green() + "Exp: " + ColorToken.End() + MenuHelper.BuildBar(pcSkill.getXp(), req.getXp(), 100, ColorToken.Orange()) + "\n\n" +
                 ColorToken.Green() + "Description: " + ColorToken.End() + pcSkill.getSkill().getDescription() + "\n";
     }
 

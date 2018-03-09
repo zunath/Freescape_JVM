@@ -71,7 +71,7 @@ public class PlayerGO {
         entity.setMaxHunger(100);
         entity.setCurrentHunger(100);
         entity.setCreateTimestamp(new Date());
-        entity.setUnallocatedSP(10);
+        entity.setUnallocatedSP(5);
         entity.setNextSPResetDate(null);
         entity.setNumberOfSPResets(0);
         entity.setVersionNumber(Constants.PlayerVersionNumber);
