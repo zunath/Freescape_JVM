@@ -3,6 +3,7 @@ package GameObject;
 import Common.Constants;
 import Data.Repository.PlayerRepository;
 import Entities.PlayerEntity;
+import NWNX.NWNX_Creature;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.nwnx.nwnx2.jvm.*;
@@ -89,12 +90,12 @@ public class PlayerGO {
         entity.setRespawnLocationX(0.0f);
         entity.setRespawnLocationY(0.0f);
         entity.setRespawnLocationZ(0.0f);
-        entity.setStrBase(NWScript.getAbilityScore(_pc, Ability.STRENGTH, true));
-        entity.setDexBase(NWScript.getAbilityScore(_pc, Ability.DEXTERITY, true));
-        entity.setConBase(NWScript.getAbilityScore(_pc, Ability.CONSTITUTION, true));
-        entity.setIntBase(NWScript.getAbilityScore(_pc, Ability.INTELLIGENCE, true));
-        entity.setWisBase(NWScript.getAbilityScore(_pc, Ability.WISDOM, true));
-        entity.setChaBase(NWScript.getAbilityScore(_pc, Ability.CHARISMA, true));
+        entity.setStrBase(NWNX_Creature.GetRawAbilityScore(_pc, Ability.STRENGTH));
+        entity.setDexBase(NWNX_Creature.GetRawAbilityScore(_pc, Ability.DEXTERITY));
+        entity.setConBase(NWNX_Creature.GetRawAbilityScore(_pc, Ability.CONSTITUTION));
+        entity.setIntBase(NWNX_Creature.GetRawAbilityScore(_pc, Ability.INTELLIGENCE));
+        entity.setWisBase(NWNX_Creature.GetRawAbilityScore(_pc, Ability.WISDOM));
+        entity.setChaBase(NWNX_Creature.GetRawAbilityScore(_pc, Ability.CHARISMA));
 
 
         return entity;

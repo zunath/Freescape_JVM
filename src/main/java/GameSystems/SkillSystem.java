@@ -4,23 +4,33 @@ import Data.Repository.PlayerRepository;
 import Data.Repository.SkillRepository;
 import Entities.PCSkillEntity;
 import Entities.PlayerEntity;
+import Entities.SkillEntity;
 import Entities.SkillXPRequirementEntity;
+import Enumerations.CustomAttributeType;
 import Enumerations.CustomItemType;
 import Enumerations.SkillID;
 import GameObject.*;
+import NWNX.NWNX_Creature;
 import com.sun.tools.javac.util.Pair;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.NWScript;
+import org.nwnx.nwnx2.jvm.constants.Ability;
 import org.nwnx.nwnx2.jvm.constants.BaseItem;
 import org.nwnx.nwnx2.jvm.constants.InventorySlot;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 public class SkillSystem {
 
     private static HashMap<String, CreatureSkillRegistration> CreatureRegistrations = new HashMap<>();
+
+    private static float PrimaryIncrease = 0.6f;
+    private static float SecondaryIncrease = 0.4f;
+    private static float TertiaryIncrease = 0.2f;
+    private static int MaxAttributeBonus = 70;
 
     public static void OnModuleEnter()
     {
@@ -65,6 +75,7 @@ public class SkillSystem {
         PCSkillEntity skill = skillRepo.GetPCSkillByID(pcGO.getUUID(), skillID);
         SkillXPRequirementEntity req = skillRepo.GetSkillXPRequirementByRank(skillID, skill.getRank());
         int maxRank = skillRepo.GetSkillMaxRank(skillID);
+        int originalRank = skill.getRank();
 
         skill.setXp(skill.getXp() + xp);
         NWScript.sendMessageToPC(oPC, "You earned " + skill.getSkill().getName() + " skill experience.");
@@ -87,7 +98,12 @@ public class SkillSystem {
         }
 
         skillRepo.Save(skill);
-        playerRepo.save(player);
+        // Update player and apply stat changes only if a level up occurred.
+        if(originalRank != skill.getRank())
+        {
+            playerRepo.save(player);
+            ApplyStatChanges(oPC);
+        }
     }
 
     public static PCSkillEntity GetPCSkill(NWObject oPC, int skillID)
@@ -261,4 +277,69 @@ public class SkillSystem {
 
         CreatureRegistrations.remove(creatureGO.getUUID());
     }
+
+    private static void ApplyStatChanges(NWObject oPC)
+    {
+        PlayerGO pcGO = new PlayerGO(oPC);
+        SkillRepository skillRepo = new SkillRepository();
+        PlayerRepository playerRepo = new PlayerRepository();
+        PlayerEntity pcEntity = playerRepo.GetByPlayerID(pcGO.getUUID());
+        List<PCSkillEntity> skills = skillRepo.GetAllPCSkills(pcGO.getUUID());
+        float strBonus = 0.0f;
+        float dexBonus = 0.0f;
+        float conBonus = 0.0f;
+        float intBonus = 0.0f;
+        float wisBonus = 0.0f;
+        float chaBonus = 0.0f;
+
+        for(PCSkillEntity pcSkill: skills)
+        {
+            SkillEntity skill = pcSkill.getSkill();
+            int primary = skill.getPrimary();
+            int secondary = skill.getSecondary();
+            int tertiary = skill.getTertiary();
+
+            // Primary Bonuses
+            if(primary == CustomAttributeType.STR) strBonus += PrimaryIncrease * pcSkill.getRank();
+            else if(primary == CustomAttributeType.DEX) dexBonus += PrimaryIncrease * pcSkill.getRank();
+            else if(primary == CustomAttributeType.CON) conBonus += PrimaryIncrease * pcSkill.getRank();
+            else if(primary == CustomAttributeType.INT) intBonus += PrimaryIncrease * pcSkill.getRank();
+            else if(primary == CustomAttributeType.WIS) wisBonus += PrimaryIncrease * pcSkill.getRank();
+            else if(primary == CustomAttributeType.CHA) chaBonus += PrimaryIncrease * pcSkill.getRank();
+
+            // Secondary Bonuses
+            if(secondary == CustomAttributeType.STR) strBonus += SecondaryIncrease * pcSkill.getRank();
+            else if(secondary == CustomAttributeType.DEX) dexBonus += SecondaryIncrease * pcSkill.getRank();
+            else if(secondary == CustomAttributeType.CON) conBonus += SecondaryIncrease * pcSkill.getRank();
+            else if(secondary == CustomAttributeType.INT) intBonus += SecondaryIncrease * pcSkill.getRank();
+            else if(secondary == CustomAttributeType.WIS) wisBonus += SecondaryIncrease * pcSkill.getRank();
+            else if(secondary == CustomAttributeType.CHA) chaBonus += SecondaryIncrease * pcSkill.getRank();
+
+            // Tertiary Bonuses
+            if(tertiary == CustomAttributeType.STR) strBonus += TertiaryIncrease * pcSkill.getRank();
+            else if(tertiary == CustomAttributeType.DEX) dexBonus += TertiaryIncrease * pcSkill.getRank();
+            else if(tertiary == CustomAttributeType.CON) conBonus += TertiaryIncrease * pcSkill.getRank();
+            else if(tertiary == CustomAttributeType.INT) intBonus += TertiaryIncrease * pcSkill.getRank();
+            else if(tertiary == CustomAttributeType.WIS) wisBonus += TertiaryIncrease * pcSkill.getRank();
+            else if(tertiary == CustomAttributeType.CHA) chaBonus += TertiaryIncrease * pcSkill.getRank();
+        }
+
+        // Check caps.
+        if(strBonus > MaxAttributeBonus) strBonus = MaxAttributeBonus;
+        if(dexBonus > MaxAttributeBonus) dexBonus = MaxAttributeBonus;
+        if(conBonus > MaxAttributeBonus) conBonus = MaxAttributeBonus;
+        if(intBonus > MaxAttributeBonus) intBonus = MaxAttributeBonus;
+        if(wisBonus > MaxAttributeBonus) wisBonus = MaxAttributeBonus;
+        if(chaBonus > MaxAttributeBonus) chaBonus = MaxAttributeBonus;
+
+        // Apply attributes
+        NWNX_Creature.SetRawAbilityScore(oPC, Ability.STRENGTH, (int)strBonus + pcEntity.getStrBase());
+        NWNX_Creature.SetRawAbilityScore(oPC, Ability.DEXTERITY, (int)dexBonus + pcEntity.getDexBase());
+        NWNX_Creature.SetRawAbilityScore(oPC, Ability.CONSTITUTION, (int)conBonus + pcEntity.getConBase());
+        NWNX_Creature.SetRawAbilityScore(oPC, Ability.INTELLIGENCE, (int)intBonus + pcEntity.getIntBase());
+        NWNX_Creature.SetRawAbilityScore(oPC, Ability.WISDOM, (int)wisBonus + pcEntity.getWisBase());
+        NWNX_Creature.SetRawAbilityScore(oPC, Ability.CHARISMA, (int)chaBonus + pcEntity.getChaBase());
+
+    }
+
 }

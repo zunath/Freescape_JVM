@@ -6,6 +6,7 @@ import Entities.PCSkillEntity;
 import Entities.SkillCategoryEntity;
 import Entities.SkillEntity;
 import Entities.SkillXPRequirementEntity;
+import org.omg.CORBA.DATA_CONVERSION;
 
 import java.util.List;
 
@@ -62,6 +63,15 @@ public class SkillRepository {
         {
             return context.executeSQLSingle("Skills/GetSkillMaxRank",
                     new SqlParameter("skillID", skillID));
+        }
+    }
+
+    public List<PCSkillEntity> GetAllPCSkills(String uuid)
+    {
+        try(DataContext context = new DataContext())
+        {
+            return context.executeSQLList("Skills/GetAllPCSkills", PCSkillEntity.class,
+                    new SqlParameter("playerID", uuid));
         }
     }
 
