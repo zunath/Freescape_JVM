@@ -73,7 +73,8 @@ public class DataAccess {
         _configuration.addAnnotatedClass(CustomEffectEntity.class);
         _configuration.addAnnotatedClass(DatabaseRepository.class);
         _configuration.addAnnotatedClass(DMRoleEntity.class);
-        _configuration.addAnnotatedClass(ItemCombinationEntity.class);
+        _configuration.addAnnotatedClass(ItemEntity.class);
+        _configuration.addAnnotatedClass(ItemTypeEntity.class);
         _configuration.addAnnotatedClass(KeyItemCategoryEntity.class);
         _configuration.addAnnotatedClass(KeyItemEntity.class);
         _configuration.addAnnotatedClass(LootTableEntity.class);

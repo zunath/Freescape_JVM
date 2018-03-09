@@ -3,6 +3,7 @@ package Feat;
 import Common.IScriptEventHandler;
 import GameSystems.DurabilitySystem;
 import GameSystems.MagicSystem;
+import GameSystems.SkillSystem;
 import Helper.ScriptHelper;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.NWScript;
@@ -11,12 +12,13 @@ import java.util.Objects;
 @SuppressWarnings("UnusedDeclaration")
 public class OnHitCastSpell implements IScriptEventHandler {
     @Override
-    public void runScript(NWObject oTarget) {
-        if(!oTarget.equals(NWObject.INVALID))
+    public void runScript(NWObject oPC) {
+        if(!oPC.equals(NWObject.INVALID))
         {
-            DurabilitySystem.OnHitCastSpell(oTarget);
-            MagicSystem.OnHitCastSpell(oTarget);
-            HandleItemSpecificCastSpell(oTarget);
+            DurabilitySystem.OnHitCastSpell(oPC);
+            MagicSystem.OnHitCastSpell(oPC);
+            SkillSystem.OnHitCastSpell(oPC);
+            HandleItemSpecificCastSpell(oPC);
         }
     }
 

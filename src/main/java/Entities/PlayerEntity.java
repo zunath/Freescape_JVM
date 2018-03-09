@@ -79,6 +79,19 @@ public class PlayerEntity {
     @Column(name = "IsSanctuaryOverrideEnabled")
     private boolean isSanctuaryOverrideEnabled;
 
+    @Column(name = "STRBase")
+    private int strBase;
+    @Column(name = "DEXBase")
+    private int dexBase;
+    @Column(name = "CONBase")
+    private int conBase;
+    @Column(name = "INTBase")
+    private int intBase;
+    @Column(name = "WISBase")
+    private int wisBase;
+    @Column(name = "CHABase")
+    private int chaBase;
+
     public PlayerEntity()
     {
 
@@ -363,4 +376,53 @@ public class PlayerEntity {
     public void setSanctuaryOverrideEnabled(boolean sanctuaryOverrideEnabled) {
         isSanctuaryOverrideEnabled = sanctuaryOverrideEnabled;
     }
+
+    public int getStrBase() {
+        return strBase;
+    }
+
+    public void setStrBase(int strBase) {
+        this.strBase = strBase;
+    }
+
+    public int getDexBase() {
+        return dexBase;
+    }
+
+    public void setDexBase(int dexBase) {
+        this.dexBase = dexBase;
+    }
+
+    public int getConBase() {
+        return conBase;
+    }
+
+    public void setConBase(int conBase) {
+        this.conBase = conBase;
+    }
+
+    public int getIntBase() {
+        return intBase;
+    }
+
+    public void setIntBase(int intBase) {
+        this.intBase = intBase;
+    }
+
+    public int getWisBase() {
+        return wisBase;
+    }
+
+    public void setWisBase(int wisBase) {
+        this.wisBase = wisBase;
+    }
+
+    public int getChaBase() {
+        return chaBase;
+    }
+
+    public void setChaBase(int chaBase) {
+        this.chaBase = chaBase;
+    }
+
 }

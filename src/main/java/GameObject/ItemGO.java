@@ -62,4 +62,14 @@ public class ItemGO {
         return hasItemProperty;
     }
 
+    public int GetAC()
+    {
+        return NWScript.getLocalInt(item, "CUSTOM_ITEM_PROPERTY_AC");
+    }
+
+    public int GetCustomItemType()
+    {
+        return NWScript.getLocalInt(item, "CUSTOM_ITEM_PROPERTY_TYPE");
+    }
+
 }

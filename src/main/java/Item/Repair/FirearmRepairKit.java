@@ -1,7 +1,9 @@
 package Item.Repair;
 
 import Common.IScriptEventHandler;
+import Enumerations.SkillID;
 import GameSystems.DurabilitySystem;
+import GameSystems.SkillSystem;
 import Helper.ItemHelper;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.NWScript;
@@ -19,8 +21,8 @@ public class FirearmRepairKit implements IScriptEventHandler {
             return;
         }
 
-        int skill = 0; // TODO: Skill system check
-        float repairAmount = 10.0f + skill;
+        int skill = SkillSystem.GetPCSkill(oPC, SkillID.ItemRepair).getRank();
+        float repairAmount = 10.0f + skill * 2.0f;
 
         DurabilitySystem.RunItemRepair(oPC, item, repairAmount);
 

@@ -1,5 +1,6 @@
 package Event.Module;
 import Common.IScriptEventHandler;
+import GameSystems.ItemSystem;
 import GameSystems.KeyItemSystem;
 import GameSystems.QuestSystem;
 import org.nwnx.nwnx2.jvm.*;
@@ -12,5 +13,6 @@ public class OnAcquireItem implements IScriptEventHandler {
 		NWScript.executeScript("x2_mod_def_aqu", objSelf);
         KeyItemSystem.OnModuleItemAcquired();
 		QuestSystem.OnItemAcquired();
+		ItemSystem.OnItemAcquired();
 	}
 }

@@ -2,6 +2,7 @@ package Event.Module;
 
 import Common.IScriptEventHandler;
 import GameSystems.DurabilitySystem;
+import GameSystems.ItemSystem;
 import GameSystems.MagicSystem;
 import NWNX.NWNX_Events;
 import org.nwnx.nwnx2.jvm.NWObject;
@@ -14,6 +15,7 @@ public class OnExamine implements IScriptEventHandler {
 
         String description = "";
         description = MagicSystem.OnModuleExamine(description, examiner, examinedObject);
+        description = ItemSystem.OnModuleExamine(description, examiner, examinedObject);
         description = DurabilitySystem.OnModuleExamine(description, examinedObject);
 
         if(description.equals("")) return;

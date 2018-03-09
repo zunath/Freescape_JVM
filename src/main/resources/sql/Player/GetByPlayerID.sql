@@ -31,6 +31,12 @@ SELECT pc.PlayerID ,
        pc.RespawnLocationOrientation ,
        pc.DateLastForcedSPReset ,
        pc.DateSanctuaryEnds ,
-       pc.IsSanctuaryOverrideEnabled
+       pc.IsSanctuaryOverrideEnabled,
+       pc.STRBase,
+       pc.DEXBase,
+       pc.CONBase,
+       pc.INTBase,
+       pc.WISBase,
+       pc.CHABase
 FROM dbo.PlayerCharacters pc
 WHERE pc.PlayerID = :playerID
