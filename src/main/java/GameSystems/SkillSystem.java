@@ -127,7 +127,7 @@ public class SkillSystem {
 
     public static void GiveSkillXP(NWObject oPC, int skillID, int xp)
     {
-        if(xp <= 0 || !NWScript.getIsPC(oPC) || NWScript.getIsDM(oPC) || NWScript.getIsDMPossessed(oPC)) return;
+        if(skillID <= 0 || xp <= 0 || !NWScript.getIsPC(oPC) || NWScript.getIsDM(oPC) || NWScript.getIsDMPossessed(oPC)) return;
 
         PlayerGO pcGO = new PlayerGO(oPC);
         PlayerRepository playerRepo = new PlayerRepository();
@@ -379,7 +379,7 @@ public class SkillSystem {
         }
     }
 
-    private static float CalculateSkillAdjustedXP(float xp, int registeredLevel, int skillRank)
+    public static float CalculateSkillAdjustedXP(float xp, int registeredLevel, int skillRank)
     {
         int delta = registeredLevel - skillRank;
         float levelAdjustment = 0.2f * delta;
