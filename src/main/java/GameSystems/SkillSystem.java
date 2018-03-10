@@ -11,6 +11,7 @@ import NWNX.NWNX_Creature;
 import com.sun.tools.javac.util.Pair;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.NWScript;
+import org.nwnx.nwnx2.jvm.Scheduler;
 import org.nwnx.nwnx2.jvm.constants.Ability;
 import org.nwnx.nwnx2.jvm.constants.BaseItem;
 import org.nwnx.nwnx2.jvm.constants.InventorySlot;
@@ -40,6 +41,7 @@ public class SkillSystem {
             PlayerGO pcGO = new PlayerGO(oPC);
             SkillRepository repo = new SkillRepository();
             repo.InsertAllPCSkillsByID(pcGO.getUUID());
+            ForceEquipFistGlove(oPC);
         }
     }
 
@@ -60,8 +62,43 @@ public class SkillSystem {
                 CreatureRegistrations.put(reg.GetCreatureID(), reg);
             }
         }
-
     }
+
+    public static void OnModuleItemUnequipped()
+    {
+        NWObject oPC = NWScript.getPCItemLastUnequippedBy();
+        NWObject oItem = NWScript.getPCItemLastUnequipped();
+        int type = NWScript.getBaseItemType(oItem);
+
+        if(!NWScript.getIsPC(oPC) || NWScript.getIsDM(oPC) || NWScript.getIsDMPossessed(oPC)) return;
+        if(type != BaseItem.BRACER && type != BaseItem.GLOVES) return;
+
+        // If fist was unequipped, destroy it.
+        String resref = NWScript.getResRef(oItem);
+        if(resref.equals("fist"))
+        {
+            NWScript.destroyObject(oItem, 0.0f);
+        }
+
+        // Check in 1 second to see if PC has a glove equipped. If they don't, create a fist glove and equip it.
+        ForceEquipFistGlove(oPC);
+    }
+
+    private static void ForceEquipFistGlove(NWObject oPC)
+    {
+        Scheduler.delay(oPC, 1000, () -> {
+
+            NWObject glove = NWScript.getItemInSlot(InventorySlot.ARMS, oPC);
+            if(!NWScript.getIsObjectValid(glove))
+            {
+                NWScript.clearAllActions(false);
+                glove = NWScript.createItemOnObject("fist", oPC, 1, "");
+                NWScript.actionEquipItem(glove, InventorySlot.ARMS);
+                NWScript.setLocalInt(glove, "UNBREAKABLE", 1);
+            }
+        });
+    }
+
 
     public static void GiveSkillXP(NWObject oPC, int skillID, int xp)
     {
@@ -358,6 +395,8 @@ public class SkillSystem {
             ArrayList<Pair<Integer, PlayerSkillPointTracker>> skillRegs = preg.GetSkillRegistrationPoints();
             int totalPoints = preg.GetTotalSkillRegistrationPoints();
 
+            boolean receivesMartialArtsPenalty = CheckForMartialArtsPenalty(skillRegs);
+
             // Grant XP based on points acquired during combat.
             for(Pair<Integer, PlayerSkillPointTracker> skreg: skillRegs)
             {
@@ -367,6 +406,10 @@ public class SkillSystem {
                 float percentage = (float)points / (float)totalPoints;
                 float adjustedXP = baseXP * percentage;
                 adjustedXP = CalculateSkillAdjustedXP(adjustedXP, skreg.snd.getRegisteredLevel(), skillRank);
+
+                // Penalty to martial arts XP for using a shield.
+                if(skillID == SkillID.MartialArts && receivesMartialArtsPenalty)
+                    adjustedXP = adjustedXP * 0.4f;
 
                 GiveSkillXP(preg.getPC(), skillID, (int)(adjustedXP));
             }
@@ -389,6 +432,21 @@ public class SkillSystem {
         }
 
         CreatureRegistrations.remove(creatureGO.getGlobalUUID());
+    }
+
+    private static boolean CheckForMartialArtsPenalty(ArrayList<Pair<Integer, PlayerSkillPointTracker>> skillRegs)
+    {
+        boolean usedShield = false;
+        boolean usedMartialArts = false;
+        for(Pair<Integer, PlayerSkillPointTracker> sreg : skillRegs)
+        {
+            if(sreg.fst == SkillID.Shields) usedShield = true;
+            else if(sreg.fst == SkillID.MartialArts) usedMartialArts = true;
+
+            if(usedMartialArts && usedShield) return true;
+        }
+
+        return false;
     }
 
     @SuppressWarnings("ConstantConditions")

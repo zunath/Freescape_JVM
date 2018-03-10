@@ -1,9 +1,6 @@
 package GameSystems;
 
-import Bioware.AddItemPropertyPolicy;
-import Bioware.XP2;
 import Helper.ColorToken;
-import org.nwnx.nwnx2.jvm.NWItemProperty;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.NWScript;
 import org.nwnx.nwnx2.jvm.Scheduler;
