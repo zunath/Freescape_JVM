@@ -99,6 +99,31 @@ public class SkillSystem {
         });
     }
 
+    private static int CalculateTotalSkillPointsPenalty(int totalSkillPoints, int xp)
+    {
+        if(totalSkillPoints >= 450)
+        {
+            xp = (int)(xp * 0.70f);
+        }
+        else if(totalSkillPoints >= 400)
+        {
+            xp = (int)(xp * 0.80f);
+        }
+        else if(totalSkillPoints >= 350)
+        {
+            xp = (int)(xp * 0.85f);
+        }
+        else if(totalSkillPoints >= 300)
+        {
+            xp = (int)(xp * 0.90f);
+        }
+        else if(totalSkillPoints >= 250)
+        {
+            xp = (int)(xp * 0.95f);
+        }
+
+        return xp;
+    }
 
     public static void GiveSkillXP(NWObject oPC, int skillID, int xp)
     {
@@ -112,6 +137,7 @@ public class SkillSystem {
         SkillXPRequirementEntity req = skillRepo.GetSkillXPRequirementByRank(skillID, skill.getRank());
         int maxRank = skillRepo.GetSkillMaxRank(skillID);
         int originalRank = skill.getRank();
+        xp = CalculateTotalSkillPointsPenalty(player.getTotalSPAcquired(), xp);
 
         // Run the skill decay rules.
         // If the method returns false, that means all skills are locked.
@@ -224,7 +250,6 @@ public class SkillSystem {
         }
 
         ApplyStatChanges(oPC);
-        // TODO: Figure out SP refunds.
         return true;
     }
 
