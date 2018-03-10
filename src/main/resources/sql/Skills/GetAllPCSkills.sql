@@ -3,6 +3,7 @@ SELECT PCSkillID ,
        PlayerID ,
        SkillID ,
        XP ,
-       Rank
+       Rank,
+       IsLocked
 FROM dbo.PCSkills
 WHERE PlayerID = :playerID

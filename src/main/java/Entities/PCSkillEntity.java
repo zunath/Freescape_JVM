@@ -24,6 +24,9 @@ public class PCSkillEntity {
     @Column(name = "Rank")
     private int rank;
 
+    @Column(name = "IsLocked")
+    private boolean isLocked;
+
     public int getPcSkillID() {
         return pcSkillID;
     }
@@ -63,4 +66,13 @@ public class PCSkillEntity {
     public void setRank(int rank) {
         this.rank = rank;
     }
+
+    public boolean isLocked() {
+        return isLocked;
+    }
+
+    public void setLocked(boolean locked) {
+        isLocked = locked;
+    }
+
 }

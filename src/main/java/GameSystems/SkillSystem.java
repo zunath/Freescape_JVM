@@ -2,10 +2,7 @@ package GameSystems;
 
 import Data.Repository.PlayerRepository;
 import Data.Repository.SkillRepository;
-import Entities.PCSkillEntity;
-import Entities.PlayerEntity;
-import Entities.SkillEntity;
-import Entities.SkillXPRequirementEntity;
+import Entities.*;
 import Enumerations.CustomAttributeType;
 import Enumerations.CustomItemType;
 import Enumerations.SkillID;
@@ -22,15 +19,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class SkillSystem {
 
     private static HashMap<String, CreatureSkillRegistration> CreatureRegistrations = new HashMap<>();
 
-    private static float PrimaryIncrease = 0.6f;
-    private static float SecondaryIncrease = 0.4f;
-    private static float TertiaryIncrease = 0.2f;
-    private static int MaxAttributeBonus = 70;
+    private static final float PrimaryIncrease = 0.6f;
+    private static final float SecondaryIncrease = 0.4f;
+    private static final float TertiaryIncrease = 0.2f;
+    private static final int MaxAttributeBonus = 70;
+    public static final int SkillCap = 500;
 
     public static void OnModuleEnter()
     {
@@ -77,6 +76,14 @@ public class SkillSystem {
         int maxRank = skillRepo.GetSkillMaxRank(skillID);
         int originalRank = skill.getRank();
 
+        // Run the skill decay rules.
+        // If the method returns false, that means all skills are locked.
+        // So we can't give the player any XP.
+        if(!ApplySkillDecay(oPC, skill, xp))
+        {
+            return;
+        }
+
         skill.setXp(skill.getXp() + xp);
         NWScript.sendMessageToPC(oPC, "You earned " + skill.getSkill().getName() + " skill experience.");
 
@@ -98,12 +105,85 @@ public class SkillSystem {
         }
 
         skillRepo.Save(skill);
+
+
         // Update player and apply stat changes only if a level up occurred.
         if(originalRank != skill.getRank())
         {
             playerRepo.save(player);
             ApplyStatChanges(oPC);
         }
+    }
+
+    private static boolean ApplySkillDecay(NWObject oPC, PCSkillEntity levelingSkill, int xp)
+    {
+        SkillRepository skillRepo = new SkillRepository();
+        int totalSkillRanks = skillRepo.GetPCTotalSkillCount(levelingSkill.getPlayerID());
+        if(totalSkillRanks < SkillCap) return true;
+
+        // Find out if we have enough XP to remove. If we don't, make no changes and return false signifying no XP could be removed.
+        List<TotalSkillXPEntity> skillTotalXP = skillRepo.GetTotalXPAmountsForPC(levelingSkill.getPlayerID(), levelingSkill.getSkill().getSkillID());
+        int aggregateXP = 0;
+        for(TotalSkillXPEntity p : skillTotalXP)
+        {
+            aggregateXP += p.getTotalSkillXP();
+        }
+        if(aggregateXP < xp) return false;
+
+        // We have enough XP to remove. Reduce XP, picking random skills each time we reduce.
+        List<PCSkillEntity> skillsPossibleToDecay = skillRepo.GetAllUnlockedPCSkills(levelingSkill.getPlayerID(), levelingSkill.getSkill().getSkillID());
+        while(xp > 0)
+        {
+            int skillIndex = ThreadLocalRandom.current().nextInt(skillsPossibleToDecay.size());
+            PCSkillEntity decaySkill = skillsPossibleToDecay.get(skillIndex);
+            int totalDecaySkillXP = skillTotalXP.get(skillIndex).getTotalSkillXP();
+
+            if(totalDecaySkillXP >= xp)
+            {
+                totalDecaySkillXP = totalDecaySkillXP - xp;
+                xp = 0;
+            }
+            else if(totalDecaySkillXP < xp)
+            {
+                totalDecaySkillXP = 0;
+                xp = xp - totalDecaySkillXP;
+            }
+
+            // If skill drops to 0 total XP, remove it from the possible list of skills
+            if(totalDecaySkillXP <= 0)
+            {
+                skillsPossibleToDecay.remove(decaySkill);
+                decaySkill.setXp(0);
+                decaySkill.setRank(0);
+            }
+            // Otherwise calculate what rank and XP value the skill should now be.
+            else
+            {
+                List<SkillXPRequirementEntity> reqs = skillRepo.GetSkillXPRequirementsUpToRank(decaySkill.getSkill().getSkillID(), decaySkill.getRank());
+                int newDecaySkillRank = 0;
+                for(SkillXPRequirementEntity req: reqs)
+                {
+                    if(totalDecaySkillXP >= req.getXp())
+                    {
+                        totalDecaySkillXP = totalDecaySkillXP - req.getXp();
+                        newDecaySkillRank++;
+                    }
+                    else if(totalDecaySkillXP < req.getXp())
+                    {
+                        break;
+                    }
+                }
+
+                decaySkill.setRank(newDecaySkillRank);
+                decaySkill.setXp(totalDecaySkillXP);
+            }
+
+            skillRepo.Save(decaySkill);
+        }
+
+        ApplyStatChanges(oPC);
+        // TODO: Figure out SP refunds.
+        return true;
     }
 
     public static PCSkillEntity GetPCSkill(NWObject oPC, int skillID)
@@ -278,6 +358,7 @@ public class SkillSystem {
         CreatureRegistrations.remove(creatureGO.getUUID());
     }
 
+    @SuppressWarnings("ConstantConditions")
     private static void ApplyStatChanges(NWObject oPC)
     {
         PlayerGO pcGO = new PlayerGO(oPC);

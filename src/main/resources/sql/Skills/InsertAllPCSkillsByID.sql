@@ -4,9 +4,11 @@ BEGIN TRY
 		INSERT INTO dbo.PCSkills ( PlayerID ,
 		                           SkillID ,
 		                           XP ,
-		                           Rank )
+		                           Rank,
+		                           IsLocked)
         SELECT :playerID,
             s.SkillID,
+            0,
             0,
             0
         FROM dbo.Skills s

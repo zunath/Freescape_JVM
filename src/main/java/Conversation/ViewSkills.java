@@ -1,6 +1,7 @@
 package Conversation;
 
 import Conversation.ViewModels.SkillMenuViewModel;
+import Data.Repository.PlayerRepository;
 import Data.Repository.SkillRepository;
 import Dialog.*;
 import Entities.PCSkillEntity;
@@ -28,6 +29,7 @@ public class ViewSkills extends DialogBase implements IDialogHandler {
 
         DialogPage skillDetailsPage = new DialogPage(
                 "<SET LATER>",
+                "Toggle Decay Lock",
                 "Back"
         );
 
@@ -96,10 +98,17 @@ public class ViewSkills extends DialogBase implements IDialogHandler {
 
         title += " (" + pcSkill.getRank() + ")";
 
+        String decayLock = ColorToken.White() + "Unlocked" + ColorToken.End();
+        if(pcSkill.isLocked())
+        {
+            decayLock = ColorToken.Red() + "Locked" + ColorToken.End();
+        }
+
         return
                 ColorToken.Green() + "Skill: " + ColorToken.End() + pcSkill.getSkill().getName() + "\n" +
                 ColorToken.Green() + "Rank: " + ColorToken.End() + title + "\n" +
-                ColorToken.Green() + "Exp: " + ColorToken.End() + MenuHelper.BuildBar(pcSkill.getXp(), req.getXp(), 100, ColorToken.Orange()) + "\n\n" +
+                ColorToken.Green() + "Exp: " + ColorToken.End() + MenuHelper.BuildBar(pcSkill.getXp(), req.getXp(), 100, ColorToken.Orange()) + "\n" +
+                ColorToken.Green() + "Decay Lock: " + ColorToken.End() + decayLock + "\n\n" +
                 ColorToken.Green() + "Description: " + ColorToken.End() + pcSkill.getSkill().getDescription() + "\n";
     }
 
@@ -152,7 +161,23 @@ public class ViewSkills extends DialogBase implements IDialogHandler {
 
     private void HandleSkillDetailsResponse(int responseID)
     {
-        ChangePage("SkillListPage");
+        SkillMenuViewModel vm = (SkillMenuViewModel)GetDialogCustomData();
+        PlayerGO pcGO = new PlayerGO(GetPC());
+        SkillRepository repo = new SkillRepository();
+        PCSkillEntity pcSkill = repo.GetPCSkillByID(pcGO.getUUID(), vm.getSelectedSkillID());
+
+        switch(responseID)
+        {
+            case 1: // Toggle Lock
+                pcSkill.setLocked(!pcSkill.isLocked());
+                repo.Save(pcSkill);
+                LoadSkillDetails();
+                break;
+            case 2: // Back
+                ChangePage("SkillListPage");
+                break;
+        }
+
     }
 
     @Override

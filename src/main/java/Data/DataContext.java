@@ -45,6 +45,22 @@ public class DataContext implements AutoCloseable {
     private <T> NativeQuery<T> buildQuery(String sqlFilePath, Class c, SqlParameter... params)
     {
         String sql = readSQL(sqlFilePath);
+        @SuppressWarnings("unchecked")
+        NativeQuery<T> query = getSession()
+                .createNativeQuery(sql, c);
+
+        for(SqlParameter p : params)
+        {
+            query.setParameter(p.getName(), p.getValue());
+        }
+
+        return query;
+    }
+
+    private <T> NativeQuery<T> buildQuery(String sqlFilePath, String c, SqlParameter... params)
+    {
+        String sql = readSQL(sqlFilePath);
+        @SuppressWarnings("unchecked")
         NativeQuery<T> query = getSession()
                 .createNativeQuery(sql, c);
 
@@ -59,6 +75,7 @@ public class DataContext implements AutoCloseable {
     private <T> NativeQuery<T> buildQuery(String sqlFilePath, SqlParameter... params)
     {
         String sql = readSQL(sqlFilePath);
+        @SuppressWarnings("unchecked")
         NativeQuery<T> query = getSession()
                 .createNativeQuery(sql);
 
@@ -80,6 +97,23 @@ public class DataContext implements AutoCloseable {
             result = query.getResultList();
         }
         catch (NoResultException ex)
+        {
+            result = null;
+        }
+
+        return result;
+    }
+
+    public <T> List<T> executeSQLList(String sqlFilePath, String classString, SqlParameter... params)
+    {
+        List<T> result;
+
+        try
+        {
+            NativeQuery<T> query = buildQuery(sqlFilePath, classString, params);
+            result = query.getResultList();
+        }
+        catch(NoResultException ex)
         {
             result = null;
         }

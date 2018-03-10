@@ -1,11 +1,14 @@
 package Conversation;
 
+import Data.Repository.SkillRepository;
 import Dialog.DialogBase;
 import Dialog.DialogPage;
 import Dialog.IDialogHandler;
 import Dialog.PlayerDialog;
+import Entities.PCSkillEntity;
 import Entities.PlayerEntity;
 import GameObject.PlayerGO;
+import GameSystems.SkillSystem;
 import Helper.ColorToken;
 import Helper.MenuHelper;
 import Data.Repository.OverflowItemRepository;
@@ -113,13 +116,17 @@ public class RestMenu extends DialogBase implements IDialogHandler {
     private String BuildMainPageHeader(NWObject oPC)
     {
         PlayerGO pcGO = new PlayerGO(oPC);
-        PlayerRepository repo = new PlayerRepository();
-        PlayerEntity entity = repo.GetByPlayerID(pcGO.getUUID());
+        PlayerRepository playerRepo = new PlayerRepository();
+        SkillRepository skillRepo = new SkillRepository();
+        PlayerEntity playerEntity = playerRepo.GetByPlayerID(pcGO.getUUID());
+        Integer totalSkillCount = skillRepo.GetPCTotalSkillCount(pcGO.getUUID());
 
         String header = ColorToken.Green() + "Name: " + ColorToken.End() + NWScript.getName(oPC, false) + "\n\n";
-        header += ColorToken.Green() + "Hunger:   " + ColorToken.End() + MenuHelper.BuildBar(entity.getCurrentHunger(), entity.getMaxHunger(), 100) + "\n";
-        header += ColorToken.Green() + "Mana:      " + ColorToken.End() + MenuHelper.BuildBar(entity.getCurrentMana(), entity.getMaxMana(), 100, ColorToken.Custom(32, 223, 219)) + "\n";
-        header += ColorToken.Green() + "Revival Stones: " + ColorToken.End() + entity.getRevivalStoneCount() + "\n";
+        header += ColorToken.Green() + "Skill Points: " + ColorToken.End() + totalSkillCount + " / " + SkillSystem.SkillCap + "\n";
+        header += ColorToken.Green() + "Unallocated SP: " + ColorToken.End() + playerEntity.getUnallocatedSP() + "\n";
+        header += ColorToken.Green() + "Hunger:   " + ColorToken.End() + MenuHelper.BuildBar(playerEntity.getCurrentHunger(), playerEntity.getMaxHunger(), 100) + "\n";
+        header += ColorToken.Green() + "Mana:      " + ColorToken.End() + MenuHelper.BuildBar(playerEntity.getCurrentMana(), playerEntity.getMaxMana(), 100, ColorToken.Custom(32, 223, 219)) + "\n";
+        header += ColorToken.Green() + "Revival Stones: " + ColorToken.End() + playerEntity.getRevivalStoneCount() + "\n";
 
         return header;
     }
