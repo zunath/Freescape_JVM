@@ -385,7 +385,7 @@ public class SkillSystem {
                 continue;
 
             PlayerGO pcGO = new PlayerGO(preg.getPC());
-            float baseXP = creatureGO.getDifficultyRating() * 100;
+            float baseXP = creatureGO.getDifficultyRating() * 250 + ThreadLocalRandom.current().nextInt(20);
 
             if(creatureGO.getXPModifier() != 0.0f)
             {
