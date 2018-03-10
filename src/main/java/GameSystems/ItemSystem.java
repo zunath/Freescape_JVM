@@ -4,7 +4,7 @@ import Bioware.AddItemPropertyPolicy;
 import Bioware.XP2;
 import Data.Repository.ItemRepository;
 import Entities.ItemEntity;
-import Enumerations.SkillID;
+import GameObject.ItemGO;
 import Helper.ColorToken;
 import org.nwnx.nwnx2.jvm.NWItemProperty;
 import org.nwnx.nwnx2.jvm.NWObject;
@@ -35,13 +35,17 @@ public class ItemSystem {
     {
         if(!NWScript.getIsPC(examiner)) return existingDescription;
         if(NWScript.getObjectType(examinedObject) != ObjectType.ITEM) return existingDescription;
+        ItemGO itemGO = new ItemGO(examinedObject);
         ApplyItemFeatures(examinedObject);
         String description = "";
 
-        int ac = NWScript.getLocalInt(examinedObject, "CUSTOM_ITEM_PROPERTY_AC");
-        if(ac > 0)
+        if(itemGO.getRecommendedLevel() > 0)
         {
-            description += ColorToken.Orange() + "AC: " + ColorToken.End() + ac + "\n";
+            description += ColorToken.Orange() + "Recommended Level: " + ColorToken.End() + itemGO.getRecommendedLevel() + "\n";
+        }
+        if(itemGO.getAC() > 0)
+        {
+            description += ColorToken.Orange() + "AC: " + ColorToken.End() + itemGO.getRecommendedLevel() + "\n";
         }
 
         return existingDescription + "\n" + description;
@@ -131,7 +135,10 @@ public class ItemSystem {
         ItemEntity entity = GetItemEntity(item);
         if(entity == null) return;
 
-        NWScript.setLocalInt(item, "CUSTOM_ITEM_PROPERTY_AC", entity.getAc());
-        NWScript.setLocalInt(item, "CUSTOM_ITEM_PROPERTY_TYPE", entity.getItemType().getItemTypeID());
+        ItemGO itemGO = new ItemGO(item);
+
+        itemGO.setAC(entity.getAc());
+        itemGO.setCustomItemType(entity.getItemType().getItemTypeID());
+        itemGO.setRecommendedLevel(entity.getRecommendedLevel());
     }
 }

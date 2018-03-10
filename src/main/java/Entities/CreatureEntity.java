@@ -11,7 +11,10 @@ public class CreatureEntity {
     private int creatureID;
 
     @Column(name = "DifficultyRating")
-    private int difficultyRating;
+    private float difficultyRating;
+
+    @Column(name = "XPModifier")
+    private float xpModifier;
 
     public int getCreatureID() {
         return creatureID;
@@ -21,11 +24,19 @@ public class CreatureEntity {
         this.creatureID = creatureID;
     }
 
-    public int getDifficultyRating() {
+    public float getDifficultyRating() {
         return difficultyRating;
     }
 
-    public void setDifficultyRating(int difficultyRating) {
+    public void setDifficultyRating(float difficultyRating) {
         this.difficultyRating = difficultyRating;
+    }
+
+    public float getXPModifier() {
+        return xpModifier;
+    }
+
+    public void setXPModifier(float xpModifier) {
+        this.xpModifier = xpModifier;
     }
 }

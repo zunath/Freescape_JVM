@@ -92,6 +92,9 @@ public class PlayerEntity {
     @Column(name = "CHABase")
     private int chaBase;
 
+    @Column(name = "TotalSPAcquired")
+    private int totalSPAcquired;
+
     public PlayerEntity()
     {
 
@@ -423,6 +426,14 @@ public class PlayerEntity {
 
     public void setChaBase(int chaBase) {
         this.chaBase = chaBase;
+    }
+
+    public int getTotalSPAcquired() {
+        return totalSPAcquired;
+    }
+
+    public void setTotalSPAcquired(int totalSPAcquired) {
+        this.totalSPAcquired = totalSPAcquired;
     }
 
 }

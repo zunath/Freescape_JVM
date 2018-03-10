@@ -17,6 +17,9 @@ public class ItemEntity {
     @JoinColumn(name = "ItemTypeID")
     private ItemTypeEntity itemType;
 
+    @Column(name = "RecommendedLevel")
+    private int recommendedLevel;
+
     public String getResref() {
         return resref;
     }
@@ -40,4 +43,13 @@ public class ItemEntity {
     public void setItemType(ItemTypeEntity itemType) {
         this.itemType = itemType;
     }
+
+    public int getRecommendedLevel() {
+        return recommendedLevel;
+    }
+
+    public void setRecommendedLevel(int recommendedLevel) {
+        this.recommendedLevel = recommendedLevel;
+    }
+
 }

@@ -27,10 +27,10 @@ public class CreatureSkillRegistration {
         return reg;
     }
 
-    public void AddSkillRegistrationPoint(NWObject oPC, int skillID)
+    public void AddSkillRegistrationPoint(NWObject oPC, int skillID, int level)
     {
         PlayerSkillRegistration reg = GetRegistration(oPC);
-        reg.AddSkillPointRegistration(skillID);
+        reg.AddSkillPointRegistration(skillID, level);
     }
 
     public PlayerSkillRegistration[] GetAllRegistrations()

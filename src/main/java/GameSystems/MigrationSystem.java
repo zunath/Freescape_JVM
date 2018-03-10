@@ -115,7 +115,7 @@ public class MigrationSystem {
         }
         else if(stripItemList.contains(baseItemTypeID))
         {
-            itemGO.StripAllItemProperties();
+            itemGO.stripAllItemProperties();
         }
     }
 

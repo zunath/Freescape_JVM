@@ -39,7 +39,7 @@ public class ItemGO {
         this.script = script;
     }
 
-    public void StripAllItemProperties()
+    public void stripAllItemProperties()
     {
         for(NWItemProperty prop : NWScript.getItemProperties(item))
         {
@@ -47,7 +47,7 @@ public class ItemGO {
         }
     }
 
-    public boolean HasItemProperty(int itemPropertyID)
+    public boolean hasItemProperty(int itemPropertyID)
     {
         boolean hasItemProperty = false;
         for(NWItemProperty ip : NWScript.getItemProperties(item))
@@ -62,14 +62,34 @@ public class ItemGO {
         return hasItemProperty;
     }
 
-    public int GetAC()
+    public void setAC(int ac)
+    {
+        NWScript.setLocalInt(item, "CUSTOM_ITEM_PROPERTY_AC", ac);
+    }
+
+    public int getAC()
     {
         return NWScript.getLocalInt(item, "CUSTOM_ITEM_PROPERTY_AC");
     }
 
-    public int GetCustomItemType()
+    public int getCustomItemType()
     {
         return NWScript.getLocalInt(item, "CUSTOM_ITEM_PROPERTY_TYPE");
+    }
+
+    public void setCustomItemType(int itemType)
+    {
+        NWScript.setLocalInt(item, "CUSTOM_ITEM_PROPERTY_TYPE", itemType);
+    }
+
+    public int getRecommendedLevel()
+    {
+        return NWScript.getLocalInt(item , "CUSTOM_ITEM_PROPERTY_TYPE_RECOMMENDED_LEVEL");
+    }
+
+    public void setRecommendedLevel(int recommendedSkillLevel)
+    {
+        NWScript.setLocalInt(item, "CUSTOM_ITEM_PROPERTY_TYPE_RECOMMENDED_LEVEL", recommendedSkillLevel);
     }
 
 }

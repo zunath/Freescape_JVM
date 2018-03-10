@@ -1,5 +1,6 @@
 SELECT Resref ,
        AC ,
-       ItemTypeID
+       ItemTypeID,
+       RecommendedLevel
 FROM dbo.Items
 WHERE Resref = :resref

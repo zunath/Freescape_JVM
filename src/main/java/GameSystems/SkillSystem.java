@@ -25,9 +25,9 @@ public class SkillSystem {
 
     private static HashMap<String, CreatureSkillRegistration> CreatureRegistrations = new HashMap<>();
 
-    private static final float PrimaryIncrease = 0.6f;
-    private static final float SecondaryIncrease = 0.4f;
-    private static final float TertiaryIncrease = 0.2f;
+    private static final float PrimaryIncrease = 0.2f;
+    private static final float SecondaryIncrease = 0.1f;
+    private static final float TertiaryIncrease = 0.05f;
     private static final int MaxAttributeBonus = 70;
     public static final int SkillCap = 500;
 
@@ -97,7 +97,12 @@ public class SkillSystem {
         while(skill.getXp() >= req.getXp())
         {
             skill.setXp(skill.getXp() - req.getXp());
-            player.setUnallocatedSP(player.getUnallocatedSP() + 1);
+
+            if(player.getTotalSPAcquired() < SkillCap)
+            {
+                player.setUnallocatedSP(player.getUnallocatedSP() + 1);
+                player.setTotalSPAcquired(player.getTotalSPAcquired() + 1);
+            }
             skill.setRank(skill.getRank() + 1);
             NWScript.floatingTextStringOnCreature("Your " + skill.getSkill().getName() + " skill level increased!", oPC, false);
 
@@ -271,13 +276,13 @@ public class SkillSystem {
         return skillID;
     }
 
-    private static CreatureSkillRegistration GetCreatureSkillRegistration(String creatureID)
+    private static CreatureSkillRegistration GetCreatureSkillRegistration(String creatureUUID)
     {
-        CreatureSkillRegistration reg = CreatureRegistrations.getOrDefault(creatureID, null);
+        CreatureSkillRegistration reg = CreatureRegistrations.getOrDefault(creatureUUID, null);
         if(reg == null)
         {
-            reg = new CreatureSkillRegistration(creatureID);
-            CreatureRegistrations.put(creatureID, reg);
+            reg = new CreatureSkillRegistration(creatureUUID);
+            CreatureRegistrations.put(creatureUUID, reg);
         }
 
         return reg;
@@ -293,22 +298,43 @@ public class SkillSystem {
         if(skillID <= -1) return;
         if(NWScript.getIsPC(oTarget) || NWScript.getIsDM(oTarget)) return;
 
+        ItemGO itemGO = new ItemGO(oSpellOrigin);
         CreatureGO creatureGO = new CreatureGO(oTarget);
-        CreatureSkillRegistration reg = GetCreatureSkillRegistration(creatureGO.getUUID());
+        CreatureSkillRegistration reg = GetCreatureSkillRegistration(creatureGO.getGlobalUUID());
 
-        reg.AddSkillRegistrationPoint(oPC, skillID);
+        reg.AddSkillRegistrationPoint(oPC, skillID, itemGO.getRecommendedLevel());
+
+        // Add a registration point if a shield is equipped. This is to prevent players from swapping out a weapon for a shield
+        // just before they kill an enemy.
+        NWObject oShield = NWScript.getItemInSlot(InventorySlot.LEFTHAND, oPC);
+        int offHandType = NWScript.getBaseItemType(oShield);
+        if(offHandType == BaseItem.SMALLSHIELD ||
+                offHandType == BaseItem.LARGESHIELD ||
+                offHandType == BaseItem.TOWERSHIELD)
+        {
+            itemGO = new ItemGO(oShield);
+            reg.AddSkillRegistrationPoint(oPC, SkillID.Shields, itemGO.getRecommendedLevel());
+        }
     }
 
-    private static float CalculateCreatureXP(NWObject oPC, NWObject creature)
+    private static float CalculateSkillAdjustedXP(float xp, int registeredLevel, int skillRank)
     {
-        return 100; // TODO: Calculate based on difficulty, player comprehensive strength, etc.
+        int delta = registeredLevel - skillRank;
+        float levelAdjustment = 0.2f * delta;
+
+        if(levelAdjustment > 1.0f) levelAdjustment = 1.0f;
+        if(levelAdjustment < -1.0f) levelAdjustment = -1.0f;
+
+        xp = xp + (xp * levelAdjustment);
+        return xp;
     }
 
     public static void OnCreatureDeath(NWObject creature)
     {
         CreatureGO creatureGO = new CreatureGO(creature);
-        CreatureSkillRegistration reg = GetCreatureSkillRegistration(creatureGO.getUUID());
+        CreatureSkillRegistration reg = GetCreatureSkillRegistration(creatureGO.getGlobalUUID());
         PlayerSkillRegistration[] playerRegs = reg.GetAllRegistrations();
+        SkillRepository skillRepo = new SkillRepository();
 
         for(PlayerSkillRegistration preg : playerRegs)
         {
@@ -321,41 +347,48 @@ public class SkillSystem {
                     NWScript.getDistanceBetween(preg.getPC(), creature) > 30.0f)
                 continue;
 
-            float xp = CalculateCreatureXP(preg.getPC(), creature);
-            ArrayList<Pair<Integer, Integer>> skillRegs = preg.GetSkillRegistrationPoints();
+            PlayerGO pcGO = new PlayerGO(preg.getPC());
+            float baseXP = creatureGO.getDifficultyRating() * 100;
+
+            if(creatureGO.getXPModifier() != 0.0f)
+            {
+                baseXP = baseXP * creatureGO.getXPModifier();
+            }
+
+            ArrayList<Pair<Integer, PlayerSkillPointTracker>> skillRegs = preg.GetSkillRegistrationPoints();
             int totalPoints = preg.GetTotalSkillRegistrationPoints();
 
             // Grant XP based on points acquired during combat.
-            for(Pair<Integer, Integer> skreg: skillRegs)
+            for(Pair<Integer, PlayerSkillPointTracker> skreg: skillRegs)
             {
                 int skillID = skreg.fst;
-                int points = skreg.snd;
+                int skillRank = skillRepo.GetPCSkillByID(pcGO.getUUID(), skillID).getRank();
+                int points = skreg.snd.getPoints();
                 float percentage = (float)points / (float)totalPoints;
+                float adjustedXP = baseXP * percentage;
+                adjustedXP = CalculateSkillAdjustedXP(adjustedXP, skreg.snd.getRegisteredLevel(), skillRank);
 
-                GiveSkillXP(preg.getPC(), skillID, (int)(xp * percentage));
-            }
-
-            // Static 10% xp to armor and shields.
-            int offHandType = NWScript.getBaseItemType(NWScript.getItemInSlot(InventorySlot.LEFTHAND, preg.getPC()));
-            if(offHandType == BaseItem.SMALLSHIELD ||
-                    offHandType == BaseItem.LARGESHIELD ||
-                    offHandType == BaseItem.TOWERSHIELD)
-            {
-                GiveSkillXP(preg.getPC(), SkillID.Shields, (int)(xp * 0.10f));
+                GiveSkillXP(preg.getPC(), skillID, (int)(adjustedXP));
             }
 
             ItemGO itemGO = new ItemGO(NWScript.getItemInSlot(InventorySlot.CHEST, preg.getPC()));
-            if(itemGO.GetCustomItemType() == CustomItemType.LightArmor)
+            if(itemGO.getCustomItemType() == CustomItemType.LightArmor)
             {
-                GiveSkillXP(preg.getPC(), SkillID.LightArmor, (int)(xp * 0.10f));
+                int skillRank = skillRepo.GetPCSkillByID(pcGO.getUUID(), SkillID.LightArmor).getRank();
+                float adjustedXP = baseXP * 0.10f;
+                adjustedXP = CalculateSkillAdjustedXP(adjustedXP, itemGO.getRecommendedLevel(), skillRank);
+                GiveSkillXP(preg.getPC(), SkillID.LightArmor, (int)adjustedXP);
             }
-            else if(itemGO.GetCustomItemType() == CustomItemType.HeavyArmor)
+            else if(itemGO.getCustomItemType() == CustomItemType.HeavyArmor)
             {
-                GiveSkillXP(preg.getPC(), SkillID.HeavyArmor, (int)(xp * 0.10f));
+                int skillRank = skillRepo.GetPCSkillByID(pcGO.getUUID(), SkillID.HeavyArmor).getRank();
+                float adjustedXP = baseXP * 0.10f;
+                adjustedXP = CalculateSkillAdjustedXP(adjustedXP, itemGO.getRecommendedLevel(), skillRank);
+                GiveSkillXP(preg.getPC(), SkillID.HeavyArmor, (int)adjustedXP);
             }
         }
 
-        CreatureRegistrations.remove(creatureGO.getUUID());
+        CreatureRegistrations.remove(creatureGO.getGlobalUUID());
     }
 
     @SuppressWarnings("ConstantConditions")

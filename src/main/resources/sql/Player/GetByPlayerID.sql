@@ -37,6 +37,7 @@ SELECT pc.PlayerID ,
        pc.CONBase,
        pc.INTBase,
        pc.WISBase,
-       pc.CHABase
+       pc.CHABase,
+       pc.TotalSPAcquired
 FROM dbo.PlayerCharacters pc
 WHERE pc.PlayerID = :playerID

@@ -1,6 +1,7 @@
 package GameSystems;
 
 import Common.Constants;
+import GameObject.ItemGO;
 import NWNX.NWNX_Creature;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.NWScript;
@@ -29,9 +30,10 @@ public class ArmorSystem {
             if(oItem.equals(itemUnequipped))
                 continue;
 
+            ItemGO itemGO = new ItemGO(oItem);
             if(!oItem.equals(NWObject.INVALID))
             {
-                int itemAC = NWScript.getLocalInt(oItem, "ARMOR_AC");
+                int itemAC = itemGO.getAC();
 
                 ac += itemAC;
             }
