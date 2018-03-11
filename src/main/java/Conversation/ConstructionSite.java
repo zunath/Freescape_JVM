@@ -8,6 +8,7 @@ import Conversation.ViewModels.ConstructionSiteMenuModel;
 import Data.Repository.StructureRepository;
 import GameSystems.PlayerAuthorizationSystem;
 import GameSystems.StructureSystem;
+import Helper.ItemHelper;
 import org.nwnx.nwnx2.jvm.NWLocation;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.NWScript;
@@ -230,12 +231,11 @@ public class ConstructionSite extends DialogBase implements IDialogHandler {
 
             header += ColorToken.Green() + "Resources Required: " + ColorToken.End() + "\n\n";
 
-            header += entity.getWoodRequired() > 0 ? entity.getWoodRequired() + "x Wood" + "\n" : "";
-            header += entity.getNailsRequired() > 0 ? entity.getNailsRequired() + "x Nails" + "\n" : "";
-            header += entity.getMetalRequired() > 0 ? entity.getMetalRequired() + "x Metal" + "\n" : "";
-            header += entity.getClothRequired() > 0 ? entity.getClothRequired() + "x Cloth" + "\n" : "";
-            header += entity.getLeatherRequired() > 0 ? entity.getLeatherRequired() + "x Leather" + "\n" : "";
-            header += entity.getIronRequired() > 0 ? entity.getIronRequired() + "x Iron" + "\n" : "";
+            for(StructureComponentEntity comp: entity.getBlueprint().getComponents())
+            {
+                //noinspection StringConcatenationInLoop
+                header += comp.getQuantity() > 0 ? comp.getQuantity() + "x " + ItemHelper.GetNameByResref(comp.getResref()) + "\n" : "";
+            }
 
             page.addResponse("Quick Build", PlayerAuthorizationSystem.IsPCRegisteredAsDM(GetPC()));
             page.addResponse("Preview", true);
@@ -321,12 +321,14 @@ public class ConstructionSite extends DialogBase implements IDialogHandler {
             header += ColorToken.Green() + "Description: " + ColorToken.End() + entity.getDescription() + "\n\n";
         }
         header += (ColorToken.Green() + "Resources Required: " + ColorToken.End() + "\n") + "\n";
-        header += entity.getWoodRequired() > 0 ? entity.getWoodRequired() + "x Wood" + "\n" : "";
-        header += entity.getNailsRequired() > 0 ? entity.getNailsRequired() + "x Nails" + "\n" : "";
-        header += entity.getMetalRequired() > 0 ? entity.getMetalRequired() + "x Metal" + "\n" : "";
-        header += entity.getClothRequired() > 0 ? entity.getClothRequired() + "x Cloth" + "\n" : "";
-        header += entity.getLeatherRequired() > 0 ? entity.getLeatherRequired() + "x Leather" + "\n" : "";
-        header += entity.getIronRequired() > 0 ? entity.getIronRequired() + "x Iron" + "\n" : "";
+
+
+        for(StructureComponentEntity comp: entity.getComponents())
+        {
+            //noinspection StringConcatenationInLoop
+            header += comp.getQuantity() > 0 ? comp.getQuantity() + "x " + ItemHelper.GetNameByResref(comp.getResref()) + "\n" : "";
+        }
+
 
         SetPageHeader("BlueprintDetailsPage", header);
 

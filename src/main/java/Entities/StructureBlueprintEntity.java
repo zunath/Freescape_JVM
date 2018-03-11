@@ -1,6 +1,10 @@
 package Entities;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "StructureBlueprints")
@@ -31,24 +35,6 @@ public class StructureBlueprintEntity {
     @Column(name = "IsUseable")
     private boolean isUseable;
 
-    @Column(name = "WoodRequired")
-    private int woodRequired;
-
-    @Column(name = "MetalRequired")
-    private int metalRequired;
-
-    @Column(name = "NailsRequired")
-    private int nailsRequired;
-
-    @Column(name = "ClothRequired")
-    private int clothRequired;
-
-    @Column(name = "LeatherRequired")
-    private int leatherRequired;
-
-    @Column(name = "IronRequired")
-    private int ironRequired;
-
     @Column(name = "ItemStorageCount")
     private int itemStorageCount;
 
@@ -63,6 +49,10 @@ public class StructureBlueprintEntity {
 
     @Column(name = "RPPerSecond")
     private int rpPerSecond;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "blueprint", fetch = FetchType.EAGER, orphanRemoval = true)
+    @Fetch(value = FetchMode.SUBSELECT)
+    private List<StructureComponentEntity> components;
 
     public int getStructureBlueprintID() {
         return structureBlueprintID;
@@ -96,38 +86,6 @@ public class StructureBlueprintEntity {
         this.isActive = isActive;
     }
 
-    public int getWoodRequired() {
-        return woodRequired;
-    }
-
-    public void setWoodRequired(int woodRequired) {
-        this.woodRequired = woodRequired;
-    }
-
-    public int getNailsRequired() {
-        return nailsRequired;
-    }
-
-    public void setNailsRequired(int nailsRequired) {
-        this.nailsRequired = nailsRequired;
-    }
-
-    public int getClothRequired() {
-        return clothRequired;
-    }
-
-    public void setClothRequired(int clothRequired) {
-        this.clothRequired = clothRequired;
-    }
-
-    public int getLeatherRequired() {
-        return leatherRequired;
-    }
-
-    public void setLeatherRequired(int leatherRequired) {
-        this.leatherRequired = leatherRequired;
-    }
-
     public int getItemStorageCount() {
         return itemStorageCount;
     }
@@ -142,14 +100,6 @@ public class StructureBlueprintEntity {
 
     public void setResref(String resref) {
         this.resref = resref;
-    }
-
-    public int getMetalRequired() {
-        return metalRequired;
-    }
-
-    public void setMetalRequired(int metalRequired) {
-        this.metalRequired = metalRequired;
     }
 
     public int getStructureCategoryID() {
@@ -192,14 +142,6 @@ public class StructureBlueprintEntity {
         this.isUseable = isUseable;
     }
 
-    public int getIronRequired() {
-        return ironRequired;
-    }
-
-    public void setIronRequired(int ironRequired) {
-        this.ironRequired = ironRequired;
-    }
-
     public int getResearchSlots() {
         return researchSlots;
     }
@@ -214,5 +156,25 @@ public class StructureBlueprintEntity {
 
     public void setRpPerSecond(int rpPerSecond) {
         this.rpPerSecond = rpPerSecond;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
+    public void setTerritoryFlag(boolean territoryFlag) {
+        isTerritoryFlag = territoryFlag;
+    }
+
+    public void setUseable(boolean useable) {
+        isUseable = useable;
+    }
+
+    public List<StructureComponentEntity> getComponents() {
+        return components;
+    }
+
+    public void setComponents(List<StructureComponentEntity> components) {
+        this.components = components;
     }
 }

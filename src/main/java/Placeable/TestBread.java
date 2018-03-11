@@ -3,10 +3,6 @@ package Placeable;
 import Common.IScriptEventHandler;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.NWScript;
-import org.nwnx.nwnx2.jvm.constants.DamagePower;
-import org.nwnx.nwnx2.jvm.constants.DamageType;
-import org.nwnx.nwnx2.jvm.constants.DurationType;
-import org.nwnx.nwnx2.jvm.constants.ObjectType;
 
 public class TestBread implements IScriptEventHandler {
     @Override
@@ -32,8 +28,12 @@ public class TestBread implements IScriptEventHandler {
         */
 
 
-        NWScript.applyEffectToObject(DurationType.INSTANT, NWScript.effectDamage(1, DamageType.MAGICAL, DamagePower.NORMAL), oPC, 0.0f);
+        //NWScript.applyEffectToObject(DurationType.INSTANT, NWScript.effectDamage(1, DamageType.MAGICAL, DamagePower.NORMAL), oPC, 0.0f);
         //NWScript.applyEffectToObject(DurationType.INSTANT, NWScript.effectHeal(999), oPC, 0.0f);
+
+        NWScript.createItemOnObject("elm_wood", oPC, 1, "");
+        NWScript.createItemOnObject("nails", oPC, 1, "");
+
 
     }
 }

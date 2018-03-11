@@ -1,4 +1,4 @@
-package Feat;
+package Item;
 
 import Common.IScriptEventHandler;
 import Dialog.DialogManager;
@@ -7,10 +7,10 @@ import org.nwnx.nwnx2.jvm.NWLocation;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.NWScript;
 
-public class UseStructureTool implements IScriptEventHandler {
+public class StructureTool implements IScriptEventHandler {
     @Override
     public void runScript(NWObject oPC) {
-        NWLocation lTargetLocation = NWScript.getSpellTargetLocation();
+        NWLocation lTargetLocation = NWScript.getItemActivatedTargetLocation();
         boolean isMovingStructure = StructureSystem.IsPCMovingStructure(oPC);
 
         if(isMovingStructure)

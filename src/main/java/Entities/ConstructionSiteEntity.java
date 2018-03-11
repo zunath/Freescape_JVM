@@ -1,6 +1,10 @@
 package Entities;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "ConstructionSites")
@@ -13,24 +17,6 @@ public class ConstructionSiteEntity {
 
     @Column(name = "PlayerID")
     private String playerID;
-
-    @Column(name = "WoodRequired")
-    private int woodRequired;
-
-    @Column(name = "MetalRequired")
-    private int metalRequired;
-
-    @Column(name = "NailsRequired")
-    private int nailsRequired;
-
-    @Column(name = "ClothRequired")
-    private int clothRequired;
-
-    @Column(name = "LeatherRequired")
-    private int leatherRequired;
-
-    @Column(name = "IronRequired")
-    private int ironRequired;
 
     @Column(name = "LocationAreaTag")
     private String locationAreaTag;
@@ -55,44 +41,17 @@ public class ConstructionSiteEntity {
     @JoinColumn(name = "PCTerritoryFlagID")
     private PCTerritoryFlagEntity pcTerritoryFlag;
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "constructionSite", fetch = FetchType.EAGER, orphanRemoval = true)
+    @Fetch(value = FetchMode.SUBSELECT)
+    private List<ConstructionSiteComponentEntity> components;
+
+
     public int getConstructionSiteID() {
         return constructionSiteID;
     }
 
     public void setConstructionSiteID(int constructionSiteID) {
         this.constructionSiteID = constructionSiteID;
-    }
-
-    public int getWoodRequired() {
-        return woodRequired;
-    }
-
-    public void setWoodRequired(int woodRequired) {
-        this.woodRequired = woodRequired;
-    }
-
-    public int getNailsRequired() {
-        return nailsRequired;
-    }
-
-    public void setNailsRequired(int nailsRequired) {
-        this.nailsRequired = nailsRequired;
-    }
-
-    public int getClothRequired() {
-        return clothRequired;
-    }
-
-    public void setClothRequired(int clothRequired) {
-        this.clothRequired = clothRequired;
-    }
-
-    public int getLeatherRequired() {
-        return leatherRequired;
-    }
-
-    public void setLeatherRequired(int leatherRequired) {
-        this.leatherRequired = leatherRequired;
     }
 
     public String getLocationAreaTag() {
@@ -143,14 +102,6 @@ public class ConstructionSiteEntity {
         this.blueprint = blueprint;
     }
 
-    public int getMetalRequired() {
-        return metalRequired;
-    }
-
-    public void setMetalRequired(int metalRequired) {
-        this.metalRequired = metalRequired;
-    }
-
     public String getPlayerID() {
         return playerID;
     }
@@ -167,11 +118,11 @@ public class ConstructionSiteEntity {
         this.pcTerritoryFlag = pcTerritoryFlag;
     }
 
-    public int getIronRequired() {
-        return ironRequired;
+    public List<ConstructionSiteComponentEntity> getComponents() {
+        return components;
     }
 
-    public void setIronRequired(int ironRequired) {
-        this.ironRequired = ironRequired;
+    public void setComponents(List<ConstructionSiteComponentEntity> components) {
+        this.components = components;
     }
 }

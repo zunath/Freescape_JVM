@@ -42,6 +42,7 @@ public class PCTerritoryFlagEntity {
     private StructureBlueprintEntity blueprint;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "pcTerritoryFlag", fetch = FetchType.EAGER, orphanRemoval = true)
+    @Fetch(value = FetchMode.SUBSELECT)
     private List<PCTerritoryFlagStructureEntity> structures;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "pcTerritoryFlag", fetch = FetchType.EAGER, orphanRemoval = true)

@@ -64,6 +64,7 @@ public class DataAccess {
         _configuration.addAnnotatedClass(ChatLogEntity.class);
         _configuration.addAnnotatedClass(ClientLogEventEntity.class);
         _configuration.addAnnotatedClass(ClientLogEventTypeEntity.class);
+        _configuration.addAnnotatedClass(ConstructionSiteComponentEntity.class);
         _configuration.addAnnotatedClass(ConstructionSiteEntity.class);
         _configuration.addAnnotatedClass(CraftBlueprintCategoryEntity.class);
         _configuration.addAnnotatedClass(CraftBlueprintEntity.class);
@@ -124,6 +125,7 @@ public class DataAccess {
         _configuration.addAnnotatedClass(StorageContainerEntity.class);
         _configuration.addAnnotatedClass(StorageItemEntity.class);
         _configuration.addAnnotatedClass(StructureCategoryEntity.class);
+        _configuration.addAnnotatedClass(StructureComponentEntity.class);
         _configuration.addAnnotatedClass(StructureBlueprintEntity.class);
         _configuration.addAnnotatedClass(StructureQuickBuildAuditEntity.class);
         _configuration.addAnnotatedClass(TerritoryFlagPermissionEntity.class);

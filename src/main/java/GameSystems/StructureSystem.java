@@ -269,12 +269,16 @@ public class StructureSystem {
         entity.setLocationZ(location.getZ());
         entity.setPlayerID(pcGO.getUUID());
         entity.setBlueprint(blueprint);
-        entity.setClothRequired(blueprint.getClothRequired());
-        entity.setLeatherRequired(blueprint.getLeatherRequired());
-        entity.setMetalRequired(blueprint.getMetalRequired());
-        entity.setNailsRequired(blueprint.getNailsRequired());
-        entity.setWoodRequired(blueprint.getWoodRequired());
-        entity.setIronRequired(blueprint.getIronRequired());
+        entity.setComponents(new ArrayList<>());
+
+        for(StructureComponentEntity comp: blueprint.getComponents())
+        {
+            ConstructionSiteComponentEntity csComp = new ConstructionSiteComponentEntity();
+            csComp.setConstructionSite(entity);
+            csComp.setQuantity(comp.getQuantity());
+            csComp.setStructureComponent(comp);
+            entity.getComponents().add(csComp);
+        }
 
         if(IsWithinRangeOfTerritoryFlag(constructionSite))
         {
@@ -550,20 +554,11 @@ public class StructureSystem {
 
             if(recoverMaterials)
             {
-                int wood = entity.getBlueprint().getWoodRequired() - entity.getWoodRequired();
-                int metal = entity.getBlueprint().getMetalRequired() - entity.getMetalRequired();
-                int nails = entity.getBlueprint().getNailsRequired() - entity.getNailsRequired();
-                int cloth = entity.getBlueprint().getClothRequired() - entity.getClothRequired();
-                int leather = entity.getBlueprint().getLeatherRequired() - entity.getLeatherRequired();
-                int iron = entity.getBlueprint().getIronRequired() - entity.getIronRequired();
-
-                for(int w = 1; w <= wood; w++) NWScript.createItemOnObject("reo_wood", oPC, 1, "");
-                for(int m = 1; m <= metal; m++) NWScript.createItemOnObject("reo_metal", oPC, 1, "");
-                for(int n = 1; n <= nails; n++) NWScript.createItemOnObject("reo_nails", oPC, 1, "");
-                for(int c = 1; c <= cloth; c++) NWScript.createItemOnObject("reo_cloth", oPC, 1, "");
-                for(int l = 1; l <= leather; l++) NWScript.createItemOnObject("reo_leather", oPC, 1, "");
-                for(int i = 1; i <= iron; i++) NWScript.createItemOnObject("reo_iron", oPC, 1, "");
-
+                for(ConstructionSiteComponentEntity comp: entity.getComponents())
+                {
+                    int quantity = comp.getStructureComponent().getQuantity() - comp.getQuantity();
+                    for(int q = 1; q <= quantity; q++) NWScript.createItemOnObject(comp.getStructureComponent().getResref(), oPC, 1, "");
+                }
             }
 
             repo.Delete(entity);
@@ -599,6 +594,7 @@ public class StructureSystem {
         return false;
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static boolean IsConstructionSiteValid(NWObject site)
     {
         StructureRepository repo = new StructureRepository();
@@ -654,7 +650,8 @@ public class StructureSystem {
             PCTerritoryFlagPermissionEntity permission = repo.GetPermissionByID(pcGO.getUUID(), permissionID, flagID);
             return permission != null || pcGO.getUUID().equals(entity.getPlayerID());
         }
-        else if(buildPrivacyID == 3) // Public
+        else //noinspection RedundantIfStatement
+            if(buildPrivacyID == 3) // Public
         {
             return true;
         }
