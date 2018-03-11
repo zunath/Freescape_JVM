@@ -43,7 +43,8 @@ public class HealingKit implements IActionItem {
 
     @Override
     public float Seconds(NWObject user, NWObject item, NWObject target) {
-        return 12.0f;
+        PCSkillEntity skill = SkillSystem.GetPCSkill(user, SkillID.FirstAid);
+        return 12.0f - (skill.getRank() * 0.1f);
     }
 
     @Override
