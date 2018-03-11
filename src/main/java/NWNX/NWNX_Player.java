@@ -1,5 +1,6 @@
 package NWNX;
 
+import Helper.ScriptHelper;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.NWScript;
 import org.nwnx.nwnx2.jvm.Scheduler;
@@ -57,7 +58,7 @@ public class NWNX_Player {
 
         if(!script.equals(""))
         {
-            NWScript.executeScript(script, player);
+            ScriptHelper.RunJavaScript(player, script);
         }
     }
 

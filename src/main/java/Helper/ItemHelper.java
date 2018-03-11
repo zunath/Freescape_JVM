@@ -21,6 +21,11 @@ public class ItemHelper {
         }
     }
 
+    public static void ReduceItemCharges(NWObject item)
+    {
+        NWScript.setItemCharges(item, NWScript.getItemCharges(item)-1);
+    }
+
     public static boolean IsBlade(NWObject item)
     {
         int itemType = NWScript.getBaseItemType(item);
