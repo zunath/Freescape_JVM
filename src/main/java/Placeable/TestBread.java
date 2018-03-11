@@ -23,9 +23,9 @@ public class TestBread implements IScriptEventHandler {
         */
 
         NWObject oreSpawn = NWScript.getWaypointByTag("ORE_SPAWN");
-        NWScript.createObject(ObjectType.PLACEABLE, "rotd_ironvein", NWScript.getLocation(oreSpawn),false, "");
+        NWScript.createObject(ObjectType.PLACEABLE, "copper_vein", NWScript.getLocation(oreSpawn),false, "");
         NWObject treeSpawn = NWScript.getWaypointByTag("TREE_SPAWN");
-        NWScript.createObject(ObjectType.PLACEABLE, "rotd_tree", NWScript.getLocation(treeSpawn),false, "");
+        NWScript.createObject(ObjectType.PLACEABLE, "mithril_vein", NWScript.getLocation(treeSpawn),false, "");
 
 
 

@@ -22,7 +22,7 @@ public class BladeRepairKit implements IScriptEventHandler {
         }
 
         int skill = SkillSystem.GetPCSkill(oPC, SkillID.ItemRepair).getRank();
-        float repairAmount = 10.0f + skill * 2.0f;
+        float repairAmount = 10.0f + skill * 0.2f;
 
         DurabilitySystem.RunItemRepair(oPC, item, repairAmount);
 
