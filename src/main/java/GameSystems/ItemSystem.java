@@ -47,6 +47,14 @@ public class ItemSystem {
         {
             description += ColorToken.Orange() + "AC: " + ColorToken.End() + itemGO.getRecommendedLevel() + "\n";
         }
+        if(itemGO.getLoggingBonus() > 0)
+        {
+            description += ColorToken.Orange() + "Logging Bonus: " + ColorToken.End() + itemGO.getLoggingBonus() + "\n";
+        }
+        if(itemGO.getMiningBonus() > 0)
+        {
+            description += ColorToken.Orange() + "Mining Bonus: " + ColorToken.End() + itemGO.getMiningBonus() + "\n";
+        }
 
         return existingDescription + "\n" + description;
     }
@@ -140,5 +148,7 @@ public class ItemSystem {
         itemGO.setAC(entity.getAc());
         itemGO.setCustomItemType(entity.getItemType().getItemTypeID());
         itemGO.setRecommendedLevel(entity.getRecommendedLevel());
+        itemGO.setLoggingBonus(entity.getLoggingBonus());
+        itemGO.setMiningBonus(entity.getMiningBonus());
     }
 }

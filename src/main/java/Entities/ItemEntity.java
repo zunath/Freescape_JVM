@@ -20,6 +20,12 @@ public class ItemEntity {
     @Column(name = "RecommendedLevel")
     private int recommendedLevel;
 
+    @Column(name = "LoggingBonus")
+    private int loggingBonus;
+
+    @Column(name = "MiningBonus")
+    private int miningBonus;
+
     public String getResref() {
         return resref;
     }
@@ -52,4 +58,19 @@ public class ItemEntity {
         this.recommendedLevel = recommendedLevel;
     }
 
+    public int getLoggingBonus() {
+        return loggingBonus;
+    }
+
+    public void setLoggingBonus(int loggingBonus) {
+        this.loggingBonus = loggingBonus;
+    }
+
+    public int getMiningBonus() {
+        return miningBonus;
+    }
+
+    public void setMiningBonus(int miningBonus) {
+        this.miningBonus = miningBonus;
+    }
 }

@@ -1,6 +1,8 @@
 SELECT Resref ,
        AC ,
        ItemTypeID,
-       RecommendedLevel
+       RecommendedLevel,
+       LoggingBonus,
+       MiningBonus
 FROM dbo.Items
 WHERE Resref = :resref

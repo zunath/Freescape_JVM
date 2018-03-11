@@ -13,7 +13,11 @@ public class SkillCategoryEntity {
     @Column(name = "Name")
     private String name;
 
+    @Column(name = "IsActive")
     private boolean isActive;
+
+    @Column(name = "Sequence")
+    private int sequence;
 
     public int getSkillCategoryID() {
         return skillCategoryID;
@@ -37,5 +41,13 @@ public class SkillCategoryEntity {
 
     public void setActive(boolean active) {
         isActive = active;
+    }
+
+    public int getSequence() {
+        return sequence;
+    }
+
+    public void setSequence(int sequence) {
+        this.sequence = sequence;
     }
 }

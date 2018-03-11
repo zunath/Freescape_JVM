@@ -92,4 +92,24 @@ public class ItemGO {
         NWScript.setLocalInt(item, "CUSTOM_ITEM_PROPERTY_TYPE_RECOMMENDED_LEVEL", recommendedSkillLevel);
     }
 
+    public int getLoggingBonus()
+    {
+        return NWScript.getLocalInt(item, "CUSTOM_ITEM_PROPERTY_LOGGING_BONUS");
+    }
+
+    public void setLoggingBonus(int loggingBonus)
+    {
+        NWScript.setLocalInt(item, "CUSTOM_ITEM_PROPERTY_LOGGING_BONUS", loggingBonus);
+    }
+
+    public int getMiningBonus()
+    {
+        return NWScript.getLocalInt(item, "CUSTOM_ITEM_PROPERTY_MINING_BONUS");
+    }
+
+    public void setMiningBonus(int miningBonus)
+    {
+        NWScript.setLocalInt(item, "CUSTOM_ITEM_PROPERTY_MINING_BONUS", miningBonus);
+    }
+
 }

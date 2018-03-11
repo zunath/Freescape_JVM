@@ -148,7 +148,7 @@ public class SkillSystem {
         }
 
         skill.setXp(skill.getXp() + xp);
-        NWScript.sendMessageToPC(oPC, "You earned " + skill.getSkill().getName() + " skill experience.");
+        NWScript.sendMessageToPC(oPC, "You earned " + skill.getSkill().getName() + " skill experience. (" + xp + ")");
 
         // Skill is at cap and player would level up.
         // Reduce XP to required amount minus 1 XP
