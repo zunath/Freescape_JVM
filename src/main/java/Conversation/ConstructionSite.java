@@ -2,7 +2,9 @@ package Conversation;
 
 import Dialog.*;
 import Entities.*;
+import Enumerations.SkillID;
 import Enumerations.StructurePermission;
+import GameSystems.SkillSystem;
 import Helper.ColorToken;
 import Conversation.ViewModels.ConstructionSiteMenuModel;
 import Data.Repository.StructureRepository;
@@ -206,7 +208,8 @@ public class ConstructionSite extends DialogBase implements IDialogHandler {
         {
             ConstructionSiteEntity entity = repo.GetConstructionSiteByID(model.getConstructionSiteID());
 
-            header = ColorToken.Green() + "Blueprint: " + ColorToken.End() + entity.getBlueprint().getName() + "\n\n";
+            header = ColorToken.Green() + "Blueprint: " + ColorToken.End() + entity.getBlueprint().getName() + "\n";
+            header += ColorToken.Green() + "Level: " + ColorToken.End() + entity.getBlueprint().getLevel() + "\n\n";
 
             if(entity.getBlueprint().getMaxBuildDistance() > 0.0f)
             {
@@ -231,10 +234,10 @@ public class ConstructionSite extends DialogBase implements IDialogHandler {
 
             header += ColorToken.Green() + "Resources Required: " + ColorToken.End() + "\n\n";
 
-            for(StructureComponentEntity comp: entity.getBlueprint().getComponents())
+            for(ConstructionSiteComponentEntity comp: entity.getComponents())
             {
                 //noinspection StringConcatenationInLoop
-                header += comp.getQuantity() > 0 ? comp.getQuantity() + "x " + ItemHelper.GetNameByResref(comp.getResref()) + "\n" : "";
+                header += comp.getQuantity() > 0 ? comp.getQuantity() + "x " + ItemHelper.GetNameByResref(comp.getStructureComponent().getResref()) + "\n" : "";
             }
 
             page.addResponse("Quick Build", PlayerAuthorizationSystem.IsPCRegisteredAsDM(GetPC()));
@@ -301,7 +304,8 @@ public class ConstructionSite extends DialogBase implements IDialogHandler {
         ConstructionSiteMenuModel model = GetModel();
         StructureRepository repo = new StructureRepository();
         StructureBlueprintEntity entity = repo.GetStructureBlueprintByID(model.getBlueprintID());
-        String header = ColorToken.Green() + "Blueprint Name: " + ColorToken.End() + entity.getName() + "\n\n";
+        String header = ColorToken.Green() + "Blueprint Name: " + ColorToken.End() + entity.getName() + "\n";
+        header += ColorToken.Green() + "Level: " + ColorToken.End() + entity.getLevel() + "\n\n";
 
         if(entity.getMaxBuildDistance() > 0.0f)
         {
@@ -358,12 +362,12 @@ public class ConstructionSite extends DialogBase implements IDialogHandler {
         DialogPage page = GetPageByName("BlueprintListPage");
         page.getResponses().clear();
         NWLocation location = NWScript.getLocation(GetDialogTarget());
+        int rank = SkillSystem.GetPCSkill(GetPC(), SkillID.Construction).getRank();
 
-        List<StructureBlueprintEntity> entities = repo.GetStructuresByCategoryID(model.getCategoryID());
-
+        List<StructureBlueprintEntity> entities = repo.GetStructuresByCategoryAndPlayerRank(model.getCategoryID(), rank);
         for(StructureBlueprintEntity entity : entities)
         {
-            String entityName = entity.getName();
+            String entityName = entity.getName() + " (Lvl. " + entity.getLevel() + ")";
             if(model.isTerritoryFlag())
             {
                 if(StructureSystem.WillBlueprintOverlapWithExistingFlags(location, entity.getStructureBlueprintID()))

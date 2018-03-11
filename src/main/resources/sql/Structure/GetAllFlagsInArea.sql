@@ -20,7 +20,8 @@ SELECT pctf.PCTerritoryFlagID ,
        sb.MaxStructuresCount ,
        sb.MaxBuildDistance ,
        sb.ResearchSlots ,
-       sb.RPPerSecond
+       sb.RPPerSecond,
+       sb.Level
 FROM dbo.PCTerritoryFlags pctf
 JOIN dbo.StructureBlueprints sb ON sb.StructureBlueprintID = pctf.StructureBlueprintID
 WHERE pctf.LocationAreaTag = :areaTag

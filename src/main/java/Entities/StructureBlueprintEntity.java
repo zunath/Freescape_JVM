@@ -50,6 +50,9 @@ public class StructureBlueprintEntity {
     @Column(name = "RPPerSecond")
     private int rpPerSecond;
 
+    @Column(name = "Level")
+    private int level;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "blueprint", fetch = FetchType.EAGER, orphanRemoval = true)
     @Fetch(value = FetchMode.SUBSELECT)
     private List<StructureComponentEntity> components;
@@ -176,5 +179,13 @@ public class StructureBlueprintEntity {
 
     public void setComponents(List<StructureComponentEntity> components) {
         this.components = components;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
     }
 }

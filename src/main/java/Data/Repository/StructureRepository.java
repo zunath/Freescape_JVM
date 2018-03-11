@@ -69,12 +69,13 @@ public class StructureRepository {
         }
     }
 
-    public List<StructureBlueprintEntity> GetStructuresByCategoryID(int categoryID)
+    public List<StructureBlueprintEntity> GetStructuresByCategoryAndPlayerRank(int categoryID, int pcRank)
     {
         try(DataContext context = new DataContext())
         {
-            return context.executeSQLList("Structure/GetStructuresByCategoryID", StructureBlueprintEntity.class,
-                    new SqlParameter("structureCategoryID", categoryID));
+            return context.executeSQLList("Structure/GetStructuresByCategoryAndPlayerRank", StructureBlueprintEntity.class,
+                    new SqlParameter("structureCategoryID", categoryID),
+                    new SqlParameter("rank", pcRank));
         }
     }
 

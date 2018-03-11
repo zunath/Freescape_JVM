@@ -12,6 +12,7 @@ SELECT sb.StructureBlueprintID ,
        sb.MaxStructuresCount ,
        sb.MaxBuildDistance ,
        sb.ResearchSlots ,
-       sb.RPPerSecond
+       sb.RPPerSecond,
+       sb.Level
 FROM dbo.StructureBlueprints sb
 WHERE sb.StructureBlueprintID = :structureBlueprintID

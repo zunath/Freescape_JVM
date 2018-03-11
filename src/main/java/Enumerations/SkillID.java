@@ -16,7 +16,7 @@ public class SkillID {
     public static int Weaponsmith = 12;
     public static int Armorsmith = 13;
     public static int Logging = 14;
-    public static int Carpentry = 15;
+    public static int Construction = 15;
     public static int Cooking = 16;
     public static int FirstAid = 17;
     public static int ItemRepair = 18;
