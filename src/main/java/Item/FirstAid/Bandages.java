@@ -1,21 +1,18 @@
 package Item.FirstAid;
 
 import Entities.PCSkillEntity;
+import Enumerations.CustomEffectType;
 import Enumerations.SkillID;
 import GameObject.ItemGO;
-import GameObject.PlayerGO;
+import GameSystems.CustomEffectSystem;
 import GameSystems.SkillSystem;
-import Helper.ItemHelper;
 import Item.IActionItem;
-import org.nwnx.nwnx2.jvm.NWEffect;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.NWScript;
 import org.nwnx.nwnx2.jvm.constants.Animation;
 import org.nwnx.nwnx2.jvm.constants.DurationType;
-import org.nwnx.nwnx2.jvm.constants.EffectType;
 
-public class HealingKit implements IActionItem {
-
+public class Bandages implements IActionItem {
     @Override
     public Object StartUseItem(NWObject user, NWObject item, NWObject target) {
         NWScript.sendMessageToPC(user, "You begin treating " + NWScript.getName(target, false) + "'s wounds...");
@@ -24,27 +21,24 @@ public class HealingKit implements IActionItem {
 
     @Override
     public void ApplyEffects(NWObject user, NWObject item, NWObject target, Object customData) {
-
-        PlayerGO targetGO = new PlayerGO(target);
         ItemGO itemGO = new ItemGO(item);
 
-        targetGO.removeEffect(EffectType.REGENERATE);
+        CustomEffectSystem.RemovePCCustomEffect(target, CustomEffectType.Bleeding);
+        NWScript.applyEffectToObject(DurationType.INSTANT, NWScript.effectHeal(2), target, 0.0f);
+        NWScript.sendMessageToPC(user, "You finish bandaging " + NWScript.getName(target, false) + "'s wounds.");
+
         PCSkillEntity skill = SkillSystem.GetPCSkill(user, SkillID.FirstAid);
-        float duration = 30.0f + (skill.getRank() * 0.4f);
-        final int restoreAmount = 1 + NWScript.getLocalInt(item, "HEALING_BONUS");
-
-        NWEffect regeneration = NWScript.effectRegenerate(restoreAmount, 6.0f);
-        NWScript.applyEffectToObject(DurationType.TEMPORARY, regeneration, target, duration);
-        NWScript.sendMessageToPC(user, "You successfully treat " + NWScript.getName(target, false) + "'s wounds.");
-
         int xp = (int)SkillSystem.CalculateSkillAdjustedXP(100, itemGO.getRecommendedLevel(), skill.getRank());
         SkillSystem.GiveSkillXP(user, SkillID.FirstAid, xp);
     }
 
     @Override
     public float Seconds(NWObject user, NWObject item, NWObject target) {
+
         PCSkillEntity skill = SkillSystem.GetPCSkill(user, SkillID.FirstAid);
-        return 12.0f - (skill.getRank() * 0.1f);
+        float seconds = 6.0f - (skill.getRank() * 0.2f);
+        if(seconds < 1.0f) seconds = 1.0f;
+        return seconds;
     }
 
     @Override
@@ -70,9 +64,9 @@ public class HealingKit implements IActionItem {
             return "Only players may be targeted with this item.";
         }
 
-        if(NWScript.getCurrentHitPoints(target) >= NWScript.getMaxHitPoints(target))
+        if(!CustomEffectSystem.DoesPCHaveCustomEffect(target, CustomEffectType.Bleeding))
         {
-            return "Your target is not hurt.";
+            return "Your target is not bleeding.";
         }
 
         return null;
