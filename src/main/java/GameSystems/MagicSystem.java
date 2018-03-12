@@ -1,15 +1,14 @@
 package GameSystems;
 
-import Abilities.IAbility;
+import Perks.IPerk;
 import Bioware.Position;
-import Data.Repository.MagicRepository;
+import Data.Repository.PerkRepository;
 import Data.Repository.PlayerRepository;
 import Entities.*;
 import GameObject.PlayerGO;
 import Helper.ColorToken;
 import Helper.ScriptHelper;
 import Helper.TimeHelper;
-import NWNX.NWNX_Creature;
 import NWNX.NWNX_Events;
 import NWNX.NWNX_Player;
 import org.joda.time.DateTime;
@@ -31,19 +30,19 @@ public class MagicSystem {
     public static void OnFeatUsed(NWObject pc)
     {
         PlayerRepository playerRepo = new PlayerRepository();
-        MagicRepository repo = new MagicRepository();
+        PerkRepository repo = new PerkRepository();
         PlayerGO pcGO = new PlayerGO(pc);
         int featID = NWNX_Events.OnFeatUsed_GetFeatID();
         NWObject target =  NWNX_Events.OnFeatUsed_GetTarget();
-        AbilityEntity entity = repo.GetAbilityByFeatID(featID);
+        PerkEntity entity = repo.GetPerkByFeatID(featID);
 
         if(entity == null) return;
-        IAbility ability = (IAbility) ScriptHelper.GetClassByName("Abilities." + entity.getJavaScriptName());
-        if(ability == null) return;
+        IPerk perk = (IPerk) ScriptHelper.GetClassByName("Perks." + entity.getJavaScriptName());
+        if(perk == null) return;
 
         PlayerEntity playerEntity = playerRepo.GetByPlayerID(pcGO.getUUID());
 
-        if(ability.IsHostile())
+        if(perk.IsHostile())
         {
             if(!PVPSanctuarySystem.IsPVPAttackAllowed(pc, target)) return;
         }
@@ -55,16 +54,16 @@ public class MagicSystem {
             return;
         }
 
-        if(!ability.CanCastSpell(pc, target))
+        if(!perk.CanCastSpell(pc, target))
         {
             NWScript.sendMessageToPC(pc,
-                    ability.CannotCastSpellMessage() == null ?
+                    perk.CannotCastSpellMessage() == null ?
                             "That ability cannot be used at this time." :
-                            ability.CannotCastSpellMessage());
+                            perk.CannotCastSpellMessage());
             return;
         }
 
-        int manaCost = ability.ManaCost(pc, ability.ManaCost(pc, entity.getBaseManaCost()));
+        int manaCost = perk.ManaCost(pc, perk.ManaCost(pc, entity.getBaseManaCost()));
         if(playerEntity.getCurrentMana() < manaCost)
         {
             NWScript.sendMessageToPC(pc, "You do not have enough mana. (Required: " + manaCost + ". You have: " + playerEntity.getCurrentMana() + ")");
@@ -78,7 +77,7 @@ public class MagicSystem {
         }
 
         // Check cooldown
-        PCAbilityCooldownEntity pcCooldown = repo.GetPCCooldownByID(pcGO.getUUID(), entity.getCooldown().getAbilityCooldownCategoryID());
+        PCCooldownEntity pcCooldown = repo.GetPCCooldownByID(pcGO.getUUID(), entity.getCooldown().getCooldownCategoryID());
         DateTime unlockDateTime = new DateTime(pcCooldown.getDateUnlocked());
         DateTime now = DateTime.now(DateTimeZone.UTC);
 
@@ -90,15 +89,15 @@ public class MagicSystem {
         }
 
 
-        if(ability.CastingTime(pc, entity.getBaseCastingTime()) > 0.0f)
+        if(perk.CastingTime(pc, entity.getBaseCastingTime()) > 0.0f)
         {
-            CastSpell(pc, target, entity, ability, entity.getCooldown());
+            CastSpell(pc, target, entity, perk, entity.getCooldown());
         }
         else
         {
             if(!entity.isQueuedWeaponSkill())
             {
-                ability.OnImpact(pc, target);
+                perk.OnImpact(pc, target);
 
                 if(manaCost > 0)
                 {
@@ -108,7 +107,7 @@ public class MagicSystem {
             }
             else
             {
-                HandleQueueWeaponSkill(pc, entity, ability);
+                HandleQueueWeaponSkill(pc, entity, perk);
             }
 
         }
@@ -116,14 +115,14 @@ public class MagicSystem {
 
     private static void CastSpell(final NWObject pc,
                                   final NWObject target,
-                                  final AbilityEntity entity,
-                                  final IAbility ability,
-                                  final AbilityCooldownCategoryEntity cooldown)
+                                  final PerkEntity entity,
+                                  final IPerk perk,
+                                  final CooldownCategoryEntity cooldown)
     {
         final String spellUUID = UUID.randomUUID().toString();
         final PlayerGO pcGO = new PlayerGO(pc);
         int itemBonus = pcGO.CalculateCastingSpeed();
-        float castingTime = ability.CastingTime(pc, entity.getBaseCastingTime());
+        float castingTime = perk.CastingTime(pc, entity.getBaseCastingTime());
 
         // Casting Bonus % - Shorten casting time.
         if(itemBonus < 0)
@@ -172,37 +171,37 @@ public class MagicSystem {
 
             if(!entity.isQueuedWeaponSkill())
             {
-                ability.OnImpact(pc, target);
+                perk.OnImpact(pc, target);
             }
             else
             {
-                HandleQueueWeaponSkill(pc, entity, ability);
+                HandleQueueWeaponSkill(pc, entity, perk);
             }
 
             // Adjust mana only if spell cost > 0
-            if(ability.ManaCost(pc, entity.getBaseManaCost()) > 0)
+            if(perk.ManaCost(pc, entity.getBaseManaCost()) > 0)
             {
-                pcEntity.setCurrentMana(pcEntity.getCurrentMana() - ability.ManaCost(pc, entity.getBaseManaCost()));
+                pcEntity.setCurrentMana(pcEntity.getCurrentMana() - perk.ManaCost(pc, entity.getBaseManaCost()));
                 repo.save(pcEntity);
                 NWScript.sendMessageToPC(pc, ColorToken.Custom(32,223,219) + "Mana: " + pcEntity.getCurrentMana() + " / " + pcEntity.getMaxMana());
             }
 
-            // Mark cooldown on ability category
-            ApplyCooldown(pc, cooldown, ability);
+            // Mark cooldown on category
+            ApplyCooldown(pc, cooldown, perk);
 
             pcGO.setIsBusy(false);
         });
     }
 
-    private static void ApplyCooldown(NWObject pc, AbilityCooldownCategoryEntity cooldown, IAbility ability)
+    private static void ApplyCooldown(NWObject pc, CooldownCategoryEntity cooldown, IPerk ability)
     {
         PlayerGO pcGO = new PlayerGO(pc);
-        MagicRepository magicRepo = new MagicRepository();
+        PerkRepository magicRepo = new PerkRepository();
         float finalCooldown = ability.CooldownTime(pc, cooldown.getBaseCooldownTime());
         int cooldownSeconds = (int)finalCooldown;
         int cooldownMillis = (int)((finalCooldown - cooldownSeconds) * 100);
 
-        PCAbilityCooldownEntity pcCooldown = magicRepo.GetPCCooldownByID(pcGO.getUUID(), cooldown.getAbilityCooldownCategoryID());
+        PCCooldownEntity pcCooldown = magicRepo.GetPCCooldownByID(pcGO.getUUID(), cooldown.getCooldownCategoryID());
         DateTime unlockDate = DateTime.now(DateTimeZone.UTC).plusSeconds(cooldownSeconds).plusMillis(cooldownMillis);
         pcCooldown.setDateUnlocked(unlockDate.toDate());
         magicRepo.Save(pcCooldown);
@@ -224,10 +223,10 @@ public class MagicSystem {
         Scheduler.delay(pc, 1000, () -> CheckForSpellInterruption(pc, spellUUID, position));
     }
 
-    private static void HandleQueueWeaponSkill(final NWObject pc, final AbilityEntity entity, IAbility ability)
+    private static void HandleQueueWeaponSkill(final NWObject pc, final PerkEntity entity, IPerk ability)
     {
         final String queueUUID = UUID.randomUUID().toString();
-        NWScript.setLocalInt(pc, "ACTIVE_WEAPON_SKILL", entity.getAbilityID());
+        NWScript.setLocalInt(pc, "ACTIVE_WEAPON_SKILL", entity.getPerkID());
         NWScript.setLocalString(pc, "ACTIVE_WEAPON_SKILL_UUID", queueUUID);
         NWScript.sendMessageToPC(pc, "Weapon skill '" + entity.getName() + "' queued for next attack.");
 
@@ -248,10 +247,10 @@ public class MagicSystem {
 
     public static void LearnAbility(NWObject oPC, NWObject oItem, int abilityID)
     {
-        MagicRepository repo = new MagicRepository();
+        PerkRepository repo = new PerkRepository();
         PlayerGO pcGO = new PlayerGO(oPC);
-        AbilityEntity entity = repo.GetAbilityByID(abilityID);
-        boolean success = repo.AddAbilityToPC(pcGO.getUUID(), abilityID);
+        PerkEntity entity = repo.GetPerkByID(abilityID);
+        boolean success = repo.AddPerkToPC(pcGO.getUUID(), abilityID);
 
         if(success)
         {
@@ -272,8 +271,8 @@ public class MagicSystem {
         if(!resref.startsWith("ability_disc_")) return existingDescription;
         int abilityID = Integer.parseInt(resref.substring(13));
 
-        MagicRepository repo = new MagicRepository();
-        AbilityEntity entity = repo.GetAbilityByID(abilityID);
+        PerkRepository repo = new PerkRepository();
+        PerkEntity entity = repo.GetPerkByID(abilityID);
 
         String fullDescription = entity.getDescription() + "\n\n";
         fullDescription += "Mana Cost: " + entity.getBaseManaCost();
@@ -298,9 +297,9 @@ public class MagicSystem {
         int activeWeaponSkillID = NWScript.getLocalInt(oPC, "ACTIVE_WEAPON_SKILL");
         if(activeWeaponSkillID <= 0) return;
 
-        MagicRepository magicRepo = new MagicRepository();
-        AbilityEntity entity = magicRepo.GetAbilityByID(activeWeaponSkillID);
-        IAbility ability = (IAbility) ScriptHelper.GetClassByName("Abilities." + entity.getJavaScriptName());
+        PerkRepository magicRepo = new PerkRepository();
+        PerkEntity entity = magicRepo.GetPerkByID(activeWeaponSkillID);
+        IPerk ability = (IPerk) ScriptHelper.GetClassByName("Perks." + entity.getJavaScriptName());
 
         ability.OnImpact(oPC, oTarget);
 

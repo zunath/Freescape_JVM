@@ -28,6 +28,7 @@ public class RestMenu extends DialogBase implements IDialogHandler {
                 BuildMainPageHeader(oPC),
                 ColorToken.Green() + "Open Overflow Inventory" + ColorToken.End(),
                 "View Skills",
+                "View Perks",
                 "Dice Bag",
                 "Emote Menu",
                 "View Key Items",
@@ -66,8 +67,12 @@ public class RestMenu extends DialogBase implements IDialogHandler {
                     case 2:
                         SwitchConversation("ViewSkills");
                         break;
-                    // Dice Bag
+                    // View Perks
                     case 3:
+                        SwitchConversation("ViewPerks");
+                        break;
+                    // Dice Bag
+                    case 4:
                         NWScript.setLocalObject(oPC, "dmfi_univ_target", oPC);
                         NWScript.setLocalLocation(oPC, "dmfi_univ_location", NWScript.getLocation(oPC));
                         NWScript.setLocalString(oPC, "dmfi_univ_conv", "pc_dicebag");
@@ -77,7 +82,7 @@ public class RestMenu extends DialogBase implements IDialogHandler {
                         });
                         break;
                     // Emote Menu
-                    case 4:
+                    case 5:
                         NWScript.setLocalObject(oPC, "dmfi_univ_target", oPC);
                         NWScript.setLocalLocation(oPC, "dmfi_univ_location", NWScript.getLocation(oPC));
                         NWScript.setLocalString(oPC, "dmfi_univ_conv", "pc_emote");
@@ -87,19 +92,19 @@ public class RestMenu extends DialogBase implements IDialogHandler {
                         });
                         break;
                     // View Crafts
-                    case 5:
+                    case 6:
                         SwitchConversation("ViewCrafts");
                         break;
                     // Key Item Categories Page
-                    case 6:
+                    case 7:
                         SwitchConversation("KeyItems");
                         break;
                     // Modify Clothes
-                    case 7:
+                    case 8:
                         Scheduler.assign(oPC, () -> NWScript.actionStartConversation(oPC, "x0_skill_ctrap", true, false));
                         break;
                     // Character Management
-                    case 8:
+                    case 9:
                         SwitchConversation("CharacterManagement");
                         break;
                 }

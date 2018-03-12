@@ -3,15 +3,18 @@ package Entities;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "Abilities")
-public class AbilityEntity {
+@Table(name = "Perks")
+public class PerkEntity {
 
     @Id
-    @Column(name = "AbilityID")
-    private int abilityID;
+    @Column(name = "PerkID")
+    private int perkID;
 
     @Column(name = "Name")
     private String name;
+
+    @Column(name = "Price")
+    private int price;
 
     @Column(name = "FeatID")
     private int featID;
@@ -32,22 +35,22 @@ public class AbilityEntity {
     private String description;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "AbilityCategoryID")
-    private AbilityCategoryEntity category;
+    @JoinColumn(name = "PerkCategoryID")
+    private PerkCategoryEntity category;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "AbilityCooldownCategoryID")
-    private AbilityCooldownCategoryEntity cooldown;
+    @JoinColumn(name = "CooldownCategoryID")
+    private CooldownCategoryEntity cooldown;
 
     @Column(name = "IsQueuedWeaponSkill")
     private boolean isQueuedWeaponSkill;
 
-    public int getAbilityID() {
-        return abilityID;
+    public int getPerkID() {
+        return perkID;
     }
 
-    public void setAbilityID(int abilityID) {
-        this.abilityID = abilityID;
+    public void setPerkID(int perkID) {
+        this.perkID = perkID;
     }
 
     public String getName() {
@@ -98,11 +101,11 @@ public class AbilityEntity {
         this.baseCastingTime = baseCastingTime;
     }
 
-    public AbilityCategoryEntity getCategory() {
+    public PerkCategoryEntity getCategory() {
         return category;
     }
 
-    public void setCategory(AbilityCategoryEntity category) {
+    public void setCategory(PerkCategoryEntity category) {
         this.category = category;
     }
 
@@ -114,11 +117,11 @@ public class AbilityEntity {
         this.description = description;
     }
 
-    public AbilityCooldownCategoryEntity getCooldown() {
+    public CooldownCategoryEntity getCooldown() {
         return cooldown;
     }
 
-    public void setCooldown(AbilityCooldownCategoryEntity cooldown) {
+    public void setCooldown(CooldownCategoryEntity cooldown) {
         this.cooldown = cooldown;
     }
 
@@ -128,5 +131,13 @@ public class AbilityEntity {
 
     public void setQueuedWeaponSkill(boolean queuedWeaponSkill) {
         isQueuedWeaponSkill = queuedWeaponSkill;
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
     }
 }

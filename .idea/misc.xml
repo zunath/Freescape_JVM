@@ -29,12 +29,6 @@
     <file url="file://$PROJECT_DIR$/src/main/resources/sql/KeyItem/GetPCKeyItemByKeyItemID.sql" />
     <file url="file://$PROJECT_DIR$/src/main/resources/sql/KeyItem/GetPlayerKeyItemsByCategory.sql" />
     <file url="file://$PROJECT_DIR$/src/main/resources/sql/LootTable/GetByLootTableID.sql" />
-    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Magic/GetAbilityByFeatID.sql" />
-    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Magic/GetAbilityByID.sql" />
-    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Magic/GetActiveAbilityCategories.sql" />
-    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Magic/GetPCCooldownByID.sql" />
-    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Magic/GetPCLearnedAbilitiesByCategoryID.sql" />
-    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Magic/GetPCLearnedAbilityByID.sql" />
     <file url="file://$PROJECT_DIR$/src/main/resources/sql/OverflowItem/DeleteByID.sql" />
     <file url="file://$PROJECT_DIR$/src/main/resources/sql/OverflowItem/GetAllByPlayerID.sql" />
     <file url="file://$PROJECT_DIR$/src/main/resources/sql/OverflowItem/GetPlayerOverflowItemCount.sql" />
@@ -42,6 +36,12 @@
     <file url="file://$PROJECT_DIR$/src/main/resources/sql/PCCorpse/GetByID.sql" />
     <file url="file://$PROJECT_DIR$/src/main/resources/sql/PCMigration/GetByMigrationID.sql" />
     <file url="file://$PROJECT_DIR$/src/main/resources/sql/PCOutfit/GetByUUID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Perk/GetActivePerkCategories.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Perk/GetPCCooldownByID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Perk/GetPCPerkByID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Perk/GetPCPerksByCategoryID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Perk/GetPerkByFeatID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Perk/GetPerkByID.sql" />
     <file url="file://$PROJECT_DIR$/src/main/resources/sql/Player/GetByPlayerID.sql" />
     <file url="file://$PROJECT_DIR$/src/main/resources/sql/Quest/GetAllCompletedQuestIDs.sql" />
     <file url="file://$PROJECT_DIR$/src/main/resources/sql/Quest/GetAllPCQuestStatusesByID.sql" />
@@ -57,7 +57,6 @@
     <file url="file://$PROJECT_DIR$/src/main/resources/sql/Research/GetResearchJobsInQueue.sql" />
     <file url="file://$PROJECT_DIR$/src/main/resources/sql/SearchSite/GetSearchSiteByID.sql" />
     <file url="file://$PROJECT_DIR$/src/main/resources/sql/ServerConfiguration/GetServerConfiguration.sql" />
-    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Spawn/GetBySpawnTableID.sql" />
     <file url="file://$PROJECT_DIR$/src/main/resources/sql/Storage/GetByContainerID.sql" />
     <file url="file://$PROJECT_DIR$/src/main/resources/sql/Structure/GetAllConstructionSites.sql" />
     <file url="file://$PROJECT_DIR$/src/main/resources/sql/Structure/GetAllFlagsInArea.sql" />

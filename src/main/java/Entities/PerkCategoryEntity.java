@@ -3,12 +3,12 @@ package Entities;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "AbilityCategories")
-public class AbilityCategoryEntity {
+@Table(name = "PerkCategories")
+public class PerkCategoryEntity {
 
     @Id
-    @Column(name = "AbilityCategoryID")
-    private int abilityCategoryID;
+    @Column(name = "PerkCategoryID")
+    private int perkCategoryID;
 
     @Column(name = "Name")
     private String name;
@@ -16,12 +16,12 @@ public class AbilityCategoryEntity {
     @Column(name = "IsActive")
     private boolean isActive;
 
-    public int getAbilityCategoryID() {
-        return abilityCategoryID;
+    public int getPerkCategoryID() {
+        return perkCategoryID;
     }
 
-    public void setAbilityCategoryID(int abilityCategoryID) {
-        this.abilityCategoryID = abilityCategoryID;
+    public void setPerkCategoryID(int perkCategoryID) {
+        this.perkCategoryID = perkCategoryID;
     }
 
     public String getName() {

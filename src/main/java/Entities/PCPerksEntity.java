@@ -4,13 +4,13 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name="PCLearnedAbilities")
-public class PCLearnedAbilityEntity {
+@Table(name="PCPerks")
+public class PCPerksEntity {
 
     @Id
-    @Column(name = "PCLearnedAbilityID")
+    @Column(name = "PCPerkID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int pcAbilityID;
+    private int pcPerkID;
 
     @Column(name = "PlayerID")
     private String playerID;
@@ -19,15 +19,15 @@ public class PCLearnedAbilityEntity {
     private Timestamp acquiredDate;
 
     @ManyToOne(fetch=FetchType.EAGER)
-    @JoinColumn(name = "AbilityID")
-    private AbilityEntity ability;
+    @JoinColumn(name = "PerkID")
+    private PerkEntity perk;
 
     public int getPcBlueprintID() {
-        return pcAbilityID;
+        return pcPerkID;
     }
 
     public void setPcBlueprintID(int pcAbilityID) {
-        this.pcAbilityID = pcAbilityID;
+        this.pcPerkID = pcAbilityID;
     }
 
     public String getPlayerID() {
@@ -46,11 +46,11 @@ public class PCLearnedAbilityEntity {
         this.acquiredDate = acquiredDate;
     }
 
-    public AbilityEntity getAbility() {
-        return ability;
+    public PerkEntity getPerk() {
+        return perk;
     }
 
-    public void setAbility(AbilityEntity ability) {
-        this.ability = ability;
+    public void setPerk(PerkEntity perk) {
+        this.perk = perk;
     }
 }

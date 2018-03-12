@@ -1,6 +1,5 @@
 package GameSystems;
 
-import Abilities.IAbility;
 import Bioware.AddItemPropertyPolicy;
 import Bioware.XP2;
 import Data.Repository.ItemRepository;
@@ -11,7 +10,6 @@ import Helper.ColorToken;
 import Helper.ItemHelper;
 import Helper.ScriptHelper;
 import Item.IActionItem;
-import NWNX.NWNX_Events;
 import NWNX.NWNX_Player;
 import org.nwnx.nwnx2.jvm.*;
 import org.nwnx.nwnx2.jvm.constants.BaseItem;

@@ -3,12 +3,12 @@ package Entities;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "AbilityCooldownCategories")
-public class AbilityCooldownCategoryEntity {
+@Table(name = "CooldownCategories")
+public class CooldownCategoryEntity {
 
     @Id
-    @Column(name = "AbilityCooldownCategoryID")
-    private int abilityCooldownCategoryID;
+    @Column(name = "CooldownCategoryID")
+    private int cooldownCategoryID;
 
     @Column(name = "Name")
     private String name;
@@ -16,12 +16,12 @@ public class AbilityCooldownCategoryEntity {
     @Column(name = "BaseCooldownTime")
     private float BaseCooldownTime;
 
-    public int getAbilityCooldownCategoryID() {
-        return abilityCooldownCategoryID;
+    public int getCooldownCategoryID() {
+        return cooldownCategoryID;
     }
 
-    public void setAbilityCooldownCategoryID(int abilityCooldownCategoryID) {
-        this.abilityCooldownCategoryID = abilityCooldownCategoryID;
+    public void setCooldownCategoryID(int cooldownCategoryID) {
+        this.cooldownCategoryID = cooldownCategoryID;
     }
 
     public String getName() {

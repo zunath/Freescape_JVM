@@ -53,9 +53,9 @@ public class DataAccess {
         _configuration.setProperty("hibernate.c3p0.timeout", "300");
 
         // Link all DB entities to the configuration here.
-        _configuration.addAnnotatedClass(AbilityCategoryEntity.class);
-        _configuration.addAnnotatedClass(AbilityCooldownCategoryEntity.class);
-        _configuration.addAnnotatedClass(AbilityEntity.class);
+        _configuration.addAnnotatedClass(PerkCategoryEntity.class);
+        _configuration.addAnnotatedClass(CooldownCategoryEntity.class);
+        _configuration.addAnnotatedClass(PerkEntity.class);
         _configuration.addAnnotatedClass(ActivePlayerEntity.class);
         _configuration.addAnnotatedClass(AuthorizedDMEntity.class);
         _configuration.addAnnotatedClass(BaseItemTypeEntity.class);
@@ -81,8 +81,8 @@ public class DataAccess {
         _configuration.addAnnotatedClass(KeyItemEntity.class);
         _configuration.addAnnotatedClass(LootTableEntity.class);
         _configuration.addAnnotatedClass(LootTableItemEntity.class);
-        _configuration.addAnnotatedClass(PCAbilityCooldownEntity.class);
-        _configuration.addAnnotatedClass(PCLearnedAbilityEntity.class);
+        _configuration.addAnnotatedClass(PCCooldownEntity.class);
+        _configuration.addAnnotatedClass(PCPerksEntity.class);
         _configuration.addAnnotatedClass(PCBlueprintEntity.class);
         _configuration.addAnnotatedClass(PCKeyItemEntity.class);
         _configuration.addAnnotatedClass(PCMigrationEntity.class);

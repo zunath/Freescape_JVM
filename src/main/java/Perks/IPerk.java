@@ -1,8 +1,8 @@
-package Abilities;
+package Perks;
 
 import org.nwnx.nwnx2.jvm.NWObject;
 
-public interface IAbility {
+public interface IPerk {
     boolean CanCastSpell(NWObject oPC, NWObject oTarget);
     String CannotCastSpellMessage();
     int ManaCost(NWObject oPC, int baseManaCost);

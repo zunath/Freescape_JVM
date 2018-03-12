@@ -7,44 +7,43 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
 import java.sql.Timestamp;
-import java.util.List;
 
-public class MagicRepository {
+public class PerkRepository {
 
-    public AbilityEntity GetAbilityByFeatID(int featID)
+    public PerkEntity GetPerkByFeatID(int featID)
     {
         try(DataContext context = new DataContext())
         {
-            return context.executeSQLSingle("Magic/GetAbilityByFeatID", AbilityEntity.class,
+            return context.executeSQLSingle("Perk/GetPerkByFeatID", PerkEntity.class,
                     new SqlParameter("featID", featID));
         }
     }
 
-    public AbilityEntity GetAbilityByID(int abilityID)
+    public PerkEntity GetPerkByID(int perkID)
     {
         try(DataContext context = new DataContext())
         {
-            return context.executeSQLSingle("Magic/GetAbilityByID", AbilityEntity.class,
-                    new SqlParameter("abilityID", abilityID));
+            return context.executeSQLSingle("Perk/GetPerkByID", PerkEntity.class,
+                    new SqlParameter("perkID", perkID));
         }
     }
 
-    public boolean AddAbilityToPC(String uuid, int abilityID)
+    public boolean AddPerkToPC(String uuid, int perkID)
     {
         boolean addedSuccessfully = false;
-        AbilityEntity ability = GetAbilityByID(abilityID);
+        PerkEntity perk = GetPerkByID(perkID);
 
         try(DataContext context = new DataContext())
         {
-            PCLearnedAbilityEntity entity = context.executeSQLSingle("Magic/GetPCLearnedAbilityByID", PCLearnedAbilityEntity.class,
-                    new SqlParameter("abilityID", abilityID),
+            PCPerksEntity entity = context.executeSQLSingle("Perk/GetPCPerkByID", PCPerksEntity.class,
+                    new SqlParameter("perkID", perkID),
                     new SqlParameter("playerID", uuid));
 
             if(entity == null)
             {
-                entity = new PCLearnedAbilityEntity();
+                entity = new PCPerksEntity();
                 entity.setPlayerID(uuid);
-                entity.setAbility(ability);
+                entity.setPerk(perk);
                 DateTime dt = new DateTime(DateTimeZone.UTC);
                 entity.setAcquiredDate(new Timestamp(dt.getMillis()));
 
@@ -56,20 +55,20 @@ public class MagicRepository {
         return addedSuccessfully;
     }
 
-    public PCAbilityCooldownEntity GetPCCooldownByID(String uuid, int cooldownCategoryID)
+    public PCCooldownEntity GetPCCooldownByID(String uuid, int cooldownCategoryID)
     {
-        PCAbilityCooldownEntity entity;
+        PCCooldownEntity entity;
 
         try(DataContext context = new DataContext())
         {
-            entity = context.executeSQLSingle("Magic/GetPCCooldownByID", PCAbilityCooldownEntity.class,
+            entity = context.executeSQLSingle("Perk/GetPCCooldownByID", PCCooldownEntity.class,
                     new SqlParameter("playerID", uuid),
-                    new SqlParameter("abilityCooldownCategoryID", cooldownCategoryID));
+                    new SqlParameter("cooldownCategoryID", cooldownCategoryID));
 
             if(entity == null)
             {
-                entity = new PCAbilityCooldownEntity();
-                entity.setAbilityCooldownCategoryID(cooldownCategoryID);
+                entity = new PCCooldownEntity();
+                entity.setCooldownCategoryID(cooldownCategoryID);
                 entity.setDateUnlocked(DateTime.now(DateTimeZone.UTC).minusSeconds(1).toDate());
                 entity.setPlayerID(uuid);
             }
@@ -78,7 +77,7 @@ public class MagicRepository {
         return entity;
     }
 
-    public void Save(PCAbilityCooldownEntity entity)
+    public void Save(PCCooldownEntity entity)
     {
         try(DataContext context = new DataContext())
         {
