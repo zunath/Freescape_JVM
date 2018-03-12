@@ -1,31 +1,276 @@
 package Conversation;
 
-import Dialog.DialogBase;
-import Dialog.DialogPage;
-import Dialog.IDialogHandler;
-import Dialog.PlayerDialog;
+import Conversation.ViewModels.PerkMenuViewModel;
+import Data.Repository.PerkRepository;
+import Data.Repository.PlayerRepository;
+import Data.Repository.SkillRepository;
+import Dialog.*;
+import Entities.*;
+import GameObject.PlayerGO;
+import GameSystems.SkillSystem;
+import Helper.ColorToken;
 import org.nwnx.nwnx2.jvm.NWObject;
+
+import java.util.List;
 
 public class ViewPerks extends DialogBase implements IDialogHandler {
     @Override
     public PlayerDialog SetUp(NWObject oPC) {
         PlayerDialog dialog = new PlayerDialog("MainPage");
         DialogPage mainPage = new DialogPage(
-                "<SET LATER>"
+                "<SET LATER>",
+                "View My Perks",
+                "Buy Perks",
+                "Back"
         );
 
-        return null;
+        DialogPage categoryPage = new DialogPage(
+                "Please select a category. Additional options will appear as you increase your skill ranks."
+        );
+
+        DialogPage perkListPage = new DialogPage(
+                "Please select a perk. Additional options will appear as you increase your skill ranks."
+        );
+
+        DialogPage perkDetailsPage = new DialogPage(
+                "<SET LATER>",
+                "Purchase Upgrade",
+                "Back"
+        );
+
+        DialogPage viewMyPerksPage = new DialogPage(
+                "<SET LATER>",
+                "Back"
+        );
+
+        dialog.addPage("MainPage", mainPage);
+        dialog.addPage("CategoryPage", categoryPage);
+        dialog.addPage("PerkListPage", perkListPage);
+        dialog.addPage("PerkDetailsPage", perkDetailsPage);
+        dialog.addPage("ViewMyPerksPage", viewMyPerksPage);
+        return dialog;
     }
 
     @Override
     public void Initialize() {
+        PerkMenuViewModel vm = new PerkMenuViewModel();
+        SetPageHeader("MainPage", GetMainPageHeader());
+        SetDialogCustomData(vm);
+    }
 
+    private String GetMainPageHeader()
+    {
+        PlayerGO pcGO = new PlayerGO(GetPC());
+        PlayerRepository playerRepo = new PlayerRepository();
+        SkillRepository skillRepo = new SkillRepository();
+        PerkRepository perkRepo = new PerkRepository();
+        PlayerEntity pcEntity = playerRepo.GetByPlayerID(pcGO.getUUID());
+
+        int totalSP = skillRepo.GetPCTotalSkillCount(pcGO.getUUID());
+        int totalPerks = perkRepo.GetPCTotalPerkCount(pcGO.getUUID());
+
+        return ColorToken.Green() + "Total SP: " + ColorToken.End() + totalSP + " / " + SkillSystem.SkillCap + "\n" +
+                ColorToken.Green() + "Available SP: " + ColorToken.End() + pcEntity.getUnallocatedSP() + "\n" +
+                ColorToken.Green() + "Total Perks: " + ColorToken.End() + totalPerks + "\n";
+    }
+
+    private void BuildViewMyPerks()
+    {
+        PlayerGO pcGO = new PlayerGO(GetPC());
+        PerkRepository perkRepo = new PerkRepository();
+        List<PCPerkHeaderEntity> perks = perkRepo.GetPCPerksForMenuHeader(pcGO.getUUID());
+
+        String header = "Perks purchased:\n\n";
+        for(PCPerkHeaderEntity perk: perks)
+        {
+            header += perk.getName() + " (Lvl. " + perk.getLevel() + "): " + perk.getBonusDescription() + "\n";
+        }
+
+        SetPageHeader("ViewMyPerksPage", header);
+    }
+
+    private void BuildCategoryList()
+    {
+        PlayerGO pcGO = new PlayerGO(GetPC());
+        PerkRepository perkRepo = new PerkRepository();
+        List<PerkCategoryEntity> categories = perkRepo.GetPerkCategoriesForPC(pcGO.getUUID());
+
+        ClearPageResponses("CategoryPage");
+        for(PerkCategoryEntity category: categories)
+        {
+            AddResponseToPage("CategoryPage", category.getName(), true, category.getPerkCategoryID());
+        }
+        AddResponseToPage("CategoryPage", "Back", true, -1);
+    }
+
+    private void BuildPerkList()
+    {
+        PlayerGO pcGO = new PlayerGO(GetPC());
+        PerkMenuViewModel vm = (PerkMenuViewModel)GetDialogCustomData();
+        PerkRepository perkRepo = new PerkRepository();
+        List<PerkEntity> perks = perkRepo.GetPerksForPC(pcGO.getUUID(), vm.getSelectedCategoryID());
+
+        ClearPageResponses("PerkListPage");
+        for(PerkEntity perk: perks)
+        {
+            AddResponseToPage("PerkListPage", perk.getName(), true, perk.getPerkID());
+        }
+        AddResponseToPage("PerkListPage", "Back", true, -1);
+    }
+
+    private void BuildPerkDetails()
+    {
+        PlayerGO pcGO = new PlayerGO(GetPC());
+        PerkMenuViewModel vm = (PerkMenuViewModel)GetDialogCustomData();
+        PerkRepository perkRepo = new PerkRepository();
+        PerkEntity perk = perkRepo.GetPerkByID(vm.getSelectedPerkID());
+        PCPerksEntity pcPerk = perkRepo.GetPCPerkByID(pcGO.getUUID(), perk.getPerkID());
+        PlayerRepository playerRepo = new PlayerRepository();
+        PlayerEntity player = playerRepo.GetByPlayerID(pcGO.getUUID());
+
+        int rank = pcPerk == null ? 0 : pcPerk.getPerkLevel();
+        int maxRank = perk.getLevels().size();
+        String currentBonus = "N/A";
+        String nextBonus = "N/A";
+        String price = "N/A";
+
+        if(CanPerkBeUpgraded(perk, pcPerk, player))
+        {
+            SetResponseVisible("PerkDetailsPage", 1, true);
+        }
+        else
+        {
+            SetResponseVisible("PerkDetailsPage", 1, false);
+        }
+
+        if(rank > 0)
+        {
+            currentBonus = perk.getLevels().get(rank-1).getDescription();
+        }
+        if(rank+1 < maxRank)
+        {
+            nextBonus = perk.getLevels().get(rank).getDescription();
+            price = perk.getLevels().get(rank-1).getPrice() + " SP (Available: " + player.getUnallocatedSP() + " SP)";
+        }
+
+        String header = ColorToken.Green() + "Name: " + ColorToken.End() + perk.getName() + "\n" +
+                ColorToken.Green() + "Rank: " + ColorToken.End() + rank + " / " + maxRank + "\n" +
+                ColorToken.Green() + "Price: " + ColorToken.End() + price + "\n" +
+                ColorToken.Green() + "Description: " + ColorToken.End() + perk.getDescription() + "\n" +
+                ColorToken.Green() + "Current Bonus: " + ColorToken.End() + currentBonus + "\n" +
+                ColorToken.Green() + "Next Bonus: " + ColorToken.End() + nextBonus + "\n";
+        SetPageHeader("PerkDetailsPage", header);
+
+    }
+
+    private boolean CanPerkBeUpgraded(PerkEntity perk, PCPerksEntity pcPerk, PlayerEntity player)
+    {
+        SkillRepository skillRepo = new SkillRepository();
+        int rank = pcPerk == null ? 0 : pcPerk.getPerkLevel();
+        int maxRank = perk.getLevels().size();
+        if(rank+1 > maxRank) return false;
+
+        PerkLevelEntity level = perk.getLevels().get(rank+1);
+        if(player.getUnallocatedSP() < level.getPrice()) return false;
+
+        for(PerkLevelSkillRequirementEntity req: level.getSkillRequirements())
+        {
+            PCSkillEntity pcSkill = skillRepo.GetPCSkillByID(player.getPCID(), req.getSkill().getSkillID());
+            if(pcSkill.getRank() < req.getRequiredRank()) return false;
+        }
+
+        return true;
     }
 
     @Override
     public void DoAction(NWObject oPC, String pageName, int responseID) {
+        switch (pageName)
+        {
+            case "MainPage":
+                HandleMainPageResponses(responseID);
+                break;
+            case "ViewMyPerksPage":
+                HandleViewMyPerksResponses(responseID);
+                break;
+            case "CategoryPage":
+                HandleCategoryResponses(responseID);
+                break;
+            case "PerkListPage":
+                HandlePerkListResponses(responseID);
+                break;
+            case "PerkDetailsPage":
+                HandlePerkDetailsResponses(responseID);
+                break;
 
+        }
     }
+
+    private void HandleMainPageResponses(int responseID)
+    {
+        switch (responseID)
+        {
+            case 1: // View My Perks
+                BuildViewMyPerks();
+                ChangePage("ViewMyPerksPage");
+                break;
+            case 2: // Buy Perks
+                BuildCategoryList();
+                ChangePage("CategoryPage");
+                break;
+            case 3: // Back
+                SwitchConversation("RestMenu");
+                break;
+        }
+    }
+
+    private void HandleViewMyPerksResponses(int responseID)
+    {
+        ChangePage("MainPage");
+    }
+
+    private void HandleCategoryResponses(int responseID)
+    {
+        PerkMenuViewModel vm = (PerkMenuViewModel)GetDialogCustomData();
+        DialogResponse response = GetResponseByID("CategoryPage", responseID);
+        if((int)response.getCustomData() == -1)
+        {
+            ChangePage("MainPage");
+            return;
+        }
+
+        vm.setSelectedCategoryID((int)response.getCustomData());
+        BuildPerkList();
+        ChangePage("PerkListPage");
+    }
+
+    private void HandlePerkListResponses(int responseID)
+    {
+        PerkMenuViewModel vm = (PerkMenuViewModel)GetDialogCustomData();
+        DialogResponse response = GetResponseByID("PerkListPage", responseID);
+        if((int)response.getCustomData() == -1)
+        {
+            ChangePage("CategoryPage");
+            return;
+        }
+
+        vm.setSelectedPerkID((int)response.getCustomData());
+        BuildPerkDetails();
+        ChangePage("PerkDetailsPage");
+    }
+
+    private void HandlePerkDetailsResponses(int responseID)
+    {
+        switch(responseID)
+        {
+            case 1: // Purchase Upgrade
+                break;
+            case 2: // Back
+                BuildPerkList();
+                ChangePage("PerkListPage");
+                break;
+        }
+    }
+
 
     @Override
     public void EndDialog() {

@@ -1,6 +1,10 @@
 package Entities;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "Perks")
@@ -13,11 +17,8 @@ public class PerkEntity {
     @Column(name = "Name")
     private String name;
 
-    @Column(name = "Price")
-    private int price;
-
     @Column(name = "FeatID")
-    private int featID;
+    private Integer featID;
 
     @Column(name = "IsActive")
     private boolean isActive;
@@ -45,6 +46,10 @@ public class PerkEntity {
     @Column(name = "IsQueuedWeaponSkill")
     private boolean isQueuedWeaponSkill;
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "perk", fetch = FetchType.EAGER, orphanRemoval = true)
+    @Fetch(value = FetchMode.SUBSELECT)
+    private List<PerkLevelEntity> levels;
+
     public int getPerkID() {
         return perkID;
     }
@@ -61,11 +66,11 @@ public class PerkEntity {
         this.name = name;
     }
 
-    public int getFeatID() {
+    public Integer getFeatID() {
         return featID;
     }
 
-    public void setFeatID(int featID) {
+    public void setFeatID(Integer featID) {
         this.featID = featID;
     }
 
@@ -133,11 +138,11 @@ public class PerkEntity {
         isQueuedWeaponSkill = queuedWeaponSkill;
     }
 
-    public int getPrice() {
-        return price;
+    public List<PerkLevelEntity> getLevels() {
+        return levels;
     }
 
-    public void setPrice(int price) {
-        this.price = price;
+    public void setLevels(List<PerkLevelEntity> levels) {
+        this.levels = levels;
     }
 }

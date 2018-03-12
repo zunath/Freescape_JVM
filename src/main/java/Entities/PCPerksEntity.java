@@ -22,6 +22,9 @@ public class PCPerksEntity {
     @JoinColumn(name = "PerkID")
     private PerkEntity perk;
 
+    @Column(name = "PerkLevel")
+    private int perkLevel;
+
     public int getPcBlueprintID() {
         return pcPerkID;
     }
@@ -52,5 +55,21 @@ public class PCPerksEntity {
 
     public void setPerk(PerkEntity perk) {
         this.perk = perk;
+    }
+
+    public int getPcPerkID() {
+        return pcPerkID;
+    }
+
+    public void setPcPerkID(int pcPerkID) {
+        this.pcPerkID = pcPerkID;
+    }
+
+    public int getPerkLevel() {
+        return perkLevel;
+    }
+
+    public void setPerkLevel(int perkLevel) {
+        this.perkLevel = perkLevel;
     }
 }

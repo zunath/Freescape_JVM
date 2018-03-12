@@ -16,6 +16,9 @@ public class PerkCategoryEntity {
     @Column(name = "IsActive")
     private boolean isActive;
 
+    @Column(name = "Sequence")
+    private int sequence;
+
     public int getPerkCategoryID() {
         return perkCategoryID;
     }
@@ -38,5 +41,13 @@ public class PerkCategoryEntity {
 
     public void setActive(boolean active) {
         isActive = active;
+    }
+
+    public int getSequence() {
+        return sequence;
+    }
+
+    public void setSequence(int sequence) {
+        this.sequence = sequence;
     }
 }
