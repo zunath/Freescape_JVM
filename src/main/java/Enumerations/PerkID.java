@@ -7,4 +7,6 @@ public class PerkID {
     public static final int VanityBlueprints = 4;
     public static final int TerritoryMarkerBlueprints = 5;
     public static final int CraftingDeviceBlueprints = 6;
+    public static final int StorageContainerBlueprints = 7;
+    public static final int ResourceBundleBlueprints = 8;
 }

@@ -60,6 +60,9 @@ public class StructureBlueprintEntity {
     @Column(name = "RequiredPerkLevel")
     private int requiredPerkLevel;
 
+    @Column(name = "GivesSkillXP")
+    private boolean GivesSkillXP;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "blueprint", fetch = FetchType.EAGER, orphanRemoval = true)
     @Fetch(value = FetchMode.SUBSELECT)
     private List<StructureComponentEntity> components;
@@ -210,5 +213,13 @@ public class StructureBlueprintEntity {
 
     public void setRequiredPerkLevel(int requiredPerkLevel) {
         this.requiredPerkLevel = requiredPerkLevel;
+    }
+
+    public boolean givesSkillXP() {
+        return GivesSkillXP;
+    }
+
+    public void setGivesSkillXP(boolean givesSkillXP) {
+        GivesSkillXP = givesSkillXP;
     }
 }

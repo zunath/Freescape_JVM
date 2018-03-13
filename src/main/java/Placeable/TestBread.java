@@ -39,7 +39,7 @@ public class TestBread implements IScriptEventHandler {
 
 /*
         StructureRepository repo = new StructureRepository();
-        int id = 3;
+        int id = 125;
         NWObject area = NWScript.getObjectByTag("struc_importer", 0);
         for(NWObject obj: NWScript.getObjectsInArea(area))
         {
@@ -50,7 +50,7 @@ public class TestBread implements IScriptEventHandler {
 
             StructureBlueprintEntity bp = new StructureBlueprintEntity();
             bp.setStructureBlueprintID(id);
-            bp.setStructureCategoryID(38);
+            bp.setStructureCategoryID(51);
             bp.setName(name);
             bp.setDescription("");
             bp.setResref(NWScript.getResRef(obj));
@@ -69,7 +69,7 @@ public class TestBread implements IScriptEventHandler {
             id++;
         }
 
-*/
 
+*/
     }
 }

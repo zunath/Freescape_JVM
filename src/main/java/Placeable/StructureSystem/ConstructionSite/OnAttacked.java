@@ -114,8 +114,11 @@ public class OnAttacked implements IScriptEventHandler {
             repo.Save(entity);
             DurabilitySystem.RunItemDecay(oPC, weapon);
 
-            int xp = (int)SkillSystem.CalculateSkillAdjustedXP(100, 0, rank);
-            SkillSystem.GiveSkillXP(oPC, SkillID.Construction, xp);
+            if(entity.getBlueprint().givesSkillXP())
+            {
+                int xp = (int)SkillSystem.CalculateSkillAdjustedXP(100, 0, rank);
+                SkillSystem.GiveSkillXP(oPC, SkillID.Construction, xp);
+            }
 
             // Speedy Builder - Grants haste for 8 seconds
             int perkChance = PerkSystem.GetPCPerkLevel(oPC, PerkID.SpeedyBuilder) * 10;
