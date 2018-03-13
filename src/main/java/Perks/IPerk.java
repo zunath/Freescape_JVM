@@ -10,6 +10,7 @@ public interface IPerk {
     float CooldownTime(NWObject oPC, float baseCooldownTime);
     void OnImpact(NWObject oPC, NWObject oTarget);
     void OnPurchased(NWObject oPC);
+    void OnRemoved(NWObject oPC);
     boolean IsHostile();
 
 }

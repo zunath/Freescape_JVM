@@ -5,16 +5,21 @@ import Entities.ConstructionSiteComponentEntity;
 import Entities.ConstructionSiteEntity;
 import Common.IScriptEventHandler;
 import Data.Repository.StructureRepository;
+import Enumerations.PerkID;
 import Enumerations.SkillID;
+import GameObject.PlayerGO;
 import GameSystems.DurabilitySystem;
+import GameSystems.PerkSystem;
 import GameSystems.SkillSystem;
 import GameSystems.StructureSystem;
 import Helper.ColorToken;
 import Helper.ItemHelper;
+import org.nwnx.nwnx2.jvm.NWEffect;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.NWScript;
 import org.nwnx.nwnx2.jvm.Scheduler;
 import org.nwnx.nwnx2.jvm.constants.BaseItem;
+import org.nwnx.nwnx2.jvm.constants.DurationType;
 import org.nwnx.nwnx2.jvm.constants.InventorySlot;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -60,7 +65,7 @@ public class OnAttacked implements IScriptEventHandler {
         StructureRepository repo = new StructureRepository();
         ConstructionSiteEntity entity = repo.GetConstructionSiteByID(constructionSiteID);
         int rank = SkillSystem.GetPCSkill(oPC, SkillID.Construction).getRank();
-        int mangleChance = CalculateMangleChance(entity.getBlueprint().getLevel(), rank);
+        int mangleChance = CalculateMangleChance(oPC, entity.getBlueprint().getLevel(), rank);
         boolean isMangle = ThreadLocalRandom.current().nextInt(100)+1 <= mangleChance;
         boolean foundResource = false;
         String updateMessage = "You lack the necessary resources...";
@@ -103,6 +108,13 @@ public class OnAttacked implements IScriptEventHandler {
 
             int xp = (int)SkillSystem.CalculateSkillAdjustedXP(100, 0, rank);
             SkillSystem.GiveSkillXP(oPC, SkillID.Construction, xp);
+
+            // Speedy Builder - Grants haste for 8 seconds
+            int perkChance = PerkSystem.GetPCPerkLevel(oPC, PerkID.SpeedyBuilder) * 10;
+            if(ThreadLocalRandom.current().nextInt(100) + 1 <= perkChance)
+            {
+                NWScript.applyEffectToObject(DurationType.TEMPORARY, NWScript.effectHaste(), oPC, 8.0f);
+            }
         }
         else
         {
@@ -110,14 +122,19 @@ public class OnAttacked implements IScriptEventHandler {
         }
     }
 
-    private static int CalculateMangleChance(int level, int rank)
+    private static int CalculateMangleChance(NWObject oPC, int level, int rank)
     {
+        PlayerGO pcGO = new PlayerGO(oPC);
+        int perkLevel = PerkSystem.GetPCPerkLevel(oPC, PerkID.MangleMaster);
         int delta = level - rank;
-        if(delta <= 3) return 0;
+        int perkReduction = perkLevel * 5;
+        int mangleChance;
+        if(delta <= 3) mangleChance = 0;
+        else if(delta <= 4) mangleChance = 15;
+        else if(delta <= 5) mangleChance = 25;
+        else if(delta <= 6) mangleChance = 50;
+        else mangleChance = 95;
 
-        if(delta <= 4) return 20;
-        else if(delta <= 5) return 35;
-        else if(delta <= 6) return 50;
-        else return 95;
+        return mangleChance - perkReduction;
     }
 }

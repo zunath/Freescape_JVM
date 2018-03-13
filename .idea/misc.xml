@@ -10,6 +10,7 @@
   <component name="ProjectPlainTextFileTypeManager">
     <file url="file://$PROJECT_DIR$/src/main/resources/sql/ActivityLogging/GetChatChannelByID.sql" />
     <file url="file://$PROJECT_DIR$/src/main/resources/sql/AuthorizedDM/GetDMByCDKey.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Cooldown/GetPCCooldownByID.sql" />
     <file url="file://$PROJECT_DIR$/src/main/resources/sql/Craft/GetAllCrafts.sql" />
     <file url="file://$PROJECT_DIR$/src/main/resources/sql/Craft/GetBlueprintByID.sql" />
     <file url="file://$PROJECT_DIR$/src/main/resources/sql/Craft/GetCraftByID.sql" />
@@ -37,7 +38,6 @@
     <file url="file://$PROJECT_DIR$/src/main/resources/sql/PCMigration/GetByMigrationID.sql" />
     <file url="file://$PROJECT_DIR$/src/main/resources/sql/PCOutfit/GetByUUID.sql" />
     <file url="file://$PROJECT_DIR$/src/main/resources/sql/Perk/GetActivePerkCategories.sql" />
-    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Perk/GetPCCooldownByID.sql" />
     <file url="file://$PROJECT_DIR$/src/main/resources/sql/Perk/GetPCPerkByID.sql" />
     <file url="file://$PROJECT_DIR$/src/main/resources/sql/Perk/GetPCPerksByCategoryID.sql" />
     <file url="file://$PROJECT_DIR$/src/main/resources/sql/Perk/GetPerkByFeatID.sql" />

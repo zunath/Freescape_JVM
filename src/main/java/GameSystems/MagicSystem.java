@@ -1,5 +1,6 @@
 package GameSystems;
 
+import Data.Repository.CooldownRepository;
 import Perks.IPerk;
 import Bioware.Position;
 import Data.Repository.PerkRepository;
@@ -30,11 +31,12 @@ public class MagicSystem {
     public static void OnFeatUsed(NWObject pc)
     {
         PlayerRepository playerRepo = new PlayerRepository();
-        PerkRepository repo = new PerkRepository();
+        PerkRepository perkRepo = new PerkRepository();
+        CooldownRepository cdRepo = new CooldownRepository();
         PlayerGO pcGO = new PlayerGO(pc);
         int featID = NWNX_Events.OnFeatUsed_GetFeatID();
         NWObject target =  NWNX_Events.OnFeatUsed_GetTarget();
-        PerkEntity entity = repo.GetPerkByFeatID(featID);
+        PerkEntity entity = perkRepo.GetPerkByFeatID(featID);
 
         if(entity == null) return;
         IPerk perk = (IPerk) ScriptHelper.GetClassByName("Perks." + entity.getJavaScriptName());
@@ -77,7 +79,7 @@ public class MagicSystem {
         }
 
         // Check cooldown
-        PCCooldownEntity pcCooldown = repo.GetPCCooldownByID(pcGO.getUUID(), entity.getCooldown().getCooldownCategoryID());
+        PCCooldownEntity pcCooldown = cdRepo.GetPCCooldownByID(pcGO.getUUID(), entity.getCooldown().getCooldownCategoryID());
         DateTime unlockDateTime = new DateTime(pcCooldown.getDateUnlocked());
         DateTime now = DateTime.now(DateTimeZone.UTC);
 
@@ -196,15 +198,15 @@ public class MagicSystem {
     private static void ApplyCooldown(NWObject pc, CooldownCategoryEntity cooldown, IPerk ability)
     {
         PlayerGO pcGO = new PlayerGO(pc);
-        PerkRepository magicRepo = new PerkRepository();
+        CooldownRepository cdRepo = new CooldownRepository();
         float finalCooldown = ability.CooldownTime(pc, cooldown.getBaseCooldownTime());
         int cooldownSeconds = (int)finalCooldown;
         int cooldownMillis = (int)((finalCooldown - cooldownSeconds) * 100);
 
-        PCCooldownEntity pcCooldown = magicRepo.GetPCCooldownByID(pcGO.getUUID(), cooldown.getCooldownCategoryID());
+        PCCooldownEntity pcCooldown = cdRepo.GetPCCooldownByID(pcGO.getUUID(), cooldown.getCooldownCategoryID());
         DateTime unlockDate = DateTime.now(DateTimeZone.UTC).plusSeconds(cooldownSeconds).plusMillis(cooldownMillis);
         pcCooldown.setDateUnlocked(unlockDate.toDate());
-        magicRepo.Save(pcCooldown);
+        cdRepo.Save(pcCooldown);
     }
 
     private static void CheckForSpellInterruption(final NWObject pc, final String spellUUID, final NWVector position)
