@@ -4,6 +4,7 @@ import Dialog.*;
 import Entities.*;
 import Enumerations.SkillID;
 import Enumerations.StructurePermission;
+import GameObject.PlayerGO;
 import GameSystems.SkillSystem;
 import Helper.ColorToken;
 import Conversation.ViewModels.ConstructionSiteMenuModel;
@@ -340,12 +341,13 @@ public class ConstructionSite extends DialogBase implements IDialogHandler {
 
     private void LoadCategoryPageResponses()
     {
+        PlayerGO pcGO = new PlayerGO(GetPC());
         ConstructionSiteMenuModel model = GetModel();
         StructureRepository repo = new StructureRepository();
         DialogPage page = GetPageByName("BlueprintCategoryPage");
         page.getResponses().clear();
 
-        List<StructureCategoryEntity> categories = repo.GetStructureCategoriesByType(model.isTerritoryFlag());
+        List<StructureCategoryEntity> categories = repo.GetStructureCategoriesByType(pcGO.getUUID(), model.isTerritoryFlag());
 
         for(StructureCategoryEntity category : categories)
         {

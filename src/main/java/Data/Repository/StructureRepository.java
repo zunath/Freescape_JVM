@@ -60,12 +60,13 @@ public class StructureRepository {
         }
     }
 
-    public List<StructureCategoryEntity> GetStructureCategoriesByType(boolean isTerritoryFlagCategory)
+    public List<StructureCategoryEntity> GetStructureCategoriesByType(String uuid, boolean isTerritoryFlagCategory)
     {
         try(DataContext context = new DataContext())
         {
             return context.executeSQLList("Structure/GetStructureCategoriesByType", StructureCategoryEntity.class,
-                    new SqlParameter("isTerritoryFlagCategory", isTerritoryFlagCategory));
+                    new SqlParameter("isTerritoryFlagCategory", isTerritoryFlagCategory),
+                    new SqlParameter("playerID", uuid));
         }
     }
 

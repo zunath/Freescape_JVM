@@ -87,7 +87,7 @@ public class ViewPerks extends DialogBase implements IDialogHandler {
         PerkRepository perkRepo = new PerkRepository();
         List<PCPerkHeaderEntity> perks = perkRepo.GetPCPerksForMenuHeader(pcGO.getUUID());
 
-        StringBuilder header = new StringBuilder("Perks purchased:\n\n");
+        StringBuilder header = new StringBuilder(ColorToken.Green() + "Perks purchased:" + ColorToken.End() + "\n\n");
         for(PCPerkHeaderEntity perk: perks)
         {
             header.append(perk.getName()).append(" (Lvl. ").append(perk.getLevel()).append(") ").append("\n");
