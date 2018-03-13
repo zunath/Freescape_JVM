@@ -14,7 +14,8 @@ SELECT sb.StructureBlueprintID ,
        sb.RPPerSecond,
        sb.Level,
 	   sb.PerkID,
-	   sb.RequiredPerkLevel
+	   sb.RequiredPerkLevel,
+	   sb.GivesSkillXP
 FROM dbo.StructureBlueprints AS sb
 WHERE sb.StructureBlueprintID IN (
 	SELECT DISTINCT sb2.StructureBlueprintID
