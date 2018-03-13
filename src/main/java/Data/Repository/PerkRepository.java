@@ -6,7 +6,6 @@ import Entities.*;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 public class PerkRepository {
@@ -67,6 +66,14 @@ public class PerkRepository {
         }
     }
 
+    public void Save(PCPerksEntity pcPerk)
+    {
+        try(DataContext context = new DataContext())
+        {
+            context.getSession().saveOrUpdate(pcPerk);
+        }
+    }
+
     // Old methods
 
     public PerkEntity GetPerkByFeatID(int featID)
@@ -78,32 +85,6 @@ public class PerkRepository {
         }
     }
 
-    public boolean AddPerkToPC(String uuid, int perkID)
-    {
-        boolean addedSuccessfully = false;
-        PerkEntity perk = GetPerkByID(perkID);
-
-        try(DataContext context = new DataContext())
-        {
-            PCPerksEntity entity = context.executeSQLSingle("Perk/GetPCPerkByID", PCPerksEntity.class,
-                    new SqlParameter("perkID", perkID),
-                    new SqlParameter("playerID", uuid));
-
-            if(entity == null)
-            {
-                entity = new PCPerksEntity();
-                entity.setPlayerID(uuid);
-                entity.setPerk(perk);
-                DateTime dt = new DateTime(DateTimeZone.UTC);
-                entity.setAcquiredDate(new Timestamp(dt.getMillis()));
-
-                context.getSession().saveOrUpdate(entity);
-                addedSuccessfully = true;
-            }
-        }
-
-        return addedSuccessfully;
-    }
 
     public PCCooldownEntity GetPCCooldownByID(String uuid, int cooldownCategoryID)
     {

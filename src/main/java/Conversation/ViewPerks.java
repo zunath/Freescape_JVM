@@ -9,10 +9,17 @@ import Entities.*;
 import GameObject.PlayerGO;
 import GameSystems.SkillSystem;
 import Helper.ColorToken;
+import Helper.ScriptHelper;
+import Perks.IPerk;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.nwnx.nwnx2.jvm.NWObject;
+import org.nwnx.nwnx2.jvm.NWScript;
 
+import java.sql.Timestamp;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class ViewPerks extends DialogBase implements IDialogHandler {
     @Override
     public PlayerDialog SetUp(NWObject oPC) {
@@ -80,13 +87,13 @@ public class ViewPerks extends DialogBase implements IDialogHandler {
         PerkRepository perkRepo = new PerkRepository();
         List<PCPerkHeaderEntity> perks = perkRepo.GetPCPerksForMenuHeader(pcGO.getUUID());
 
-        String header = "Perks purchased:\n\n";
+        StringBuilder header = new StringBuilder("Perks purchased:\n\n");
         for(PCPerkHeaderEntity perk: perks)
         {
-            header += perk.getName() + " (Lvl. " + perk.getLevel() + "): " + perk.getBonusDescription() + "\n";
+            header.append(perk.getName()).append(" (Lvl. ").append(perk.getLevel()).append(") ").append("\n");
         }
 
-        SetPageHeader("ViewMyPerksPage", header);
+        SetPageHeader("ViewMyPerksPage", header.toString());
     }
 
     private void BuildCategoryList()
@@ -133,6 +140,8 @@ public class ViewPerks extends DialogBase implements IDialogHandler {
         String currentBonus = "N/A";
         String nextBonus = "N/A";
         String price = "N/A";
+        PerkLevelEntity currentPerkLevel = FindPerkLevel(perk.getLevels(), rank);
+        PerkLevelEntity nextPerkLevel = FindPerkLevel(perk.getLevels(), rank+1);
 
         if(CanPerkBeUpgraded(perk, pcPerk, player))
         {
@@ -145,22 +154,65 @@ public class ViewPerks extends DialogBase implements IDialogHandler {
 
         if(rank > 0)
         {
-            currentBonus = perk.getLevels().get(rank-1).getDescription();
+            if(currentPerkLevel != null)
+            {
+                currentBonus = currentPerkLevel.getDescription();
+            }
         }
         if(rank+1 < maxRank)
         {
-            nextBonus = perk.getLevels().get(rank).getDescription();
-            price = perk.getLevels().get(rank-1).getPrice() + " SP (Available: " + player.getUnallocatedSP() + " SP)";
+            if(nextPerkLevel != null)
+            {
+                nextBonus = nextPerkLevel.getDescription();
+                price = nextPerkLevel.getPrice() + " SP (Available: " + player.getUnallocatedSP() + " SP)";
+            }
         }
 
-        String header = ColorToken.Green() + "Name: " + ColorToken.End() + perk.getName() + "\n" +
+        StringBuilder header = new StringBuilder(ColorToken.Green() + "Name: " + ColorToken.End() + perk.getName() + "\n" +
                 ColorToken.Green() + "Rank: " + ColorToken.End() + rank + " / " + maxRank + "\n" +
                 ColorToken.Green() + "Price: " + ColorToken.End() + price + "\n" +
                 ColorToken.Green() + "Description: " + ColorToken.End() + perk.getDescription() + "\n" +
                 ColorToken.Green() + "Current Bonus: " + ColorToken.End() + currentBonus + "\n" +
-                ColorToken.Green() + "Next Bonus: " + ColorToken.End() + nextBonus + "\n";
-        SetPageHeader("PerkDetailsPage", header);
+                ColorToken.Green() + "Next Bonus: " + ColorToken.End() + nextBonus + "\n");
 
+        if(nextPerkLevel != null)
+        {
+            List<PerkLevelSkillRequirementEntity> requirements = nextPerkLevel.getSkillRequirements();
+            if(requirements.size() > 0)
+            {
+                SkillRepository skillRepo = new SkillRepository();
+                header.append("\n").append(ColorToken.Green()).append("Next Upgrade Skill Requirements:").append(ColorToken.End()).append("\n\n");
+
+                for(PerkLevelSkillRequirementEntity req: requirements)
+                {
+                    String detailLine = req.getSkill().getName() + " Rank " + req.getRequiredRank();
+                    String colorToken = ColorToken.Red();
+
+                    PCSkillEntity skill = skillRepo.GetPCSkillByID(pcGO.getUUID(), req.getSkill().getSkillID());
+                    if(skill.getRank() >= req.getRequiredRank())
+                    {
+                        colorToken = ColorToken.Green();
+                    }
+
+                    header.append(colorToken).append(detailLine).append(ColorToken.End()).append("\n");
+                }
+            }
+        }
+
+        SetPageHeader("PerkDetailsPage", header.toString());
+
+    }
+
+    private PerkLevelEntity FindPerkLevel(List<PerkLevelEntity> levels, int findLevel)
+    {
+        for(PerkLevelEntity lvl: levels)
+        {
+            if(lvl.getLevel() == findLevel)
+            {
+                return lvl;
+            }
+        }
+        return null;
     }
 
     private boolean CanPerkBeUpgraded(PerkEntity perk, PCPerksEntity pcPerk, PlayerEntity player)
@@ -170,7 +222,9 @@ public class ViewPerks extends DialogBase implements IDialogHandler {
         int maxRank = perk.getLevels().size();
         if(rank+1 > maxRank) return false;
 
-        PerkLevelEntity level = perk.getLevels().get(rank+1);
+        PerkLevelEntity level = FindPerkLevel(perk.getLevels(), rank+1);
+        if(level == null) return false;
+
         if(player.getUnallocatedSP() < level.getPrice()) return false;
 
         for(PerkLevelSkillRequirementEntity req: level.getSkillRequirements())
@@ -260,16 +314,75 @@ public class ViewPerks extends DialogBase implements IDialogHandler {
 
     private void HandlePerkDetailsResponses(int responseID)
     {
+        PerkMenuViewModel vm = (PerkMenuViewModel)GetDialogCustomData();
+
         switch(responseID)
         {
-            case 1: // Purchase Upgrade
+            case 1: // Purchase Upgrade / Confirm Purchase
+                if(vm.isConfirmingPurchase())
+                {
+                    SetResponseText("PerkDetailsPage", 1, "Purchase Upgrade");
+                    DoPerkUpgrade();
+                    BuildPerkDetails();
+                }
+                else
+                {
+                    vm.setConfirmingPurchase(true);
+                    SetResponseText("PerkDetailsPage", 1, "CONFIRM PURCHASE");
+                }
                 break;
             case 2: // Back
+                vm.setConfirmingPurchase(false);
                 BuildPerkList();
                 ChangePage("PerkListPage");
                 break;
         }
     }
+
+    private void DoPerkUpgrade()
+    {
+        PerkMenuViewModel vm = (PerkMenuViewModel)GetDialogCustomData();
+        PerkRepository perkRepo = new PerkRepository();
+        PlayerRepository playerRepo = new PlayerRepository();
+
+        PlayerGO pcGO = new PlayerGO(GetPC());
+        PerkEntity perk = perkRepo.GetPerkByID(vm.getSelectedPerkID());
+        PCPerksEntity pcPerk = perkRepo.GetPCPerkByID(pcGO.getUUID(), vm.getSelectedPerkID());
+        PlayerEntity player = playerRepo.GetByPlayerID(pcGO.getUUID());
+
+        if(CanPerkBeUpgraded(perk, pcPerk, player))
+        {
+            if(pcPerk == null)
+            {
+                pcPerk = new PCPerksEntity();
+                DateTime dt = new DateTime(DateTimeZone.UTC);
+                pcPerk.setAcquiredDate(new Timestamp(dt.getMillis()));
+                pcPerk.setPerk(perk);
+                pcPerk.setPlayerID(pcGO.getUUID());
+                pcPerk.setPerkLevel(0);
+            }
+
+            PerkLevelEntity nextPerkLevel = FindPerkLevel(perk.getLevels(), pcPerk.getPerkLevel()+1);
+            if(nextPerkLevel == null) return;
+
+            pcPerk.setPerkLevel(pcPerk.getPerkLevel() + 1);
+            player.setUnallocatedSP(player.getUnallocatedSP() - nextPerkLevel.getPrice());
+
+            perkRepo.Save(pcPerk);
+            playerRepo.save(player);
+
+            NWScript.sendMessageToPC(GetPC(),ColorToken.Green() + "Perk Purchased: " + perk.getName() + " (Lvl. " + pcPerk.getPerkLevel() + ")");
+
+            IPerk perkScript = (IPerk) ScriptHelper.GetClassByName("Perks." + perk.getJavaScriptName());
+            if(perkScript == null) return;
+            perkScript.OnPurchased(GetPC());
+        }
+        else
+        {
+            NWScript.floatingTextStringOnCreature(ColorToken.Red() + "You cannot purchase the perk at this time." + ColorToken.End(), GetPC(), false);
+        }
+    }
+
 
 
     @Override

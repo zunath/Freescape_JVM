@@ -244,25 +244,6 @@ public class MagicSystem {
         });
     }
 
-
-    public static void LearnAbility(NWObject oPC, NWObject oItem, int abilityID)
-    {
-        PerkRepository repo = new PerkRepository();
-        PlayerGO pcGO = new PlayerGO(oPC);
-        PerkEntity entity = repo.GetPerkByID(abilityID);
-        boolean success = repo.AddPerkToPC(pcGO.getUUID(), abilityID);
-
-        if(success)
-        {
-            NWScript.destroyObject(oItem, 0.0f);
-            NWScript.sendMessageToPC(oPC, "You learn " + entity.getName() + "!");
-        }
-        else
-        {
-            NWScript.sendMessageToPC(oPC, "You already know " + entity.getName() + ".");
-        }
-    }
-
     public static String OnModuleExamine(String existingDescription, NWObject oExaminer, NWObject oExaminedObject)
     {
         if(!NWScript.getIsPC(oExaminer)) return existingDescription;
@@ -299,9 +280,12 @@ public class MagicSystem {
 
         PerkRepository magicRepo = new PerkRepository();
         PerkEntity entity = magicRepo.GetPerkByID(activeWeaponSkillID);
-        IPerk ability = (IPerk) ScriptHelper.GetClassByName("Perks." + entity.getJavaScriptName());
+        IPerk perk = (IPerk) ScriptHelper.GetClassByName("Perks." + entity.getJavaScriptName());
 
-        ability.OnImpact(oPC, oTarget);
+        if(perk != null)
+        {
+            perk.OnImpact(oPC, oTarget);
+        }
 
         NWScript.deleteLocalString(oPC, "ACTIVE_WEAPON_SKILL_UUID");
         NWScript.deleteLocalInt(oPC, "ACTIVE_WEAPON_SKILL");

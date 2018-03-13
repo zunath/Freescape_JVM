@@ -25,12 +25,12 @@ public class PCPerksEntity {
     @Column(name = "PerkLevel")
     private int perkLevel;
 
-    public int getPcBlueprintID() {
+    public int getPCPerkID() {
         return pcPerkID;
     }
 
-    public void setPcBlueprintID(int pcAbilityID) {
-        this.pcPerkID = pcAbilityID;
+    public void setPCPerkID(int pcPerkID) {
+        this.pcPerkID = pcPerkID;
     }
 
     public String getPlayerID() {
@@ -55,14 +55,6 @@ public class PCPerksEntity {
 
     public void setPerk(PerkEntity perk) {
         this.perk = perk;
-    }
-
-    public int getPcPerkID() {
-        return pcPerkID;
-    }
-
-    public void setPcPerkID(int pcPerkID) {
-        this.pcPerkID = pcPerkID;
     }
 
     public int getPerkLevel() {

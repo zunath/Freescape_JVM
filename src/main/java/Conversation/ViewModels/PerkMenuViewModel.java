@@ -4,6 +4,7 @@ public class PerkMenuViewModel {
 
     private int selectedCategoryID;
     private int selectedPerkID;
+    private boolean isConfirmingPurchase;
 
     public int getSelectedCategoryID() {
         return selectedCategoryID;
@@ -19,5 +20,13 @@ public class PerkMenuViewModel {
 
     public void setSelectedPerkID(int selectedPerkID) {
         this.selectedPerkID = selectedPerkID;
+    }
+
+    public boolean isConfirmingPurchase() {
+        return isConfirmingPurchase;
+    }
+
+    public void setConfirmingPurchase(boolean confirmingPurchase) {
+        isConfirmingPurchase = confirmingPurchase;
     }
 }

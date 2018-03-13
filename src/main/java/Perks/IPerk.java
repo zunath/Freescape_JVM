@@ -9,8 +9,7 @@ public interface IPerk {
     float CastingTime(NWObject oPC, float baseCastingTime);
     float CooldownTime(NWObject oPC, float baseCooldownTime);
     void OnImpact(NWObject oPC, NWObject oTarget);
-    void OnEquip(NWObject oPC);
-    void OnUnequip(NWObject oPC);
+    void OnPurchased(NWObject oPC);
     boolean IsHostile();
 
 }
