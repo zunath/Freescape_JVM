@@ -53,6 +53,13 @@ public class StructureBlueprintEntity {
     @Column(name = "Level")
     private int level;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "PerkID")
+    private PerkEntity perk;
+
+    @Column(name = "RequiredPerkLevel")
+    private int requiredPerkLevel;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "blueprint", fetch = FetchType.EAGER, orphanRemoval = true)
     @Fetch(value = FetchMode.SUBSELECT)
     private List<StructureComponentEntity> components;
@@ -187,5 +194,21 @@ public class StructureBlueprintEntity {
 
     public void setLevel(int level) {
         this.level = level;
+    }
+
+    public PerkEntity getPerk() {
+        return perk;
+    }
+
+    public void setPerk(PerkEntity perk) {
+        this.perk = perk;
+    }
+
+    public int getRequiredPerkLevel() {
+        return requiredPerkLevel;
+    }
+
+    public void setRequiredPerkLevel(int requiredPerkLevel) {
+        this.requiredPerkLevel = requiredPerkLevel;
     }
 }

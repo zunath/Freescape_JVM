@@ -1,10 +1,10 @@
 package Placeable.StructureSystem.ConstructionSite;
 
 
-import Entities.ConstructionSiteComponentEntity;
-import Entities.ConstructionSiteEntity;
 import Common.IScriptEventHandler;
 import Data.Repository.StructureRepository;
+import Entities.ConstructionSiteComponentEntity;
+import Entities.ConstructionSiteEntity;
 import Enumerations.PerkID;
 import Enumerations.SkillID;
 import GameObject.PlayerGO;
@@ -14,7 +14,6 @@ import GameSystems.SkillSystem;
 import GameSystems.StructureSystem;
 import Helper.ColorToken;
 import Helper.ItemHelper;
-import org.nwnx.nwnx2.jvm.NWEffect;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.NWScript;
 import org.nwnx.nwnx2.jvm.Scheduler;
@@ -78,7 +77,16 @@ public class OnAttacked implements IScriptEventHandler {
                 NWObject item = NWScript.getItemPossessedBy(oPC, comp.getStructureComponent().getResref());
                 if(NWScript.getIsObjectValid(item))
                 {
-                    ItemHelper.ReduceItemStack(item);
+                    int reuseChance = isMangle ? 0 : PerkSystem.GetPCPerkLevel(oPC, PerkID.ConservativeConstruction) * 2;
+                    if(ThreadLocalRandom.current().nextInt(100) + 1 <= reuseChance)
+                    {
+                        NWScript.sendMessageToPC(oPC, "You conserve a resource...");
+                    }
+                    else
+                    {
+                        ItemHelper.ReduceItemStack(item);
+                    }
+
                     if(isMangle)
                     {
                         NWScript.sendMessageToPC(oPC, ColorToken.Red() + "You mangle a resource due to your lack of skill..." + ColorToken.End());

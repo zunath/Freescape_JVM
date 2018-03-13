@@ -3,7 +3,7 @@ package Perks.Construction;
 import Perks.IPerk;
 import org.nwnx.nwnx2.jvm.NWObject;
 
-public class SpeedyBuilder implements IPerk {
+public class ConservativeConstruction implements IPerk {
     @Override
     public boolean CanCastSpell(NWObject oPC, NWObject oTarget) {
         return false;

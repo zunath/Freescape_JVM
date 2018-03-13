@@ -1,8 +1,11 @@
 package Placeable;
 
 import Common.IScriptEventHandler;
+import Data.Repository.StructureRepository;
+import Entities.StructureBlueprintEntity;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.NWScript;
+import org.nwnx.nwnx2.jvm.constants.ObjectType;
 
 public class TestBread implements IScriptEventHandler {
     @Override
@@ -31,9 +34,42 @@ public class TestBread implements IScriptEventHandler {
         //NWScript.applyEffectToObject(DurationType.INSTANT, NWScript.effectDamage(1, DamageType.MAGICAL, DamagePower.NORMAL), oPC, 0.0f);
         //NWScript.applyEffectToObject(DurationType.INSTANT, NWScript.effectHeal(999), oPC, 0.0f);
 
-        NWScript.createItemOnObject("elm_wood", oPC, 1, "");
-        NWScript.createItemOnObject("nails", oPC, 1, "");
+        //NWScript.createItemOnObject("elm_wood", oPC, 1, "");
+        //NWScript.createItemOnObject("nails", oPC, 1, "");
 
+/*
+        StructureRepository repo = new StructureRepository();
+        int id = 3;
+        NWObject area = NWScript.getObjectByTag("struc_importer", 0);
+        for(NWObject obj: NWScript.getObjectsInArea(area))
+        {
+            if(NWScript.getObjectType(obj) != ObjectType.PLACEABLE) continue;
+
+            String customname = NWScript.getLocalString(obj, "NAME");
+            String name = customname.equals("") ? NWScript.getName(obj, false) : customname;
+
+            StructureBlueprintEntity bp = new StructureBlueprintEntity();
+            bp.setStructureBlueprintID(id);
+            bp.setStructureCategoryID(38);
+            bp.setName(name);
+            bp.setDescription("");
+            bp.setResref(NWScript.getResRef(obj));
+            bp.setIsActive(true);
+            bp.setIsTerritoryFlag(false);
+            bp.setIsUseable(false);
+            bp.setItemStorageCount(0);
+            bp.setMaxStructuresCount(0);
+            bp.setMaxBuildDistance(0.0f);
+            bp.setResearchSlots(0);
+            bp.setRpPerSecond(0);
+            bp.setLevel(0);
+
+            repo.Save(bp);
+
+            id++;
+        }
+
+*/
 
     }
 }

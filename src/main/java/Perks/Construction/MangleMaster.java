@@ -35,12 +35,12 @@ public class MangleMaster implements IPerk {
     }
 
     @Override
-    public void OnPurchased(NWObject oPC) {
+    public void OnPurchased(NWObject oPC, int newLevel) {
 
     }
 
     @Override
-    public void OnRemoved(NWObject oPC) {
+    public void OnRemoved(NWObject oPC, int newLevel) {
 
     }
 

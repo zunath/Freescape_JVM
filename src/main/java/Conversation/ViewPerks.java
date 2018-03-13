@@ -333,6 +333,7 @@ public class ViewPerks extends DialogBase implements IDialogHandler {
                 break;
             case 2: // Back
                 vm.setConfirmingPurchase(false);
+                SetResponseText("PerkDetailsPage", 1, "Purchase Upgrade");
                 BuildPerkList();
                 ChangePage("PerkListPage");
                 break;
@@ -375,7 +376,7 @@ public class ViewPerks extends DialogBase implements IDialogHandler {
 
             IPerk perkScript = (IPerk) ScriptHelper.GetClassByName("Perks." + perk.getJavaScriptName());
             if(perkScript == null) return;
-            perkScript.OnPurchased(GetPC());
+            perkScript.OnPurchased(GetPC(), pcPerk.getPerkLevel());
         }
         else
         {
