@@ -77,7 +77,7 @@ public class OnAttacked implements IScriptEventHandler {
                 NWObject item = NWScript.getItemPossessedBy(oPC, comp.getStructureComponent().getResref());
                 if(NWScript.getIsObjectValid(item))
                 {
-                    int reuseChance = isMangle ? 0 : PerkSystem.GetPCPerkLevel(oPC, PerkID.ConservativeConstruction) * 2;
+                    int reuseChance = isMangle ? 0 : PerkSystem.GetPCPerkLevel(oPC, PerkID.ConservativeConstruction) * 2 + PerkSystem.GetPCPerkLevel(oPC, PerkID.Lucky);
                     if(ThreadLocalRandom.current().nextInt(100) + 1 <= reuseChance)
                     {
                         NWScript.sendMessageToPC(oPC, "You conserve a resource...");
@@ -122,6 +122,10 @@ public class OnAttacked implements IScriptEventHandler {
 
             // Speedy Builder - Grants haste for 8 seconds
             int perkChance = PerkSystem.GetPCPerkLevel(oPC, PerkID.SpeedyBuilder) * 10;
+            if(perkChance > 0)
+            {
+                perkChance += PerkSystem.GetPCPerkLevel(oPC, PerkID.Lucky) * 2;
+            }
             if(ThreadLocalRandom.current().nextInt(100) + 1 <= perkChance)
             {
                 NWScript.applyEffectToObject(DurationType.TEMPORARY, NWScript.effectHaste(), oPC, 8.0f);
@@ -136,7 +140,7 @@ public class OnAttacked implements IScriptEventHandler {
     private static int CalculateMangleChance(NWObject oPC, int level, int rank)
     {
         PlayerGO pcGO = new PlayerGO(oPC);
-        int perkLevel = PerkSystem.GetPCPerkLevel(oPC, PerkID.MangleMaster);
+        int perkLevel = PerkSystem.GetPCPerkLevel(oPC, PerkID.MangleMaster) + (PerkSystem.GetPCPerkLevel(oPC, PerkID.Lucky) / 2);
         int delta = level - rank;
         int perkReduction = perkLevel * 5;
         int mangleChance;

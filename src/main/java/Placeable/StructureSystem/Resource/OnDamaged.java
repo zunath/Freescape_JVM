@@ -40,17 +40,21 @@ public class OnDamaged implements IScriptEventHandler {
         int resourceCount = NWScript.getLocalInt(objSelf, "RESOURCE_COUNT");
         String resourceProp = NWScript.getLocalString(objSelf, "RESOURCE_PROP");
         int difficultyRating = NWScript.getLocalInt(objSelf, "RESOURCE_DIFFICULTY_RATING");
-        int baseDurabilityChance = 100;
-        int durabilityChanceReduction = 0;
-        int durabilityLossChance = baseDurabilityChance - durabilityChanceReduction;
         int weaponChanceBonus;
         int skillID;
         int perkChanceBonus;
         int secondResourceChance;
+        int durabilityChanceReduction = 0;
 
         if(activityID == 1) // 1 = Logging
         {
             weaponChanceBonus = weaponGO.getLoggingBonus();
+            if(weaponChanceBonus > 0)
+            {
+                weaponChanceBonus += PerkSystem.GetPCPerkLevel(oPC, PerkID.LoggingAxeExpert) * 5;
+                durabilityChanceReduction = PerkSystem.GetPCPerkLevel(oPC, PerkID.LoggingAxeExpert) * 10 + PerkSystem.GetPCPerkLevel(oPC, PerkID.Lucky);
+            }
+
             skillID = SkillID.Logging;
             perkChanceBonus = PerkSystem.GetPCPerkLevel(oPC, PerkID.Lumberjack) * 5;
             secondResourceChance = PerkSystem.GetPCPerkLevel(oPC, PerkID.PrecisionLogging) * 10;
@@ -58,13 +62,18 @@ public class OnDamaged implements IScriptEventHandler {
         else if(activityID == 2) // Mining
         {
             weaponChanceBonus = weaponGO.getMiningBonus();
+            if(weaponChanceBonus > 0)
+            {
+                weaponChanceBonus += PerkSystem.GetPCPerkLevel(oPC, PerkID.PickaxeExpert) * 5;
+                durabilityChanceReduction = PerkSystem.GetPCPerkLevel(oPC, PerkID.PickaxeExpert) * 10 + PerkSystem.GetPCPerkLevel(oPC, PerkID.Lucky);
+            }
             skillID = SkillID.Mining;
-            perkChanceBonus = PerkSystem.GetPCPerkLevel(oPC, PerkID.Miner) * 5;
+            perkChanceBonus = PerkSystem.GetPCPerkLevel(oPC, PerkID.Miner) * 5 + PerkSystem.GetPCPerkLevel(oPC, PerkID.Lucky);
             secondResourceChance = PerkSystem.GetPCPerkLevel(oPC, PerkID.PrecisionMining) * 10;
         }
         else return;
         PCSkillEntity skill = skillRepo.GetPCSkillByID(pcGO.getUUID(), skillID);
-
+        int durabilityLossChance = 100 - durabilityChanceReduction;
         if(ThreadLocalRandom.current().nextInt() <= durabilityLossChance)
         {
             DurabilitySystem.RunItemDecay(oPC, oWeapon);

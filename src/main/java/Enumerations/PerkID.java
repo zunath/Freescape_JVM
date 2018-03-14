@@ -13,4 +13,9 @@ public class PerkID {
     public static final int Lumberjack = 10;
     public static final int PrecisionMining = 11;
     public static final int PrecisionLogging = 12;
+    public static final int PickaxeExpert = 13;
+    public static final int LoggingAxeExpert = 14;
+    public static final int Lucky = 15;
+    public static final int Health = 16;
+    public static final int Mana = 17;
 }

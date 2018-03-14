@@ -183,6 +183,11 @@ public class ViewPerks extends DialogBase implements IDialogHandler {
                 SkillRepository skillRepo = new SkillRepository();
                 header.append("\n").append(ColorToken.Green()).append("Next Upgrade Skill Requirements:").append(ColorToken.End()).append("\n\n");
 
+                if(requirements.size() <= 0)
+                {
+                    header.append("None\n");
+                }
+
                 for(PerkLevelSkillRequirementEntity req: requirements)
                 {
                     String detailLine = req.getSkill().getName() + " Rank " + req.getRequiredRank();
@@ -196,6 +201,7 @@ public class ViewPerks extends DialogBase implements IDialogHandler {
 
                     header.append(colorToken).append(detailLine).append(ColorToken.End()).append("\n");
                 }
+
             }
         }
 
@@ -323,6 +329,7 @@ public class ViewPerks extends DialogBase implements IDialogHandler {
                 {
                     SetResponseText("PerkDetailsPage", 1, "Purchase Upgrade");
                     DoPerkUpgrade();
+                    vm.setConfirmingPurchase(false);
                     BuildPerkDetails();
                 }
                 else

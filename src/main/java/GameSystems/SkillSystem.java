@@ -5,6 +5,7 @@ import Data.Repository.SkillRepository;
 import Entities.*;
 import Enumerations.CustomAttributeType;
 import Enumerations.CustomItemType;
+import Enumerations.PerkID;
 import Enumerations.SkillID;
 import GameObject.*;
 import NWNX.NWNX_Creature;
@@ -475,7 +476,7 @@ public class SkillSystem {
     }
 
     @SuppressWarnings("ConstantConditions")
-    private static void ApplyStatChanges(NWObject oPC)
+    public static void ApplyStatChanges(NWObject oPC)
     {
         PlayerGO pcGO = new PlayerGO(oPC);
         SkillRepository skillRepo = new SkillRepository();
@@ -536,6 +537,24 @@ public class SkillSystem {
         NWNX_Creature.SetRawAbilityScore(oPC, Ability.INTELLIGENCE, (int)intBonus + pcEntity.getIntBase());
         NWNX_Creature.SetRawAbilityScore(oPC, Ability.WISDOM, (int)wisBonus + pcEntity.getWisBase());
         NWNX_Creature.SetRawAbilityScore(oPC, Ability.CHARISMA, (int)chaBonus + pcEntity.getChaBase());
+
+        // Apply HP
+        int hp = 30 + NWScript.getAbilityModifier(Ability.CONSTITUTION, oPC)  * 5;
+        hp += PerkSystem.GetPCPerkLevel(oPC, PerkID.Health) * 5;
+        if(hp > 255) hp = 255;
+        if(hp < 20) hp = 20;
+        NWNX_Creature.SetMaxHitPointsByLevel(oPC, 1, hp);
+
+        // Apply Mana
+        int mana = 20;
+        mana += (NWScript.getAbilityModifier(Ability.INTELLIGENCE, oPC) +
+                NWScript.getAbilityModifier(Ability.WISDOM, oPC) +
+                NWScript.getAbilityModifier(Ability.CHARISMA, oPC)) * 5;
+        mana += PerkSystem.GetPCPerkLevel(oPC, PerkID.Mana) * 5;
+        if(mana < 0) mana = 0;
+        pcEntity.setMaxMana(mana);
+
+        playerRepo.save(pcEntity);
 
     }
 

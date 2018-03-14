@@ -52,8 +52,6 @@ public class PlayerInitializationSystem {
             NWNX_Creature.AddFeatByLevel(oPC, Feat.WEAPON_PROFICIENCY_MARTIAL, 1);
             NWNX_Creature.AddFeatByLevel(oPC, Feat.WEAPON_PROFICIENCY_SIMPLE, 1);
 
-            NWNX_Creature.SetMaxHitPointsByLevel(oPC, 1, 30);
-
             for(int iCurSkill = 1; iCurSkill <= 27; iCurSkill++)
             {
                 NWNX_Creature.SetSkillRank(oPC, iCurSkill-1, 0);
@@ -69,11 +67,11 @@ public class PlayerInitializationSystem {
                 NWNX_Creature.RemoveKnownSpell(oPC, classID, 0, index);
             }
 
-            // Save to database
             PlayerRepository repo = new PlayerRepository();
             PlayerEntity entity = pcGO.createEntity();
             repo.save(entity);
 
+            SkillSystem.ApplyStatChanges(oPC);
             Scheduler.delay(oPC, 1000, () -> NWScript.applyEffectToObject(DurationType.INSTANT, NWScript.effectHeal(999), oPC, 0.0f));
         }
     }
