@@ -11,18 +11,14 @@ SELECT sb.StructureBlueprintID ,
        sb.MaxStructuresCount ,
        sb.MaxBuildDistance ,
        sb.ResearchSlots ,
-       sb.RPPerSecond,
-       sb.Level,
-	   sb.PerkID,
-	   sb.RequiredPerkLevel,
-	   sb.GivesSkillXP
-FROM dbo.StructureBlueprints AS sb
-WHERE sb.StructureBlueprintID IN (
-	SELECT DISTINCT sb2.StructureBlueprintID
-	FROM dbo.StructureBlueprints AS sb2
-	LEFT JOIN dbo.PCPerks pcp ON (sb2.PerkID IS NULL OR pcp.PerkID = sb2.PerkID) AND (pcp.PerkLevel >= sb2.RequiredPerkLevel)
-	WHERE sb2.IsActive = 1
-		AND sb2.StructureCategoryID = :structureCategoryID
-		AND (sb2.Level <= :rank + 2 )
-)
-ORDER BY sb.Name ASC
+       sb.RPPerSecond ,
+       sb.Level ,
+       sb.PerkID ,
+       sb.RequiredPerkLevel ,
+       sb.GivesSkillXP
+FROM dbo.StructureBlueprints sb
+OUTER APPLY dbo.fn_GetPlayerEffectivePerkLevel(:playerID, sb.PerkID, :rank + 2) pcp
+WHERE sb.IsActive = 1
+	AND sb.StructureCategoryID = :structureCategoryID
+	AND (sb.Level <= :rank + 2)
+	AND ISNULL(pcp.Level, 0) >= sb.RequiredPerkLevel

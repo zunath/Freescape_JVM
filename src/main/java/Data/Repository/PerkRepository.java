@@ -48,6 +48,16 @@ public class PerkRepository {
         }
     }
 
+    public PerkLevelEntity GetPCSkillAdjustedPerkLevel(String uuid, int perkID)
+    {
+        try(DataContext context = new DataContext())
+        {
+            return context.executeSQLSingle("Perk/GetPCSkillAdjustedPerkLevel", PerkLevelEntity.class,
+                    new SqlParameter("playerID", uuid),
+                    new SqlParameter("perkID", perkID));
+        }
+    }
+
     public Integer GetPCTotalPerkCount(String uuid)
     {
         try(DataContext context = new DataContext())

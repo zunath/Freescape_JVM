@@ -359,6 +359,7 @@ public class ConstructionSite extends DialogBase implements IDialogHandler {
 
     private void LoadBlueprintListPageResponses()
     {
+        PlayerGO pcGO = new PlayerGO(GetPC());
         ConstructionSiteMenuModel model = GetModel();
         StructureRepository repo = new StructureRepository();
         DialogPage page = GetPageByName("BlueprintListPage");
@@ -366,7 +367,7 @@ public class ConstructionSite extends DialogBase implements IDialogHandler {
         NWLocation location = NWScript.getLocation(GetDialogTarget());
         int rank = SkillSystem.GetPCSkill(GetPC(), SkillID.Construction).getRank();
 
-        List<StructureBlueprintEntity> entities = repo.GetStructuresByCategoryAndPlayerRank(model.getCategoryID(), rank);
+        List<StructureBlueprintEntity> entities = repo.GetStructuresByCategoryAndPlayerRank(pcGO.getUUID(), model.getCategoryID(), rank);
         for(StructureBlueprintEntity entity : entities)
         {
             String entityName = entity.getName() + " (Lvl. " + entity.getLevel() + ")";
