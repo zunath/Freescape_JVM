@@ -3,10 +3,12 @@ package Placeable.StructureSystem.Resource;
 import Common.IScriptEventHandler;
 import Data.Repository.SkillRepository;
 import Entities.PCSkillEntity;
+import Enumerations.PerkID;
 import Enumerations.SkillID;
 import GameObject.ItemGO;
 import GameObject.PlayerGO;
 import GameSystems.DurabilitySystem;
+import GameSystems.PerkSystem;
 import GameSystems.SkillSystem;
 import org.nwnx.nwnx2.jvm.NWLocation;
 import org.nwnx.nwnx2.jvm.NWObject;
@@ -43,16 +45,22 @@ public class OnDamaged implements IScriptEventHandler {
         int durabilityLossChance = baseDurabilityChance - durabilityChanceReduction;
         int weaponChanceBonus;
         int skillID;
+        int perkChanceBonus;
+        int secondResourceChance;
 
         if(activityID == 1) // 1 = Logging
         {
             weaponChanceBonus = weaponGO.getLoggingBonus();
             skillID = SkillID.Logging;
+            perkChanceBonus = PerkSystem.GetPCPerkLevel(oPC, PerkID.Lumberjack) * 5;
+            secondResourceChance = PerkSystem.GetPCPerkLevel(oPC, PerkID.PrecisionLogging) * 10;
         }
         else if(activityID == 2) // Mining
         {
             weaponChanceBonus = weaponGO.getMiningBonus();
             skillID = SkillID.Mining;
+            perkChanceBonus = PerkSystem.GetPCPerkLevel(oPC, PerkID.Miner) * 5;
+            secondResourceChance = PerkSystem.GetPCPerkLevel(oPC, PerkID.PrecisionMining) * 10;
         }
         else return;
         PCSkillEntity skill = skillRepo.GetPCSkillByID(pcGO.getUUID(), skillID);
@@ -64,7 +72,8 @@ public class OnDamaged implements IScriptEventHandler {
 
         int baseChance = 10;
         int chance = baseChance + weaponChanceBonus;
-        chance = chance + CalculateSuccessChanceDeltaModifier(difficultyRating, skill.getRank());
+        chance += CalculateSuccessChanceDeltaModifier(difficultyRating, skill.getRank());
+        chance += perkChanceBonus;
 
         if(chance <= 0)
         {
@@ -77,6 +86,12 @@ public class OnDamaged implements IScriptEventHandler {
             NWScript.floatingTextStringOnCreature("You break off some " + resourceName + ".", oPC, false);
             NWScript.setLocalInt(objSelf, "RESOURCE_COUNT", --resourceCount);
             NWScript.applyEffectToObject(DurationType.INSTANT, NWScript.effectHeal(10000), objSelf, 0.0f);
+
+            if(ThreadLocalRandom.current().nextInt(100) + 1 <= secondResourceChance)
+            {
+                NWScript.floatingTextStringOnCreature("You break off a second piece.", oPC, false);
+                NWScript.createObject(ObjectType.ITEM, resourceItemResref, location, false, "");
+            }
 
             float deltaModifier = CalculateXPDeltaModifier(difficultyRating, skill.getRank());
             float baseXP = (100 + ThreadLocalRandom.current().nextInt(20)) * deltaModifier;

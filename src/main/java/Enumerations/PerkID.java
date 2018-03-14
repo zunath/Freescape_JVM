@@ -9,4 +9,8 @@ public class PerkID {
     public static final int CraftingDeviceBlueprints = 6;
     public static final int StorageContainerBlueprints = 7;
     public static final int ResourceBundleBlueprints = 8;
+    public static final int Miner = 9;
+    public static final int Lumberjack = 10;
+    public static final int PrecisionMining = 11;
+    public static final int PrecisionLogging = 12;
 }
