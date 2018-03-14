@@ -100,7 +100,7 @@ public class ItemSystem {
         }
 
         Object customData = actionItem.StartUseItem(user, item, target);
-        float delay = actionItem.Seconds(user, item, target);
+        float delay = actionItem.Seconds(user, item, target, customData);
         int animationID = actionItem.AnimationID();
         boolean faceTarget = actionItem.FaceTarget();
         NWVector userPosition = NWScript.getPosition(user);
@@ -154,8 +154,11 @@ public class ItemSystem {
 
         actionItem.ApplyEffects(user, item, target, customData);
 
-        if(NWScript.getItemCharges(item) > 0) ItemHelper.ReduceItemCharges(item);
-        else NWScript.destroyObject(item, 0.0f);
+        if(actionItem.ReducesItemCharge(user, item, target, customData))
+        {
+            if(NWScript.getItemCharges(item) > 0) ItemHelper.ReduceItemCharges(item);
+            else NWScript.destroyObject(item, 0.0f);
+        }
     }
 
     public static void OnModuleEquipItem()

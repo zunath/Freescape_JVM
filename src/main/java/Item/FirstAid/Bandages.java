@@ -37,7 +37,7 @@ public class Bandages implements IActionItem {
     }
 
     @Override
-    public float Seconds(NWObject user, NWObject item, NWObject target) {
+    public float Seconds(NWObject user, NWObject item, NWObject target, Object customData) {
 
         if(ThreadLocalRandom.current().nextInt(100) + 1 <= PerkSystem.GetPCPerkLevel(user, PerkID.SpeedyMedic) * 10)
         {
@@ -63,6 +63,11 @@ public class Bandages implements IActionItem {
     @Override
     public float MaxDistance() {
         return 3.5f;
+    }
+
+    @Override
+    public boolean ReducesItemCharge(NWObject user, NWObject item, NWObject target, Object customData) {
+        return true;
     }
 
     @Override

@@ -21,4 +21,7 @@ public class PerkID {
     public static final int SpeedyMiner = 18;
     public static final int SpeedyLogger = 19;
     public static final int SpeedyMedic = 20;
+    public static final int HealingKitExpert = 21;
+    public static final int ImmediateImprovement = 22;
+    public static final int FrugalMedic = 23;
 }
