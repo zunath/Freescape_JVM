@@ -18,4 +18,7 @@ public class PerkID {
     public static final int Lucky = 15;
     public static final int Health = 16;
     public static final int Mana = 17;
+    public static final int SpeedyMiner = 18;
+    public static final int SpeedyLogger = 19;
+    public static final int SpeedyMedic = 20;
 }

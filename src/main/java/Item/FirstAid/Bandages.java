@@ -2,15 +2,19 @@ package Item.FirstAid;
 
 import Entities.PCSkillEntity;
 import Enumerations.CustomEffectType;
+import Enumerations.PerkID;
 import Enumerations.SkillID;
 import GameObject.ItemGO;
 import GameSystems.CustomEffectSystem;
+import GameSystems.PerkSystem;
 import GameSystems.SkillSystem;
 import Item.IActionItem;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.NWScript;
 import org.nwnx.nwnx2.jvm.constants.Animation;
 import org.nwnx.nwnx2.jvm.constants.DurationType;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Bandages implements IActionItem {
     @Override
@@ -34,6 +38,11 @@ public class Bandages implements IActionItem {
 
     @Override
     public float Seconds(NWObject user, NWObject item, NWObject target) {
+
+        if(ThreadLocalRandom.current().nextInt(100) + 1 <= PerkSystem.GetPCPerkLevel(user, PerkID.SpeedyMedic) * 10)
+        {
+            return 0.1f;
+        }
 
         PCSkillEntity skill = SkillSystem.GetPCSkill(user, SkillID.FirstAid);
         float seconds = 6.0f - (skill.getRank() * 0.2f);

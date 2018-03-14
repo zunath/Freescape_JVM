@@ -45,6 +45,8 @@ public class OnDamaged implements IScriptEventHandler {
         int perkChanceBonus;
         int secondResourceChance;
         int durabilityChanceReduction = 0;
+        int hasteChance;
+        int lucky = PerkSystem.GetPCPerkLevel(oPC, PerkID.Lucky);
 
         if(activityID == 1) // 1 = Logging
         {
@@ -52,12 +54,13 @@ public class OnDamaged implements IScriptEventHandler {
             if(weaponChanceBonus > 0)
             {
                 weaponChanceBonus += PerkSystem.GetPCPerkLevel(oPC, PerkID.LoggingAxeExpert) * 5;
-                durabilityChanceReduction = PerkSystem.GetPCPerkLevel(oPC, PerkID.LoggingAxeExpert) * 10 + PerkSystem.GetPCPerkLevel(oPC, PerkID.Lucky);
+                durabilityChanceReduction = PerkSystem.GetPCPerkLevel(oPC, PerkID.LoggingAxeExpert) * 10 + lucky;
             }
 
             skillID = SkillID.Logging;
-            perkChanceBonus = PerkSystem.GetPCPerkLevel(oPC, PerkID.Lumberjack) * 5;
+            perkChanceBonus = PerkSystem.GetPCPerkLevel(oPC, PerkID.Lumberjack) * 5 + lucky;
             secondResourceChance = PerkSystem.GetPCPerkLevel(oPC, PerkID.PrecisionLogging) * 10;
+            hasteChance = PerkSystem.GetPCPerkLevel(oPC, PerkID.SpeedyLogger) * 10 + lucky;
         }
         else if(activityID == 2) // Mining
         {
@@ -65,11 +68,12 @@ public class OnDamaged implements IScriptEventHandler {
             if(weaponChanceBonus > 0)
             {
                 weaponChanceBonus += PerkSystem.GetPCPerkLevel(oPC, PerkID.PickaxeExpert) * 5;
-                durabilityChanceReduction = PerkSystem.GetPCPerkLevel(oPC, PerkID.PickaxeExpert) * 10 + PerkSystem.GetPCPerkLevel(oPC, PerkID.Lucky);
+                durabilityChanceReduction = PerkSystem.GetPCPerkLevel(oPC, PerkID.PickaxeExpert) * 10 + lucky;
             }
             skillID = SkillID.Mining;
-            perkChanceBonus = PerkSystem.GetPCPerkLevel(oPC, PerkID.Miner) * 5 + PerkSystem.GetPCPerkLevel(oPC, PerkID.Lucky);
+            perkChanceBonus = PerkSystem.GetPCPerkLevel(oPC, PerkID.Miner) * 5 + lucky;
             secondResourceChance = PerkSystem.GetPCPerkLevel(oPC, PerkID.PrecisionMining) * 10;
+            hasteChance = PerkSystem.GetPCPerkLevel(oPC, PerkID.SpeedyMiner) * 10 + lucky;
         }
         else return;
         PCSkillEntity skill = skillRepo.GetPCSkillByID(pcGO.getUUID(), skillID);
@@ -106,6 +110,14 @@ public class OnDamaged implements IScriptEventHandler {
             float baseXP = (100 + ThreadLocalRandom.current().nextInt(20)) * deltaModifier;
             int xp = (int)SkillSystem.CalculateSkillAdjustedXP(baseXP, weaponGO.getRecommendedLevel(), skill.getRank());
             SkillSystem.GiveSkillXP(oPC, skillID, xp);
+        }
+
+        if(chance > 0)
+        {
+            if(ThreadLocalRandom.current().nextInt(100) + 1 <= hasteChance)
+            {
+                NWScript.applyEffectToObject(DurationType.TEMPORARY, NWScript.effectHaste(), oPC, 8.0f);
+            }
         }
 
         if(resourceCount <= 0)

@@ -1,9 +1,11 @@
 package Item.FirstAid;
 
 import Entities.PCSkillEntity;
+import Enumerations.PerkID;
 import Enumerations.SkillID;
 import GameObject.ItemGO;
 import GameObject.PlayerGO;
+import GameSystems.PerkSystem;
 import GameSystems.SkillSystem;
 import Helper.ItemHelper;
 import Item.IActionItem;
@@ -13,6 +15,8 @@ import org.nwnx.nwnx2.jvm.NWScript;
 import org.nwnx.nwnx2.jvm.constants.Animation;
 import org.nwnx.nwnx2.jvm.constants.DurationType;
 import org.nwnx.nwnx2.jvm.constants.EffectType;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 public class HealingKit implements IActionItem {
 
@@ -43,6 +47,12 @@ public class HealingKit implements IActionItem {
 
     @Override
     public float Seconds(NWObject user, NWObject item, NWObject target) {
+
+        if(ThreadLocalRandom.current().nextInt(100) + 1 <= PerkSystem.GetPCPerkLevel(user, PerkID.SpeedyMedic) * 10)
+        {
+            return 0.1f;
+        }
+
         PCSkillEntity skill = SkillSystem.GetPCSkill(user, SkillID.FirstAid);
         return 12.0f - (skill.getRank() * 0.1f);
     }
