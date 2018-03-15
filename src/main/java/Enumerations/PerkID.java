@@ -24,4 +24,5 @@ public class PerkID {
     public static final int HealingKitExpert = 21;
     public static final int ImmediateImprovement = 22;
     public static final int FrugalMedic = 23;
+    public static final int DefensiveManeuver = 24;
 }

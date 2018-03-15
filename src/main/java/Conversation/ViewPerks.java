@@ -1,5 +1,7 @@
 package Conversation;
 
+import Bioware.AddItemPropertyPolicy;
+import Bioware.XP2;
 import Conversation.ViewModels.PerkMenuViewModel;
 import Data.Repository.PerkRepository;
 import Data.Repository.PlayerRepository;
@@ -13,8 +15,13 @@ import Helper.ScriptHelper;
 import Perks.IPerk;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.nwnx.nwnx2.jvm.NWItemProperty;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.NWScript;
+import org.nwnx.nwnx2.jvm.constants.Ip;
+import org.nwnx.nwnx2.jvm.constants.IpConst;
+import org.nwnx.nwnx2.jvm.constants.IpConstCastspell;
+import org.nwnx.nwnx2.jvm.constants.ItemProperty;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -378,6 +385,35 @@ public class ViewPerks extends DialogBase implements IDialogHandler {
 
             perkRepo.Save(pcPerk);
             playerRepo.save(player);
+
+            // If a perk is activatable, create the item on the PC.
+            // Remove any existing cast spell unique power properties and add the correct one based on the DB flag.
+            if(!perk.getItemResref().equals("") &&
+                    !NWScript.getIsObjectValid(NWScript.getItemPossessedBy(GetPC(), perk.getItemResref())))
+            {
+                NWObject spellItem = NWScript.createItemOnObject(perk.getItemResref(), GetPC(), 1, "");
+                NWScript.setItemCursedFlag(spellItem, true);
+                NWScript.setLocalInt(spellItem, "ACTIVATION_PERK_ID", perk.getPerkID());
+
+                for(NWItemProperty ip: NWScript.getItemProperties(spellItem))
+                {
+                    int ipType = NWScript.getItemPropertyType(ip);
+                    int ipSubType = NWScript.getItemPropertySubType(ip);
+                    if(ipType == ItemProperty.CAST_SPELL &&
+                            (ipSubType == Ip.CONST_CASTSPELL_UNIQUE_POWER ||
+                            ipSubType == Ip.CONST_CASTSPELL_UNIQUE_POWER_SELF_ONLY ||
+                            ipSubType == Ip.CONST_CASTSPELL_ACTIVATE_ITEM ))
+                    {
+                        NWScript.removeItemProperty(spellItem, ip);
+                    }
+                }
+
+                NWItemProperty ip;
+                if(perk.isTargetSelfOnly()) ip = NWScript.itemPropertyCastSpell(IpConst.CASTSPELL_UNIQUE_POWER_SELF_ONLY, IpConstCastspell.NUMUSES_UNLIMITED_USE);
+                else ip = NWScript.itemPropertyCastSpell(IpConst.CASTSPELL_UNIQUE_POWER, IpConstCastspell.NUMUSES_UNLIMITED_USE);
+
+                XP2.IPSafeAddItemProperty(spellItem, ip, 0.0f, AddItemPropertyPolicy.ReplaceExisting, false, false);
+            }
 
             NWScript.sendMessageToPC(GetPC(),ColorToken.Green() + "Perk Purchased: " + perk.getName() + " (Lvl. " + pcPerk.getPerkLevel() + ")");
 

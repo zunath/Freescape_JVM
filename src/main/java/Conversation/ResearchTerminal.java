@@ -7,7 +7,6 @@ import Data.Repository.ResearchRepository;
 import Data.Repository.StructureRepository;
 import Dialog.*;
 import Entities.*;
-import GameSystems.MagicSystem;
 import GameSystems.StructureSystem;
 import Helper.ColorToken;
 import Helper.TimeHelper;

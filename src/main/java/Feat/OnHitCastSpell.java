@@ -2,7 +2,8 @@ package Feat;
 
 import Common.IScriptEventHandler;
 import GameSystems.DurabilitySystem;
-import GameSystems.MagicSystem;
+import GameSystems.AbilitySystem;
+import GameSystems.PerkSystem;
 import GameSystems.SkillSystem;
 import Helper.ScriptHelper;
 import org.nwnx.nwnx2.jvm.NWObject;
@@ -16,8 +17,9 @@ public class OnHitCastSpell implements IScriptEventHandler {
         if(!oPC.equals(NWObject.INVALID))
         {
             DurabilitySystem.OnHitCastSpell(oPC);
-            MagicSystem.OnHitCastSpell(oPC);
+            AbilitySystem.OnHitCastSpell(oPC);
             SkillSystem.OnHitCastSpell(oPC);
+            PerkSystem.OnHitCastSpell(oPC);
             HandleItemSpecificCastSpell(oPC);
         }
     }

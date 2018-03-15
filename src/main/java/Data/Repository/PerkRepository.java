@@ -3,8 +3,6 @@ package Data.Repository;
 import Data.DataContext;
 import Data.SqlParameter;
 import Entities.*;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 
 import java.util.List;
 
@@ -76,22 +74,20 @@ public class PerkRepository {
         }
     }
 
+    public List<PCPerksEntity> GetPCPerksWithExecutionType(String uuid)
+    {
+        try(DataContext context = new DataContext())
+        {
+            return context.executeSQLList("Perk/GetPCPerksWithExecutionType", PCPerksEntity.class,
+                    new SqlParameter("playerID", uuid));
+        }
+    }
+
     public void Save(PCPerksEntity pcPerk)
     {
         try(DataContext context = new DataContext())
         {
             context.getSession().saveOrUpdate(pcPerk);
-        }
-    }
-
-    // Old methods
-
-    public PerkEntity GetPerkByFeatID(int featID)
-    {
-        try(DataContext context = new DataContext())
-        {
-            return context.executeSQLSingle("Perk/GetPerkByFeatID", PerkEntity.class,
-                    new SqlParameter("featID", featID));
         }
     }
 }

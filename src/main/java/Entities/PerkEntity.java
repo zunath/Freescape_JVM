@@ -43,8 +43,14 @@ public class PerkEntity {
     @JoinColumn(name = "CooldownCategoryID")
     private CooldownCategoryEntity cooldown;
 
-    @Column(name = "IsQueuedWeaponSkill")
-    private boolean isQueuedWeaponSkill;
+    @Column(name = "ExecutionTypeID")
+    private int perkExecutionTypeID;
+
+    @Column(name = "ItemResref")
+    private String itemResref;
+
+    @Column(name = "IsTargetSelfOnly")
+    private boolean isTargetSelfOnly;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "perk", fetch = FetchType.EAGER, orphanRemoval = true)
     @Fetch(value = FetchMode.SUBSELECT)
@@ -130,12 +136,12 @@ public class PerkEntity {
         this.cooldown = cooldown;
     }
 
-    public boolean isQueuedWeaponSkill() {
-        return isQueuedWeaponSkill;
+    public int getPerkExecutionTypeID() {
+        return perkExecutionTypeID;
     }
 
-    public void setQueuedWeaponSkill(boolean queuedWeaponSkill) {
-        isQueuedWeaponSkill = queuedWeaponSkill;
+    public void setPerkExecutionTypeID(int perkExecutionTypeID) {
+        this.perkExecutionTypeID = perkExecutionTypeID;
     }
 
     public List<PerkLevelEntity> getLevels() {
@@ -144,5 +150,21 @@ public class PerkEntity {
 
     public void setLevels(List<PerkLevelEntity> levels) {
         this.levels = levels;
+    }
+
+    public String getItemResref() {
+        return itemResref;
+    }
+
+    public void setItemResref(String itemResref) {
+        this.itemResref = itemResref;
+    }
+
+    public boolean isTargetSelfOnly() {
+        return isTargetSelfOnly;
+    }
+
+    public void setTargetSelfOnly(boolean targetSelfOnly) {
+        isTargetSelfOnly = targetSelfOnly;
     }
 }

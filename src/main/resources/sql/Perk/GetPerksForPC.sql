@@ -9,7 +9,8 @@ SELECT p.PerkID ,
        p.Description ,
        p.PerkCategoryID ,
        p.CooldownCategoryID ,
-       p.IsQueuedWeaponSkill
+       p.ExecutionTypeID,
+       p.IsTargetSelfOnly
 FROM dbo.Perks p
 WHERE p.PerkID IN (
 	SELECT DISTINCT p.PerkID
@@ -22,4 +23,3 @@ WHERE p.PerkID IN (
 		AND (plsr.RequiredRank IS NULL OR plsr.RequiredRank <= pcsk.Rank)
 		AND p.PerkCategoryID = :categoryID
 )
-

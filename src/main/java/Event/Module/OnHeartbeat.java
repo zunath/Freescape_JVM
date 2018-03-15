@@ -7,7 +7,7 @@ import Entities.PlayerEntity;
 import GameObject.PlayerGO;
 import GameSystems.CustomEffectSystem;
 import GameSystems.FoodSystem;
-import GameSystems.MagicSystem;
+import GameSystems.AbilitySystem;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.NWScript;
 import org.nwnx.nwnx2.jvm.constants.Ability;
@@ -105,7 +105,7 @@ public class OnHeartbeat implements IScriptEventHandler {
 					amount += 5;
 				}
 
-				entity = MagicSystem.RestoreMana(oPC, amount, entity);
+				entity = AbilitySystem.RestoreMana(oPC, amount, entity);
 			}
 
 			entity.setCurrentManaTick(rate);

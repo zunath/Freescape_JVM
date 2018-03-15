@@ -1,6 +1,7 @@
 package Data;
 import Data.Repository.DatabaseRepository;
 import Entities.*;
+import Enumerations.PerkExecutionTypeID;
 import Helper.ErrorHelper;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -107,6 +108,7 @@ public class DataAccess {
         _configuration.addAnnotatedClass(PCTerritoryFlagsStructuresResearchQueueEntity.class);
         _configuration.addAnnotatedClass(PerkCategoryEntity.class);
         _configuration.addAnnotatedClass(PerkEntity.class);
+        _configuration.addAnnotatedClass(PerkExecutionTypeID.class);
         _configuration.addAnnotatedClass(PerkLevelEntity.class);
         _configuration.addAnnotatedClass(PerkLevelSkillRequirementEntity.class);
         _configuration.addAnnotatedClass(PlayerEntity.class);
