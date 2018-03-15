@@ -31,8 +31,9 @@ public class AbilitySystem {
     private static int SPELL_STATUS_STARTED = 1;
     private static int SPELL_STATUS_INTERRUPTED = 2;
 
-    public static void OnModuleItemActivated(NWObject pc)
+    public static void OnModuleItemActivated()
     {
+        NWObject pc = NWScript.getItemActivator();
         NWObject item = NWScript.getItemActivated();
         NWObject target =  NWScript.getItemActivatedTarget();
         int perkID = NWScript.getLocalInt(item, "ACTIVATION_PERK_ID");
@@ -111,6 +112,7 @@ public class AbilitySystem {
                 playerEntity.setCurrentMana(playerEntity.getCurrentMana() - manaCost);
                 playerRepo.save(playerEntity);
             }
+            ApplyCooldown(pc, entity.getCooldown(), perkAction);
         }
         // Queued Weapon Skills
         else if(entity.getPerkExecutionTypeID() == PerkExecutionTypeID.QueuedWeaponSkill)

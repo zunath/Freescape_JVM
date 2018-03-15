@@ -388,31 +388,35 @@ public class ViewPerks extends DialogBase implements IDialogHandler {
 
             // If a perk is activatable, create the item on the PC.
             // Remove any existing cast spell unique power properties and add the correct one based on the DB flag.
-            if(!perk.getItemResref().equals("") &&
-                    !NWScript.getIsObjectValid(NWScript.getItemPossessedBy(GetPC(), perk.getItemResref())))
+            if(perk.getItemResref() != null && !perk.getItemResref().equals(""))
             {
-                NWObject spellItem = NWScript.createItemOnObject(perk.getItemResref(), GetPC(), 1, "");
-                NWScript.setItemCursedFlag(spellItem, true);
-                NWScript.setLocalInt(spellItem, "ACTIVATION_PERK_ID", perk.getPerkID());
-
-                for(NWItemProperty ip: NWScript.getItemProperties(spellItem))
+                if(!NWScript.getIsObjectValid(NWScript.getItemPossessedBy(GetPC(), perk.getItemResref())))
                 {
-                    int ipType = NWScript.getItemPropertyType(ip);
-                    int ipSubType = NWScript.getItemPropertySubType(ip);
-                    if(ipType == ItemProperty.CAST_SPELL &&
-                            (ipSubType == Ip.CONST_CASTSPELL_UNIQUE_POWER ||
-                            ipSubType == Ip.CONST_CASTSPELL_UNIQUE_POWER_SELF_ONLY ||
-                            ipSubType == Ip.CONST_CASTSPELL_ACTIVATE_ITEM ))
+                    NWObject spellItem = NWScript.createItemOnObject(perk.getItemResref(), GetPC(), 1, "");
+                    NWScript.setItemCursedFlag(spellItem, true);
+                    NWScript.setLocalInt(spellItem, "ACTIVATION_PERK_ID", perk.getPerkID());
+
+                    for(NWItemProperty ip: NWScript.getItemProperties(spellItem))
                     {
-                        NWScript.removeItemProperty(spellItem, ip);
+                        int ipType = NWScript.getItemPropertyType(ip);
+                        int ipSubType = NWScript.getItemPropertySubType(ip);
+                        if(ipType == ItemProperty.CAST_SPELL &&
+                                (ipSubType == Ip.CONST_CASTSPELL_UNIQUE_POWER ||
+                                        ipSubType == Ip.CONST_CASTSPELL_UNIQUE_POWER_SELF_ONLY ||
+                                        ipSubType == Ip.CONST_CASTSPELL_ACTIVATE_ITEM ))
+                        {
+                            NWScript.removeItemProperty(spellItem, ip);
+                        }
                     }
+
+                    NWItemProperty ip;
+                    if(perk.isTargetSelfOnly()) ip = NWScript.itemPropertyCastSpell(IpConst.CASTSPELL_UNIQUE_POWER_SELF_ONLY, IpConstCastspell.NUMUSES_UNLIMITED_USE);
+                    else ip = NWScript.itemPropertyCastSpell(IpConst.CASTSPELL_UNIQUE_POWER, IpConstCastspell.NUMUSES_UNLIMITED_USE);
+
+                    XP2.IPSafeAddItemProperty(spellItem, ip, 0.0f, AddItemPropertyPolicy.ReplaceExisting, false, false);
                 }
 
-                NWItemProperty ip;
-                if(perk.isTargetSelfOnly()) ip = NWScript.itemPropertyCastSpell(IpConst.CASTSPELL_UNIQUE_POWER_SELF_ONLY, IpConstCastspell.NUMUSES_UNLIMITED_USE);
-                else ip = NWScript.itemPropertyCastSpell(IpConst.CASTSPELL_UNIQUE_POWER, IpConstCastspell.NUMUSES_UNLIMITED_USE);
-
-                XP2.IPSafeAddItemProperty(spellItem, ip, 0.0f, AddItemPropertyPolicy.ReplaceExisting, false, false);
+                NWScript.setName(NWScript.getItemPossessedBy(GetPC(), perk.getItemResref()), perk.getName() + " (Lvl. " + pcPerk.getPerkLevel() + ")");
             }
 
             NWScript.sendMessageToPC(GetPC(),ColorToken.Green() + "Perk Purchased: " + perk.getName() + " (Lvl. " + pcPerk.getPerkLevel() + ")");

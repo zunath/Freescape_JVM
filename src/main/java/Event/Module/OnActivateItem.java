@@ -1,5 +1,6 @@
 package Event.Module;
 import Common.IScriptEventHandler;
+import GameSystems.AbilitySystem;
 import GameSystems.ItemSystem;
 import Helper.ScriptHelper;
 import org.nwnx.nwnx2.jvm.NWObject;
@@ -14,6 +15,7 @@ public class OnActivateItem implements IScriptEventHandler {
         NWScript.executeScript("x2_mod_def_act", objSelf);
 		HandleGeneralItemUses();
 		ItemSystem.OnModuleActivatedItem();
+		AbilitySystem.OnModuleItemActivated();
 	}
 
 	private void HandleGeneralItemUses()

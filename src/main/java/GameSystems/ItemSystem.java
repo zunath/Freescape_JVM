@@ -48,7 +48,7 @@ public class ItemSystem {
         }
         if(itemGO.getAC() > 0)
         {
-            description += ColorToken.Orange() + "AC: " + ColorToken.End() + itemGO.getRecommendedLevel() + "\n";
+            description += ColorToken.Orange() + "AC: " + ColorToken.End() + itemGO.getAC() + "\n";
         }
         if(itemGO.getLoggingBonus() > 0)
         {

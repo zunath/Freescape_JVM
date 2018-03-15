@@ -26,4 +26,5 @@ public class PerkID {
     public static final int FrugalMedic = 23;
     public static final int DefensiveManeuver = 24;
     public static final int BlockingRecovery = 25;
+    public static final int Evasiveness = 26;
 }
