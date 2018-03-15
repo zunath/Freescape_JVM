@@ -476,4 +476,94 @@ public class NWNX_Creature {
         NWNX_CallFunction(NWNX_Creature, sFunc);
     }
 
+
+    public static void SetBaseAttackBonus(NWObject creature, int bab)
+    {
+        String sFunc = "SetBaseAttackBonus";
+        NWNX_PushArgumentInt(NWNX_Creature, sFunc, bab);
+        NWNX_PushArgumentObject(NWNX_Creature, sFunc, creature);
+
+        NWNX_CallFunction(NWNX_Creature, sFunc);
+    }
+
+    public static int GetAttacksPerRound(NWObject creature, int bBaseAPR)
+    {
+        String sFunc = "GetAttacksPerRound";
+        NWNX_PushArgumentInt(NWNX_Creature, sFunc, bBaseAPR);
+        NWNX_PushArgumentObject(NWNX_Creature, sFunc, creature);
+
+        NWNX_CallFunction(NWNX_Creature, sFunc);
+        return NWNX_GetReturnValueInt(NWNX_Creature, sFunc);
+    }
+
+    public static void SetGender(NWObject creature, int gender)
+    {
+        String sFunc = "SetGender";
+        NWNX_PushArgumentInt(NWNX_Creature, sFunc, gender);
+        NWNX_PushArgumentObject(NWNX_Creature, sFunc, creature);
+
+        NWNX_CallFunction(NWNX_Creature, sFunc);
+    }
+
+    public static void RestoreFeats(NWObject creature)
+    {
+        String sFunc = "RestoreFeats";
+        NWNX_PushArgumentObject(NWNX_Creature, sFunc, creature);
+
+        NWNX_CallFunction(NWNX_Creature, sFunc);
+    }
+
+    public static void RestoreSpecialAbilities(NWObject creature)
+    {
+        String sFunc = "RestoreSpecialAbilities";
+        NWNX_PushArgumentObject(NWNX_Creature, sFunc, creature);
+
+        NWNX_CallFunction(NWNX_Creature, sFunc);
+    }
+
+    public static void RestoreSpells(NWObject creature, int level)
+    {
+        String sFunc = "RestoreSpells";
+        NWNX_PushArgumentInt(NWNX_Creature, sFunc, level);
+        NWNX_PushArgumentObject(NWNX_Creature, sFunc, creature);
+
+        NWNX_CallFunction(NWNX_Creature, sFunc);
+    }
+
+    public static void RestoreItems(NWObject creature)
+    {
+        String sFunc = "RestoreItems";
+        NWNX_PushArgumentObject(NWNX_Creature, sFunc, creature);
+
+        NWNX_CallFunction(NWNX_Creature, sFunc);
+    }
+
+    public static void SetSize(NWObject creature, int size)
+    {
+        String sFunc = "SetSize";
+        NWNX_PushArgumentInt(NWNX_Creature, sFunc, size);
+        NWNX_PushArgumentObject(NWNX_Creature, sFunc, creature);
+
+        NWNX_CallFunction(NWNX_Creature, sFunc);
+    }
+
+    public static int GetSkillPointsRemaining(NWObject creature)
+    {
+        String sFunc = "GetSkillPointsRemaining";
+        NWNX_PushArgumentObject(NWNX_Creature, sFunc, creature);
+
+        NWNX_CallFunction(NWNX_Creature, sFunc);
+        return NWNX_GetReturnValueInt(NWNX_Creature, sFunc);
+    }
+
+
+    public static void SetSkillPointsRemaining(NWObject creature, int skillpoints)
+    {
+        String sFunc = "SetSkillPointsRemaining";
+        NWNX_PushArgumentInt(NWNX_Creature, sFunc, skillpoints);
+        NWNX_PushArgumentObject(NWNX_Creature, sFunc, creature);
+
+        NWNX_CallFunction(NWNX_Creature, sFunc);
+    }
+
 }
