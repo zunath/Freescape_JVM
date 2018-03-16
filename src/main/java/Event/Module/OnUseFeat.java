@@ -1,7 +1,6 @@
 package Event.Module;
 
 import Common.IScriptEventHandler;
-import GameSystems.AbilitySystem;
 import org.nwnx.nwnx2.jvm.NWObject;
 
 public class OnUseFeat implements IScriptEventHandler {

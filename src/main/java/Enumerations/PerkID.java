@@ -28,4 +28,11 @@ public class PerkID {
     public static final int BlockingRecovery = 25;
     public static final int Evasiveness = 26;
     public static final int DeflectDamage = 27;
+    public static final int PointBlankShot = 28;
+    public static final int DualWielding = 29;
+    public static final int BladePowerAttack = 30;
+    public static final int BluntPowerAttack = 31;
+    public static final int CalledShot = 32;
+    public static final int CircleKick = 33;
+
 }

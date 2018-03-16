@@ -6,7 +6,6 @@ import Perks.IPerk;
 import org.nwnx.nwnx2.jvm.NWEffect;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.NWScript;
-import org.nwnx.nwnx2.jvm.constants.Duration;
 import org.nwnx.nwnx2.jvm.constants.DurationType;
 
 import java.util.concurrent.ThreadLocalRandom;

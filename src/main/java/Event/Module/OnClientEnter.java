@@ -1,6 +1,5 @@
 package Event.Module;
 
-import Common.Constants;
 import Common.IScriptEventHandler;
 import Data.Repository.PlayerRepository;
 import Data.Repository.ServerConfigurationRepository;

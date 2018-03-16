@@ -5,7 +5,6 @@ import Dialog.DialogBase;
 import Dialog.DialogPage;
 import Dialog.IDialogHandler;
 import Dialog.PlayerDialog;
-import Entities.PCSkillEntity;
 import Entities.PlayerEntity;
 import GameObject.PlayerGO;
 import GameSystems.SkillSystem;

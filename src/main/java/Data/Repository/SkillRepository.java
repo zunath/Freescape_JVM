@@ -3,11 +3,7 @@ package Data.Repository;
 import Data.DataContext;
 import Data.SqlParameter;
 import Entities.*;
-import com.sun.tools.javac.util.Pair;
 
-import javax.persistence.ColumnResult;
-import javax.persistence.ConstructorResult;
-import javax.persistence.SqlResultSetMapping;
 import java.util.List;
 
 public class SkillRepository {

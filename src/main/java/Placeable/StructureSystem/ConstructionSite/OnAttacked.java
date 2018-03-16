@@ -7,6 +7,7 @@ import Entities.ConstructionSiteComponentEntity;
 import Entities.ConstructionSiteEntity;
 import Enumerations.PerkID;
 import Enumerations.SkillID;
+import GameObject.ItemGO;
 import GameObject.PlayerGO;
 import GameSystems.DurabilitySystem;
 import GameSystems.PerkSystem;
@@ -84,7 +85,8 @@ public class OnAttacked implements IScriptEventHandler {
                     }
                     else
                     {
-                        ItemHelper.ReduceItemStack(item);
+                        ItemGO itemGO = new ItemGO(item);
+                        itemGO.ReduceItemStack();
                     }
 
                     if(isMangle)

@@ -166,7 +166,7 @@ public class ViewPerks extends DialogBase implements IDialogHandler {
                 currentBonus = currentPerkLevel.getDescription();
             }
         }
-        if(rank+1 < maxRank)
+        if(rank+1 <= maxRank)
         {
             if(nextPerkLevel != null)
             {
@@ -176,6 +176,7 @@ public class ViewPerks extends DialogBase implements IDialogHandler {
         }
 
         StringBuilder header = new StringBuilder(ColorToken.Green() + "Name: " + ColorToken.End() + perk.getName() + "\n" +
+                ColorToken.Green() + "Category: " + ColorToken.End() + perk.getCategory().getName() + "\n" +
                 ColorToken.Green() + "Rank: " + ColorToken.End() + rank + " / " + maxRank + "\n" +
                 ColorToken.Green() + "Price: " + ColorToken.End() + price + "\n" +
                 ColorToken.Green() + "Description: " + ColorToken.End() + perk.getDescription() + "\n" +

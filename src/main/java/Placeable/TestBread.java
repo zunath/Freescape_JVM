@@ -1,11 +1,8 @@
 package Placeable;
 
 import Common.IScriptEventHandler;
-import Data.Repository.StructureRepository;
-import Entities.StructureBlueprintEntity;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.NWScript;
-import org.nwnx.nwnx2.jvm.constants.ObjectType;
 
 public class TestBread implements IScriptEventHandler {
     @Override

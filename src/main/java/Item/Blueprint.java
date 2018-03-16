@@ -2,7 +2,6 @@ package Item;
 
 import GameObject.PlayerGO;
 import Common.IScriptEventHandler;
-import NWNX.NWNX_Events;
 import Data.Repository.CraftRepository;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.NWScript;

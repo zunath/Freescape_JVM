@@ -12,9 +12,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 @SuppressWarnings("unused")
-public class ArmorRepairKit implements IScriptEventHandler {
+public class RepairKit implements IScriptEventHandler {
     @Override
     public void runScript(NWObject oPC) {
+
+        // TODO: Genericize and set up for custom weapon types.
         NWObject target = NWScript.getItemActivatedTarget();
         NWObject item = NWScript.getItemActivated();
         int targetType = NWScript.getBaseItemType(target);

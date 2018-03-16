@@ -9,7 +9,6 @@ import Enumerations.CustomItemType;
 import Enumerations.PerkID;
 import Enumerations.SkillID;
 import GameObject.*;
-import Helper.ItemHelper;
 import NWNX.NWNX_Creature;
 import com.sun.tools.javac.util.Pair;
 import org.nwnx.nwnx2.jvm.NWObject;
@@ -24,8 +23,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
-
-import static Helper.ItemHelper.*;
 
 public class SkillSystem {
 
@@ -596,7 +593,18 @@ public class SkillSystem {
         {
             weapon = NWObject.INVALID;
             NWObject offHand = NWScript.getItemInSlot(InventorySlot.LEFTHAND, oPC);
-            if(IsBlade(offHand) || IsBlunt(offHand) || IsRanged(offHand) || IsThrowing(offHand))
+            ItemGO offGO = new ItemGO(offHand);
+            if(offGO.IsBlade() ||
+               offGO.IsFinesseBlade() ||
+               offGO.IsBlunt() ||
+               offGO.IsHeavyBlade() ||
+               offGO.IsHeavyBlunt() ||
+               offGO.IsPolearm() ||
+               offGO.IsTwinBlade() ||
+               offGO.IsMartialArtsWeapon() ||
+               offGO.IsBow() ||
+               offGO.IsCrossbow() ||
+               offGO.IsThrowing())
             {
                 weapon = offHand;
             }

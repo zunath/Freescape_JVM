@@ -7,7 +7,6 @@ import Entities.ItemEntity;
 import GameObject.ItemGO;
 import GameObject.PlayerGO;
 import Helper.ColorToken;
-import Helper.ItemHelper;
 import Helper.ScriptHelper;
 import Item.IActionItem;
 import NWNX.NWNX_Player;
@@ -154,9 +153,10 @@ public class ItemSystem {
 
         actionItem.ApplyEffects(user, item, target, customData);
 
+        ItemGO itemGO = new ItemGO(item);
         if(actionItem.ReducesItemCharge(user, item, target, customData))
         {
-            if(NWScript.getItemCharges(item) > 0) ItemHelper.ReduceItemCharges(item);
+            if(NWScript.getItemCharges(item) > 0) itemGO.ReduceItemCharges();
             else NWScript.destroyObject(item, 0.0f);
         }
     }

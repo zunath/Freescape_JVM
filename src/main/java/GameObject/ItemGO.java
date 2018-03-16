@@ -3,6 +3,9 @@ package GameObject;
 import org.nwnx.nwnx2.jvm.NWItemProperty;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.NWScript;
+import org.nwnx.nwnx2.jvm.constants.BaseItem;
+
+import java.util.Arrays;
 
 public class ItemGO {
     private String tag;
@@ -112,4 +115,172 @@ public class ItemGO {
         NWScript.setLocalInt(item, "CUSTOM_ITEM_PROPERTY_MINING_BONUS", miningBonus);
     }
 
+    public void ReduceItemStack()
+    {
+        int stackSize = NWScript.getItemStackSize(item);
+        if(stackSize > 1)
+        {
+            NWScript.setItemStackSize(item, stackSize-1);
+        }
+        else
+        {
+            NWScript.destroyObject(item, 0.0f);
+        }
+    }
+
+    public void ReduceItemCharges()
+    {
+        NWScript.setItemCharges(item, NWScript.getItemCharges(item)-1);
+    }
+
+    public boolean IsBlade()
+    {
+        int itemType = NWScript.getBaseItemType(item);
+
+        Integer[] allowedWeaponTypes = {
+                BaseItem.BASTARDSWORD,
+                BaseItem.KATANA,
+                BaseItem.LONGSWORD,
+                BaseItem.SCIMITAR
+        };
+
+        return Arrays.asList(allowedWeaponTypes).contains(itemType);
+    }
+
+    public boolean IsFinesseBlade()
+    {
+        int itemType = NWScript.getBaseItemType(item);
+
+        Integer[] allowedWeaponTypes = {
+                BaseItem.DAGGER,
+                BaseItem.HANDAXE,
+                BaseItem.KUKRI,
+                BaseItem.RAPIER,
+                BaseItem.SCIMITAR,
+                BaseItem.SHORTSWORD,
+                BaseItem.WHIP
+        };
+
+        return Arrays.asList(allowedWeaponTypes).contains(itemType);
+    }
+
+    public boolean IsBlunt()
+    {
+        int itemType = NWScript.getBaseItemType(item);
+
+        Integer[] allowedWeaponTypes = {
+                BaseItem.CLUB,
+                BaseItem.LIGHTFLAIL,
+                BaseItem.LIGHTHAMMER,
+                BaseItem.LIGHTMACE,
+                BaseItem.MORNINGSTAR
+        };
+
+        return Arrays.asList(allowedWeaponTypes).contains(itemType);
+    }
+
+    public boolean IsHeavyBlade()
+    {
+        int itemType = NWScript.getBaseItemType(item);
+
+        Integer[] allowedWeaponTypes = {
+                BaseItem.BATTLEAXE,
+                BaseItem.DWARVENWARAXE,
+                BaseItem.GREATAXE,
+                BaseItem.GREATSWORD
+        };
+
+        return Arrays.asList(allowedWeaponTypes).contains(itemType);
+    }
+
+    public boolean IsHeavyBlunt()
+    {
+        int itemType = NWScript.getBaseItemType(item);
+
+        Integer[] allowedWeaponTypes = {
+                BaseItem.HEAVYFLAIL,
+                BaseItem.WARHAMMER,
+                BaseItem.DIREMACE,
+                BaseItem.QUARTERSTAFF
+        };
+
+        return Arrays.asList(allowedWeaponTypes).contains(itemType);
+    }
+
+    public boolean IsPolearm()
+    {
+        int itemType = NWScript.getBaseItemType(item);
+
+        Integer[] allowedWeaponTypes = {
+                BaseItem.HALBERD,
+                BaseItem.SCYTHE,
+                BaseItem.SHORTSPEAR,
+                BaseItem.TRIDENT
+        };
+
+        return Arrays.asList(allowedWeaponTypes).contains(itemType);
+    }
+    public boolean IsTwinBlade()
+    {
+        int itemType = NWScript.getBaseItemType(item);
+
+        Integer[] allowedWeaponTypes = {
+                BaseItem.DOUBLEAXE,
+                BaseItem.TWOBLADEDSWORD
+        };
+
+        return Arrays.asList(allowedWeaponTypes).contains(itemType);
+    }
+
+    public boolean IsMartialArtsWeapon()
+    {
+        int itemType = NWScript.getBaseItemType(item);
+
+        Integer[] allowedWeaponTypes = {
+                BaseItem.GLOVES,
+                BaseItem.BRACER,
+                BaseItem.KAMA
+        };
+
+        return Arrays.asList(allowedWeaponTypes).contains(itemType);
+    }
+
+
+    public boolean IsBow()
+    {
+        int itemType = NWScript.getBaseItemType(item);
+
+        Integer[] allowedWeaponTypes = {
+                BaseItem.LONGBOW,
+                BaseItem.SHORTBOW
+        };
+
+        return Arrays.asList(allowedWeaponTypes).contains(itemType);
+    }
+
+    public boolean IsCrossbow()
+    {
+        int itemType = NWScript.getBaseItemType(item);
+
+        Integer[] allowedWeaponTypes = {
+                BaseItem.HEAVYCROSSBOW,
+                BaseItem.LIGHTCROSSBOW
+        };
+
+        return Arrays.asList(allowedWeaponTypes).contains(itemType);
+    }
+
+    public boolean IsThrowing()
+    {
+        int itemType = NWScript.getBaseItemType(item);
+
+        Integer[] allowedWeaponTypes = {
+                BaseItem.THROWINGAXE,
+                BaseItem.SHURIKEN,
+                BaseItem.DART,
+                BaseItem.SLING
+        };
+
+        return Arrays.asList(allowedWeaponTypes).contains(itemType);
+    }
 }

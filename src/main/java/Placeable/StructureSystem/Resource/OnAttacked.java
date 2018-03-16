@@ -1,8 +1,8 @@
 package Placeable.StructureSystem.Resource;
 
 import Common.IScriptEventHandler;
+import GameObject.ItemGO;
 import Helper.ColorToken;
-import Helper.ItemHelper;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.NWScript;
 import org.nwnx.nwnx2.jvm.Scheduler;
@@ -30,8 +30,9 @@ public class OnAttacked implements IScriptEventHandler {
             oWeapon = NWScript.getItemInSlot(InventorySlot.RIGHTHAND, oPC);
         }
 
+        ItemGO weaponGO = new ItemGO(oWeapon);
         // Weapon used isn't one of the allowed types.
-        if(!ItemHelper.IsBlade(oWeapon))
+        if(!weaponGO.IsBlade())
         {
             NWScript.setPlotFlag(objSelf, true);
             NWScript.sendMessageToPC(oPC, ColorToken.Red() + "You must be using a blade to harvest this object." + ColorToken.End());
