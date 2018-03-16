@@ -37,12 +37,22 @@ public class Mana implements IPerk {
 
     @Override
     public void OnPurchased(NWObject oPC, int newLevel) {
-        SkillSystem.ApplyStatChanges(oPC);
+        SkillSystem.ApplyStatChanges(oPC, null);
     }
 
     @Override
-    public void OnRemoved(NWObject oPC, int newLevel) {
-        SkillSystem.ApplyStatChanges(oPC);
+    public void OnRemoved(NWObject oPC) {
+        SkillSystem.ApplyStatChanges(oPC, null);
+    }
+
+    @Override
+    public void OnItemEquipped(NWObject oPC, NWObject oItem) {
+
+    }
+
+    @Override
+    public void OnItemUnequipped(NWObject oPC, NWObject oItem) {
+
     }
 
     @Override

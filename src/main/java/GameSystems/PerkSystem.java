@@ -57,6 +57,48 @@ public class PerkSystem {
         }
     }
 
+    public static void OnModuleItemEquipped()
+    {
+        NWObject oPC = NWScript.getPCItemLastEquippedBy();
+        NWObject oItem = NWScript.getPCItemLastEquipped();
+        if(!NWScript.getIsPC(oPC) || NWScript.getIsDM(oPC) || NWScript.getIsDMPossessed(oPC)) return;
+        PlayerGO pcGO = new PlayerGO(oPC);
+        PerkRepository perkRepo = new PerkRepository();
+        List<PCPerksEntity> perks = perkRepo.GetPCPerksByExecutionType(pcGO.getUUID(), PerkExecutionTypeID.EquipmentBased);
+
+        for(PCPerksEntity pcPerk: perks)
+        {
+            String jsName = pcPerk.getPerk().getJavaScriptName();
+            if(jsName == null || jsName.equals("")) continue;
+
+            IPerk perkAction = (IPerk)ScriptHelper.GetClassByName("Perks." + jsName);
+            if(perkAction == null) continue;
+
+            perkAction.OnItemEquipped(oPC, oItem);
+        }
+    }
+
+    public static void OnModuleItemUnequipped()
+    {
+        NWObject oPC = NWScript.getPCItemLastUnequippedBy();
+        NWObject oItem = NWScript.getPCItemLastUnequipped();
+        if(!NWScript.getIsPC(oPC) || NWScript.getIsDM(oPC) || NWScript.getIsDMPossessed(oPC)) return;
+        PlayerGO pcGO = new PlayerGO(oPC);
+        PerkRepository perkRepo = new PerkRepository();
+        List<PCPerksEntity> perks = perkRepo.GetPCPerksByExecutionType(pcGO.getUUID(), PerkExecutionTypeID.EquipmentBased);
+
+        for(PCPerksEntity pcPerk: perks)
+        {
+            String jsName = pcPerk.getPerk().getJavaScriptName();
+            if(jsName == null || jsName.equals("")) continue;
+
+            IPerk perkAction = (IPerk)ScriptHelper.GetClassByName("Perks." + jsName);
+            if(perkAction == null) continue;
+
+            perkAction.OnItemUnequipped(oPC, oItem);
+        }
+    }
+
     public static String OnModuleExamine(String existingDescription, NWObject examiner, NWObject examinedObject)
     {
         if(!NWScript.getIsPC(examiner)) return existingDescription;

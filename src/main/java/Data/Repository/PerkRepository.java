@@ -83,6 +83,16 @@ public class PerkRepository {
         }
     }
 
+    public List<PCPerksEntity> GetPCPerksByExecutionType(String uuid, int executionTypeID)
+    {
+        try(DataContext context = new DataContext())
+        {
+            return context.executeSQLList("Perk/GetPCPerksByExecutionType", PCPerksEntity.class,
+                    new SqlParameter("playerID", uuid),
+                    new SqlParameter("executionTypeID", executionTypeID));
+        }
+    }
+
     public void Save(PCPerksEntity pcPerk)
     {
         try(DataContext context = new DataContext())

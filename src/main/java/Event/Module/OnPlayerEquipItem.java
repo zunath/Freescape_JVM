@@ -13,7 +13,8 @@ public class OnPlayerEquipItem implements IScriptEventHandler {
 		// Bioware Default
 		NWScript.executeScript("x2_mod_def_equ", objSelf);
         DurabilitySystem.OnModuleEquip();
-		ArmorSystem.OnModuleEquipItem();
+		SkillSystem.OnModuleItemEquipped();
+		PerkSystem.OnModuleItemEquipped();
 		ItemSystem.OnModuleEquipItem();
 		HandleEquipmentSwappingDelay();
 	}

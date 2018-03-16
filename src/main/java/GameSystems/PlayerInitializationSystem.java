@@ -71,7 +71,7 @@ public class PlayerInitializationSystem {
             PlayerEntity entity = pcGO.createEntity();
             repo.save(entity);
 
-            SkillSystem.ApplyStatChanges(oPC);
+            SkillSystem.ApplyStatChanges(oPC, null);
             Scheduler.delay(oPC, 1000, () -> NWScript.applyEffectToObject(DurationType.INSTANT, NWScript.effectHeal(999), oPC, 0.0f));
         }
     }

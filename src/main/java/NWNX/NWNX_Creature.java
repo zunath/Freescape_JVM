@@ -38,7 +38,7 @@ public class NWNX_Creature {
         NWNX_CallFunction(NWNX_Creature, sFunc);
     }
 
-    public static int GetKnowsFeat(NWObject creature, int feat)
+    public static boolean GetKnowsFeat(NWObject creature, int feat)
     {
         String sFunc = "GetKnowsFeat";
 
@@ -46,7 +46,7 @@ public class NWNX_Creature {
         NWNX_PushArgumentObject(NWNX_Creature, sFunc, creature);
 
         NWNX_CallFunction(NWNX_Creature, sFunc);
-        return NWNX_GetReturnValueInt(NWNX_Creature, sFunc);
+        return NWNX_GetReturnValueInt(NWNX_Creature, sFunc) > 0;
     }
 
     public static int GetFeatCountByLevel(NWObject creature, int level)

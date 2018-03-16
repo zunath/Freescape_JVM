@@ -93,7 +93,17 @@ public class DefensiveManeuver implements IPerk {
     }
 
     @Override
-    public void OnRemoved(NWObject oPC, int newLevel) {
+    public void OnRemoved(NWObject oPC) {
+
+    }
+
+    @Override
+    public void OnItemEquipped(NWObject oPC, NWObject oItem) {
+
+    }
+
+    @Override
+    public void OnItemUnequipped(NWObject oPC, NWObject oItem) {
 
     }
 
