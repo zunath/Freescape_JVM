@@ -560,7 +560,7 @@ public class SkillSystem {
         NWNX_Creature.SetBaseAC(oPC, ac);
 
         // Apply BAB
-        int bab = CalculateWeaponSkillBAB(oPC, ignoreItem);
+        int bab = CalculateBAB(oPC, ignoreItem);
         NWNX_Creature.SetBaseAttackBonus(oPC, bab);
 
         // Apply HP
@@ -582,7 +582,7 @@ public class SkillSystem {
         playerRepo.save(pcEntity);
     }
 
-    private static int CalculateWeaponSkillBAB(NWObject oPC, NWObject ignoreItem)
+    private static int CalculateBAB(NWObject oPC, NWObject ignoreItem)
     {
         NWObject weapon = NWScript.getItemInSlot(InventorySlot.RIGHTHAND, oPC);
 
@@ -619,7 +619,15 @@ public class SkillSystem {
         int weaponSkillID = GetWeaponSkillID(weapon);
         PCSkillEntity skill = GetPCSkill(oPC, weaponSkillID);
         if(skill == null) return 0;
-        return skill.getRank() / 10;
+        int skillBAB = skill.getRank() / 10;
+        int perkBAB = 0;
+
+        if(weaponSkillID == SkillID.Throwing)
+        {
+            perkBAB += PerkSystem.GetPCPerkLevel(oPC, PerkID.TossAccuracy);
+        }
+
+        return skillBAB + perkBAB;
     }
 
     private static int CalculateAC(NWObject oPC, NWObject ignoreItem)

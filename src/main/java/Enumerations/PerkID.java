@@ -37,4 +37,17 @@ public class PerkID {
     public static final int Cleave = 34;
     public static final int DeflectArrows = 35;
     public static final int Dodge = 36;
+    public static final int Expertise = 37;
+    public static final int TossAccuracy = 38;
+    public static final int ImprovedCriticalBlades = 39;
+    public static final int ImprovedCriticalFinesseBlades = 40;
+    public static final int ImprovedCriticalBlunts = 41;
+    public static final int ImprovedCriticalHeavyBlades = 42;
+    public static final int ImprovedCriticalHeavyBlunts = 43;
+    public static final int ImprovedCriticalPolearms = 44;
+    public static final int ImprovedCriticalTwinBlades = 45;
+    public static final int ImprovedCriticalMartialArts = 46;
+    public static final int ImprovedCriticalBows = 47;
+    public static final int ImprovedCriticalCrossbows = 48;
+    public static final int ImprovedCriticalThrowing = 49;
 }

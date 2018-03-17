@@ -9,7 +9,7 @@ import org.nwnx.nwnx2.jvm.NWScript;
 import org.nwnx.nwnx2.jvm.constants.Feat;
 import org.nwnx.nwnx2.jvm.constants.InventorySlot;
 
-public class Dodge implements IPerk {
+public class Expertise implements IPerk {
     @Override
     public boolean CanCastSpell(NWObject oPC, NWObject oTarget) {
         return false;
@@ -65,13 +65,13 @@ public class Dodge implements IPerk {
         NWObject equipped = oItem == null ? NWScript.getItemInSlot(InventorySlot.CHEST, oPC) : oItem;
         ItemGO itemGO = new ItemGO(equipped);
 
-        if(equipped.equals(oItem) || itemGO.getCustomItemType() != CustomItemType.LightArmor)
+        if(equipped.equals(oItem) || itemGO.getCustomItemType() != CustomItemType.HeavyArmor)
         {
-            NWNX_Creature.RemoveFeat(oPC, Feat.DODGE);
+            NWNX_Creature.RemoveFeat(oPC, Feat.EXPERTISE);
             return;
         }
 
-        NWNX_Creature.AddFeat(oPC, Feat.DODGE);
+        NWNX_Creature.AddFeat(oPC, Feat.EXPERTISE);
     }
 
     @Override
