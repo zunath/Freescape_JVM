@@ -50,4 +50,5 @@ public class PerkID {
     public static final int ImprovedCriticalBows = 47;
     public static final int ImprovedCriticalCrossbows = 48;
     public static final int ImprovedCriticalThrowing = 49;
+    public static final int Knockdown = 50;
 }
