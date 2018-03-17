@@ -34,5 +34,7 @@ public class PerkID {
     public static final int BluntPowerAttack = 31;
     public static final int CalledShot = 32;
     public static final int CircleKick = 33;
-
+    public static final int Cleave = 34;
+    public static final int DeflectArrows = 35;
+    public static final int Dodge = 36;
 }
