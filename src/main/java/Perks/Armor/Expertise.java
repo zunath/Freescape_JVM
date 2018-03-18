@@ -47,7 +47,7 @@ public class Expertise implements IPerk {
 
     @Override
     public void OnRemoved(NWObject oPC) {
-        NWNX_Creature.RemoveFeat(oPC, Feat.DODGE);
+        NWNX_Creature.RemoveFeat(oPC, Feat.EXPERTISE);
     }
 
     @Override

@@ -1,6 +1,5 @@
 package Perks.Weapons;
 
-import Enumerations.CustomItemType;
 import Enumerations.PerkID;
 import GameObject.ItemGO;
 import GameSystems.PerkSystem;
@@ -10,7 +9,6 @@ import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.NWScript;
 import org.nwnx.nwnx2.jvm.constants.BaseItem;
 import org.nwnx.nwnx2.jvm.constants.Feat;
-import org.nwnx.nwnx2.jvm.constants.Inventory;
 import org.nwnx.nwnx2.jvm.constants.InventorySlot;
 
 public class ImprovedCritical implements IPerk {

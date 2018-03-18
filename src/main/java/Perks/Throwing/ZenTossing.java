@@ -1,4 +1,4 @@
-package Perks.Archery;
+package Perks.Throwing;
 
 import Enumerations.CustomItemType;
 import GameObject.ItemGO;
@@ -6,11 +6,10 @@ import NWNX.NWNX_Creature;
 import Perks.IPerk;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.NWScript;
-import org.nwnx.nwnx2.jvm.constants.BaseItem;
 import org.nwnx.nwnx2.jvm.constants.Feat;
 import org.nwnx.nwnx2.jvm.constants.InventorySlot;
 
-public class PointBlankShot implements IPerk {
+public class ZenTossing implements IPerk {
     @Override
     public boolean CanCastSpell(NWObject oPC, NWObject oTarget) {
         return false;
@@ -48,7 +47,7 @@ public class PointBlankShot implements IPerk {
 
     @Override
     public void OnRemoved(NWObject oPC) {
-        NWNX_Creature.RemoveFeat(oPC, Feat.POINT_BLANK_SHOT);
+        NWNX_Creature.RemoveFeat(oPC, Feat.ZEN_ARCHERY);
     }
 
     @Override
@@ -63,17 +62,16 @@ public class PointBlankShot implements IPerk {
 
     private void ApplyFeatChanges(NWObject oPC, NWObject oItem)
     {
-        NWObject armor = oItem == null ? NWScript.getItemInSlot(InventorySlot.CHEST, oPC) : oItem;
-        if(NWScript.getBaseItemType(armor) != BaseItem.ARMOR) return;
+        NWObject equipped = oItem == null ? NWScript.getItemInSlot(InventorySlot.RIGHTHAND, oPC) : oItem;
+        ItemGO itemGO = new ItemGO(equipped);
 
-        ItemGO itemGO = new ItemGO(armor);
-        if(armor.equals(oItem) || itemGO.getCustomItemType() != CustomItemType.LightArmor)
+        if(equipped.equals(oItem) || itemGO.getCustomItemType() != CustomItemType.Throwing)
         {
-            NWNX_Creature.RemoveFeat(oPC, Feat.POINT_BLANK_SHOT);
+            NWNX_Creature.RemoveFeat(oPC, Feat.ZEN_ARCHERY);
             return;
         }
 
-        NWNX_Creature.AddFeat(oPC, Feat.POINT_BLANK_SHOT);
+        NWNX_Creature.AddFeat(oPC, Feat.ZEN_ARCHERY);
     }
 
     @Override

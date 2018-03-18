@@ -51,4 +51,23 @@ public class PerkID {
     public static final int ImprovedCriticalCrossbows = 48;
     public static final int ImprovedCriticalThrowing = 49;
     public static final int Knockdown = 50;
+    public static final int Mobility = 51;
+    public static final int Opportunist = 52;
+    public static final int RapidReload = 53;
+    public static final int RapidShot = 54;
+    public static final int RapidToss = 55;
+    public static final int WeaponFinesse = 56;
+    public static final int ZenArchery = 57;
+    public static final int ZenTossing = 58;
+    public static final int WeaponFocusBlades = 59;
+    public static final int WeaponFocusFinesseBlades = 60;
+    public static final int WeaponFocusBlunts = 61;
+    public static final int WeaponFocusHeavyBlades = 62;
+    public static final int WeaponFocusHeavyBlunts = 63;
+    public static final int WeaponFocusPolearms = 64;
+    public static final int WeaponFocusTwinBlades = 65;
+    public static final int WeaponFocusMartialArts = 66;
+    public static final int WeaponFocusBows = 67;
+    public static final int WeaponFocusCrossbows = 68;
+    public static final int WeaponFocusThrowing = 69;
 }
