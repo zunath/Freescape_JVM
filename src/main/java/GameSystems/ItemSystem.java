@@ -252,5 +252,6 @@ public class ItemSystem {
         itemGO.setRecommendedLevel(entity.getRecommendedLevel());
         itemGO.setLoggingBonus(entity.getLoggingBonus());
         itemGO.setMiningBonus(entity.getMiningBonus());
+        itemGO.setCastingSpeed(entity.getCastingSpeed());
     }
 }

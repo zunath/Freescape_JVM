@@ -220,7 +220,8 @@ public class PlayerGO {
         for(int itemSlot = 0; itemSlot < Constants.NumberOfInventorySlots; itemSlot++)
         {
             NWObject item = NWScript.getItemInSlot(itemSlot, _pc);
-            castingSpeed = castingSpeed + NWScript.getLocalInt(item, "CASTING_SPEED");
+            ItemGO itemGO = new ItemGO(item);
+            castingSpeed = castingSpeed + itemGO.getCastingSpeed();
         }
 
         if(castingSpeed < -99)

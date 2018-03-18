@@ -70,4 +70,12 @@ public class PerkID {
     public static final int WeaponFocusBows = 67;
     public static final int WeaponFocusCrossbows = 68;
     public static final int WeaponFocusThrowing = 69;
+    public static final int CrushingEarth = 70;
+    public static final int LightningShock = 71;
+    public static final int GraspingIce = 72;
+    public static final int FireBlast = 73;
+    public static final int Gate = 74;
+    public static final int Purify = 75;
+    public static final int Aegis = 76;
+    public static final int ManaWall = 77;
 }

@@ -191,25 +191,29 @@ public class ViewPerks extends DialogBase implements IDialogHandler {
                 SkillRepository skillRepo = new SkillRepository();
                 header.append("\n").append(ColorToken.Green()).append("Next Upgrade Skill Requirements:").append(ColorToken.End()).append("\n\n");
 
-                if(requirements.size() <= 0)
+                boolean hasRequirement = false;
+                for(PerkLevelSkillRequirementEntity req: requirements)
+                {
+                    if(req.getRequiredRank() > 0)
+                    {
+                        String detailLine = req.getSkill().getName() + " Rank " + req.getRequiredRank();
+                        String colorToken = ColorToken.Red();
+
+                        PCSkillEntity skill = skillRepo.GetPCSkillByID(pcGO.getUUID(), req.getSkill().getSkillID());
+                        if(skill.getRank() >= req.getRequiredRank())
+                        {
+                            colorToken = ColorToken.Green();
+                        }
+
+                        header.append(colorToken).append(detailLine).append(ColorToken.End()).append("\n");
+                        hasRequirement = true;
+                    }
+                }
+
+                if(requirements.size() <= 0 || !hasRequirement)
                 {
                     header.append("None\n");
                 }
-
-                for(PerkLevelSkillRequirementEntity req: requirements)
-                {
-                    String detailLine = req.getSkill().getName() + " Rank " + req.getRequiredRank();
-                    String colorToken = ColorToken.Red();
-
-                    PCSkillEntity skill = skillRepo.GetPCSkillByID(pcGO.getUUID(), req.getSkill().getSkillID());
-                    if(skill.getRank() >= req.getRequiredRank())
-                    {
-                        colorToken = ColorToken.Green();
-                    }
-
-                    header.append(colorToken).append(detailLine).append(ColorToken.End()).append("\n");
-                }
-
             }
         }
 

@@ -26,6 +26,9 @@ public class ItemEntity {
     @Column(name = "MiningBonus")
     private int miningBonus;
 
+    @Column(name = "CastingSpeed")
+    private int castingSpeed;
+
     public String getResref() {
         return resref;
     }
@@ -72,5 +75,13 @@ public class ItemEntity {
 
     public void setMiningBonus(int miningBonus) {
         this.miningBonus = miningBonus;
+    }
+
+    public int getCastingSpeed() {
+        return castingSpeed;
+    }
+
+    public void setCastingSpeed(int castingSpeed) {
+        this.castingSpeed = castingSpeed;
     }
 }

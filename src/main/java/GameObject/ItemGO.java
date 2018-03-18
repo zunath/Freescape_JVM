@@ -115,6 +115,16 @@ public class ItemGO {
         NWScript.setLocalInt(item, "CUSTOM_ITEM_PROPERTY_MINING_BONUS", miningBonus);
     }
 
+    public int getCastingSpeed()
+    {
+        return NWScript.getLocalInt(item, "CUSTOM_ITEM_PROPERTY_CASTING_SPEED");
+    }
+
+    public void setCastingSpeed(int castingSpeed)
+    {
+        NWScript.setLocalInt(item, "CUSTOM_ITEM_PROPERTY_CASTING_SPEED", castingSpeed);
+    }
+
     public void ReduceItemStack()
     {
         int stackSize = NWScript.getItemStackSize(item);

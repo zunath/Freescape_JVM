@@ -3,6 +3,7 @@ SELECT Resref ,
        ItemTypeID,
        RecommendedLevel,
        LoggingBonus,
-       MiningBonus
+       MiningBonus,
+       CastingSpeed
 FROM dbo.Items
 WHERE Resref = :resref

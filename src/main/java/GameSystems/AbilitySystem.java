@@ -8,7 +8,9 @@ import Entities.CooldownCategoryEntity;
 import Entities.PCCooldownEntity;
 import Entities.PerkEntity;
 import Entities.PlayerEntity;
+import Enumerations.CustomItemType;
 import Enumerations.PerkExecutionTypeID;
+import GameObject.ItemGO;
 import GameObject.PlayerGO;
 import Helper.ColorToken;
 import Helper.ScriptHelper;
@@ -130,7 +132,8 @@ public class AbilitySystem {
         final String spellUUID = UUID.randomUUID().toString();
         final PlayerGO pcGO = new PlayerGO(pc);
         int itemBonus = pcGO.CalculateCastingSpeed();
-        float castingTime = perk.CastingTime(pc, entity.getBaseCastingTime());
+        float baseCastingTime = perk.CastingTime(pc, entity.getBaseCastingTime());
+        float castingTime = baseCastingTime;
 
         // Casting Bonus % - Shorten casting time.
         if(itemBonus < 0)
@@ -148,6 +151,13 @@ public class AbilitySystem {
         if(castingTime < 0.5f)
             castingTime = 0.5f;
 
+        // Heavy armor increases casting time by 2x the base casting time
+        NWObject armor = NWScript.getItemInSlot(InventorySlot.CHEST, pc);
+        ItemGO armorGO = new ItemGO(armor);
+        if(armorGO.getCustomItemType() == CustomItemType.HeavyArmor)
+        {
+            castingTime = baseCastingTime * 2;
+        }
 
         if(NWScript.getActionMode(pc, ActionMode.STEALTH))
             NWScript.setActionMode(pc, ActionMode.STEALTH, false);
