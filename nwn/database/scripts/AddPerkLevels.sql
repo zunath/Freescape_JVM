@@ -1,60 +1,128 @@
 
--- Example script used to quickly add perk levels and skill requirements.
+
 BEGIN TRANSACTION
 
+DECLARE @PerkID INT = (SELECT MAX(PerkID) + 1 FROM dbo.Perks)
+DECLARE @Name NVARCHAR(64) = 'Holy Shot'
+DECLARE @PerkDescription NVARCHAR(256) = N'Shoots a beam at a target, dealing damage.'
+DECLARE @PerkJS NVARCHAR(64) = 'Alteration.HolyShot'
+DECLARE @SkillID INT = 20
+DECLARE @PerkCategoryID INT = 30
+
+INSERT INTO dbo.Perks ( PerkID ,
+                        Name ,
+                        FeatID ,
+                        IsActive ,
+                        JavaScriptName ,
+                        BaseManaCost ,
+                        BaseCastingTime ,
+                        Description ,
+                        PerkCategoryID ,
+                        CooldownCategoryID ,
+                        ExecutionTypeID ,
+                        ItemResref ,
+                        IsTargetSelfOnly )
+VALUES ( @PerkID ,    -- PerkID - int
+         @Name ,   -- Name - varchar(64)
+         NULL ,    -- FeatID - int
+         1 , -- IsActive - bit
+         @PerkJS ,   -- JavaScriptName - varchar(64)
+         8 ,    -- BaseManaCost - int
+         4.5 ,  -- BaseCastingTime - float
+         @PerkDescription,
+         @PerkCategoryID ,    -- PerkCategoryID - int
+         12 ,    -- CooldownCategoryID - int
+         3 ,    -- ExecutionTypeID - int
+         'perk_holyshot'  ,  -- ItemResref - nvarchar(16)
+         0   -- IsTargetSelfOnly - bit
+    )
+
 DECLARE @PerkLevelID INT
-DECLARE @SkillID INT = 0 -- Skills table
-DECLARE @PerkID INT = 0 -- Perks table
+DECLARE @PerkLevel INT = 1
 
 INSERT INTO dbo.PerkLevels ( PerkID ,
                              Level ,
                              Price ,
                              Description )
 VALUES ( @PerkID , -- PerkID - int
-         1 , -- Level - int
+         @PerkLevel , -- Level - int
          1 , -- Price - int
-         N'' -- Description - nvarchar(512)
+         'Deals 1d8 damage to a single target.'
     )
 
 SET @PerkLevelID = SCOPE_IDENTITY()
+SET @PerkLevel = @PerkLevel + 1
 
 INSERT INTO dbo.PerkLevelSkillRequirements ( PerkLevelID ,
                                              SkillID ,
                                              RequiredRank )
 VALUES ( @PerkLevelID , -- PerkLevelID - int
          @SkillID , -- SkillID - int
-         10   -- RequiredRank - int
+         0   -- RequiredRank - int
     )
+
+
+
 
 INSERT INTO dbo.PerkLevels ( PerkID ,
                              Level ,
                              Price ,
                              Description )
 VALUES ( @PerkID , -- PerkID - int
-         2 , -- Level - int
+         @PerkLevel , -- Level - int
          1 , -- Price - int
-         N'' -- Description - nvarchar(512)
+         'Deals 2d6 damage to a single target.'
     )
+
 SET @PerkLevelID = SCOPE_IDENTITY()
+SET @PerkLevel = @PerkLevel + 1
 
 INSERT INTO dbo.PerkLevelSkillRequirements ( PerkLevelID ,
                                              SkillID ,
                                              RequiredRank )
 VALUES ( @PerkLevelID , -- PerkLevelID - int
          @SkillID , -- SkillID - int
-         20   -- RequiredRank - int
+         6   -- RequiredRank - int
     )
+
+
 
 INSERT INTO dbo.PerkLevels ( PerkID ,
                              Level ,
                              Price ,
                              Description )
 VALUES ( @PerkID , -- PerkID - int
-         3 , -- Level - int
+         @PerkLevel , -- Level - int
          2 , -- Price - int
-         N'' -- Description - nvarchar(512)
+         'Deals 4d4 damage to a single target.'
     )
+
 SET @PerkLevelID = SCOPE_IDENTITY()
+SET @PerkLevel = @PerkLevel + 1
+
+INSERT INTO dbo.PerkLevelSkillRequirements ( PerkLevelID ,
+                                             SkillID ,
+                                             RequiredRank )
+VALUES ( @PerkLevelID , -- PerkLevelID - int
+         @SkillID , -- SkillID - int
+         16   -- RequiredRank - int
+    )
+
+
+
+
+INSERT INTO dbo.PerkLevels ( PerkID ,
+                             Level ,
+                             Price ,
+                             Description )
+VALUES ( @PerkID , -- PerkID - int
+         @PerkLevel , -- Level - int
+         3 , -- Price - int
+         'Deals 5d4 damage to a single target.'
+    )
+
+SET @PerkLevelID = SCOPE_IDENTITY()
+SET @PerkLevel = @PerkLevel + 1
 
 INSERT INTO dbo.PerkLevelSkillRequirements ( PerkLevelID ,
                                              SkillID ,
@@ -63,16 +131,21 @@ VALUES ( @PerkLevelID , -- PerkLevelID - int
          @SkillID , -- SkillID - int
          30   -- RequiredRank - int
     )
+
+
+
 INSERT INTO dbo.PerkLevels ( PerkID ,
                              Level ,
                              Price ,
                              Description )
 VALUES ( @PerkID , -- PerkID - int
-         4 , -- Level - int
-         2 , -- Price - int
-         N'' -- Description - nvarchar(512)
+         @PerkLevel , -- Level - int
+         4 , -- Price - int
+         'Deals 4d8 damage to a single target.'
     )
+
 SET @PerkLevelID = SCOPE_IDENTITY()
+SET @PerkLevel = @PerkLevel + 1
 
 INSERT INTO dbo.PerkLevelSkillRequirements ( PerkLevelID ,
                                              SkillID ,
@@ -82,42 +155,12 @@ VALUES ( @PerkLevelID , -- PerkLevelID - int
          40   -- RequiredRank - int
     )
 
-INSERT INTO dbo.PerkLevels ( PerkID ,
-                             Level ,
-                             Price ,
-                             Description )
-VALUES ( @PerkID , -- PerkID - int
-         5 , -- Level - int
-         3 , -- Price - int
-         N'' -- Description - nvarchar(512)
-    )
-SET @PerkLevelID = SCOPE_IDENTITY()
 
-INSERT INTO dbo.PerkLevelSkillRequirements ( PerkLevelID ,
-                                             SkillID ,
-                                             RequiredRank )
-VALUES ( @PerkLevelID , -- PerkLevelID - int
-         @SkillID , -- SkillID - int
-         50   -- RequiredRank - int
-    )
-INSERT INTO dbo.PerkLevels ( PerkID ,
-                             Level ,
-                             Price ,
-                             Description )
-VALUES ( @PerkID , -- PerkID - int
-         6 , -- Level - int
-         3 , -- Price - int
-         N'' -- Description - nvarchar(512)
-    )
 
-SET @PerkLevelID = SCOPE_IDENTITY()
 
-INSERT INTO dbo.PerkLevelSkillRequirements ( PerkLevelID ,
-                                             SkillID ,
-                                             RequiredRank )
-VALUES ( @PerkLevelID , -- PerkLevelID - int
-         @SkillID , -- SkillID - int
-         60   -- RequiredRank - int
-    )
+
+
+
 -- rollback
 -- commit
+
