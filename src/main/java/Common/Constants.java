@@ -9,7 +9,6 @@ public class Constants {
 	public static final int BaseHPRegenRate = 20;
 	public static final int BaseManaRegenAmount = 1;
 	public static final int BaseManaRegenRate = 20;
-	public static final int BaseHungerRate = 60;
 
 	// The following is the number of inventory slots available in NWN
     public static final int NumberOfInventorySlots = 18;

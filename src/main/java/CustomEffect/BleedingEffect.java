@@ -10,6 +10,11 @@ import org.nwnx.nwnx2.jvm.constants.ObjectType;
 
 public class BleedingEffect implements ICustomEffectHandler {
     @Override
+    public void Apply(NWObject oCaster, NWObject oTarget) {
+
+    }
+
+    @Override
     public void Tick(NWObject oCaster, NWObject oTarget) {
         NWLocation location = NWScript.getLocation(oTarget);
         NWObject oBlood = NWScript.createObject(ObjectType.PLACEABLE, "plc_bloodstain", location, false, "");

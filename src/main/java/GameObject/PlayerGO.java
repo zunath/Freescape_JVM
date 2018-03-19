@@ -72,8 +72,9 @@ public class PlayerGO {
         entity.setLocationX(location.getX());
         entity.setLocationY(location.getY());
         entity.setLocationZ(location.getZ());
-        entity.setMaxHunger(100);
-        entity.setCurrentHunger(100);
+        entity.setMaxHunger(150);
+        entity.setCurrentHunger(150);
+        entity.setCurrentHungerTick(300);
         entity.setMaxMana(0);
         entity.setCurrentMana(10);
         entity.setCurrentManaTick(20);

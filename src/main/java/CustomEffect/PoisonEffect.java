@@ -11,6 +11,11 @@ import static org.nwnx.nwnx2.jvm.NWScript.applyEffectToObject;
 
 public class PoisonEffect implements ICustomEffectHandler {
     @Override
+    public void Apply(NWObject oCaster, NWObject oTarget) {
+
+    }
+
+    @Override
     public void Tick(NWObject oCaster, NWObject oTarget) {
 
         int damage = ThreadLocalRandom.current().nextInt(3, 7);

@@ -198,6 +198,12 @@ public class CustomEffectSystem {
             npcEffectList.put(spellModel, ticks);
         }
 
+        ICustomEffectHandler handler = (ICustomEffectHandler)ScriptHelper.GetClassByName("CustomEffect." + effectEntity.getScriptHandler());
+        if(handler != null)
+        {
+            handler.Apply(oCaster, oTarget);
+        }
+
         setLocalInt(oTarget, "CUSTOM_EFFECT_ACTIVE_" + customEffectID, effectLevel);
     }
 

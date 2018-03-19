@@ -5,6 +5,11 @@ import org.nwnx.nwnx2.jvm.NWObject;
 
 public class AegisEffect implements ICustomEffectHandler {
     @Override
+    public void Apply(NWObject oCaster, NWObject oTarget) {
+
+    }
+
+    @Override
     public void Tick(NWObject oCaster, NWObject oTarget) {
     }
 
