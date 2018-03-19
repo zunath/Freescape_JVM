@@ -45,13 +45,19 @@ public class AbilitySystem {
         PerkRepository perkRepo = new PerkRepository();
         CooldownRepository cdRepo = new CooldownRepository();
         PlayerGO pcGO = new PlayerGO(pc);
-        PerkEntity entity = perkRepo.GetPerkByID(perkID);
+        PerkEntity perk = perkRepo.GetPerkByID(perkID);
 
-        if(entity == null) return;
-        IPerk perkAction = (IPerk) ScriptHelper.GetClassByName("Perks." + entity.getJavaScriptName());
+        if(perk == null) return;
+        IPerk perkAction = (IPerk) ScriptHelper.GetClassByName("Perks." + perk.getJavaScriptName());
         if(perkAction == null) return;
 
         PlayerEntity playerEntity = playerRepo.GetByPlayerID(pcGO.getUUID());
+
+        if(PerkSystem.GetPCPerkLevel(pc, perk.getPerkID()) <= 0)
+        {
+            NWScript.sendMessageToPC(pc, "You do not meet the prerequisites to use this ability.");
+            return;
+        }
 
         if(perkAction.IsHostile())
         {
@@ -74,7 +80,7 @@ public class AbilitySystem {
             return;
         }
 
-        int manaCost = perkAction.ManaCost(pc, perkAction.ManaCost(pc, entity.getBaseManaCost()));
+        int manaCost = perkAction.ManaCost(pc, perkAction.ManaCost(pc, perk.getBaseManaCost()));
         if(playerEntity.getCurrentMana() < manaCost)
         {
             NWScript.sendMessageToPC(pc, "You do not have enough mana. (Required: " + manaCost + ". You have: " + playerEntity.getCurrentMana() + ")");
@@ -88,7 +94,7 @@ public class AbilitySystem {
         }
 
         // Check cooldown
-        PCCooldownEntity pcCooldown = cdRepo.GetPCCooldownByID(pcGO.getUUID(), entity.getCooldown().getCooldownCategoryID());
+        PCCooldownEntity pcCooldown = cdRepo.GetPCCooldownByID(pcGO.getUUID(), perk.getCooldown().getCooldownCategoryID());
         DateTime unlockDateTime = new DateTime(pcCooldown.getDateUnlocked());
         DateTime now = DateTime.now(DateTimeZone.UTC);
 
@@ -100,12 +106,12 @@ public class AbilitySystem {
         }
 
         // Spells w/ casting time
-        if(entity.getPerkExecutionTypeID() == PerkExecutionTypeID.Spell)
+        if(perk.getPerkExecutionTypeID() == PerkExecutionTypeID.Spell)
         {
-            CastSpell(pc, target, entity, perkAction, entity.getCooldown());
+            CastSpell(pc, target, perk, perkAction, perk.getCooldown());
         }
         // Combat Abilities w/o casting time
-        else if(entity.getPerkExecutionTypeID() == PerkExecutionTypeID.CombatAbility)
+        else if(perk.getPerkExecutionTypeID() == PerkExecutionTypeID.CombatAbility)
         {
             perkAction.OnImpact(pc, target);
 
@@ -114,12 +120,12 @@ public class AbilitySystem {
                 playerEntity.setCurrentMana(playerEntity.getCurrentMana() - manaCost);
                 playerRepo.save(playerEntity);
             }
-            ApplyCooldown(pc, entity.getCooldown(), perkAction);
+            ApplyCooldown(pc, perk.getCooldown(), perkAction);
         }
         // Queued Weapon Skills
-        else if(entity.getPerkExecutionTypeID() == PerkExecutionTypeID.QueuedWeaponSkill)
+        else if(perk.getPerkExecutionTypeID() == PerkExecutionTypeID.QueuedWeaponSkill)
         {
-            HandleQueueWeaponSkill(pc, entity, perkAction);
+            HandleQueueWeaponSkill(pc, perk, perkAction);
         }
     }
 

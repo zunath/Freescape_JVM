@@ -1,18 +1,125 @@
-package Perks.Evocation;
+package Perks.Alteration;
 
 import Enumerations.PerkID;
 import Enumerations.SkillID;
 import GameSystems.PerkSystem;
 import GameSystems.SkillSystem;
 import Perks.IPerk;
+import org.nwnx.nwnx2.jvm.NWEffect;
 import org.nwnx.nwnx2.jvm.NWObject;
+import org.nwnx.nwnx2.jvm.Scheduler;
 import org.nwnx.nwnx2.jvm.constants.*;
 
 import java.util.concurrent.ThreadLocalRandom;
 
 import static org.nwnx.nwnx2.jvm.NWScript.*;
 
-public class LightningShock implements IPerk {
+public class HolyShot implements IPerk {
+    @Override
+    public boolean CanCastSpell(NWObject oPC, NWObject oTarget) {
+        return true;
+    }
+
+    @Override
+    public String CannotCastSpellMessage() {
+        return null;
+    }
+
+    @Override
+    public int ManaCost(NWObject oPC, int baseManaCost) {
+        return baseManaCost;
+    }
+
+    @Override
+    public float CastingTime(NWObject oPC, float baseCastingTime) {
+        return baseCastingTime;
+    }
+
+    @Override
+    public float CooldownTime(NWObject oPC, float baseCooldownTime) {
+        return baseCooldownTime;
+    }
+
+    @Override
+    public void OnImpact(NWObject oPC, NWObject oTarget) {
+        int level = PerkSystem.GetPCPerkLevel(oPC, PerkID.HolyShot);
+        int damage;
+
+        switch(level)
+        {
+            case 1:
+                damage = ThreadLocalRandom.current().nextInt(8) + 1;
+                break;
+            case 2:
+                damage = ThreadLocalRandom.current().nextInt(6) + 1;
+                damage += ThreadLocalRandom.current().nextInt(6) + 1;
+                break;
+            case 3:
+                damage = ThreadLocalRandom.current().nextInt(6) + 1;
+                damage += ThreadLocalRandom.current().nextInt(6) + 1;
+                break;
+            case 4:
+                damage = ThreadLocalRandom.current().nextInt(4) + 1;
+                damage += ThreadLocalRandom.current().nextInt(4) + 1;
+                damage += ThreadLocalRandom.current().nextInt(4) + 1;
+                damage += ThreadLocalRandom.current().nextInt(4) + 1;
+                break;
+            case 5:
+                damage = ThreadLocalRandom.current().nextInt(4) + 1;
+                damage += ThreadLocalRandom.current().nextInt(4) + 1;
+                damage += ThreadLocalRandom.current().nextInt(4) + 1;
+                damage += ThreadLocalRandom.current().nextInt(4) + 1;
+                damage += ThreadLocalRandom.current().nextInt(4) + 1;
+                break;
+            default:
+                return;
+        }
+
+        int wisdom = getAbilityModifier(Ability.WISDOM, oPC);
+        int intelligence = getAbilityModifier(Ability.INTELLIGENCE, oPC);
+
+        float damageMultiplier = 1.0f + (intelligence * 0.2f) + (wisdom * 0.1f);
+        damage = (int)((float)damage * damageMultiplier);
+
+        Scheduler.assign(oPC, () -> {
+            NWEffect vfx = effectVisualEffect(VfxBeam.HOLY, false);
+            applyEffectToObject(DurationType.INSTANT, vfx, oTarget, 0.0f);
+        });
+
+        applyEffectToObject(DurationType.INSTANT, effectDamage(damage, DamageType.MAGICAL, DamagePower.NORMAL), oTarget, 0.0f);
+        SkillSystem.RegisterPCToNPCForSkill(oPC, oTarget, SkillID.AlterationMagic);
+    }
+
+    @Override
+    public void OnPurchased(NWObject oPC, int newLevel) {
+
+    }
+
+    @Override
+    public void OnRemoved(NWObject oPC) {
+
+    }
+
+    @Override
+    public void OnItemEquipped(NWObject oPC, NWObject oItem) {
+
+    }
+
+    @Override
+    public void OnItemUnequipped(NWObject oPC, NWObject oItem) {
+
+    }
+
+    @Override
+    public boolean IsHostile() {
+        return true;
+    }
+}
+
+
+/*
+
+IPerk {
     @Override
     public boolean CanCastSpell(NWObject oPC, NWObject oTarget) {
         return true;
@@ -108,4 +215,5 @@ public class LightningShock implements IPerk {
     public boolean IsHostile() {
         return true;
     }
-}
+
+ */

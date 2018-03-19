@@ -3,6 +3,8 @@ package GameObject;
 import Common.Constants;
 import Data.Repository.PlayerRepository;
 import Entities.PlayerEntity;
+import Enumerations.CustomEffectType;
+import GameSystems.CustomEffectSystem;
 import NWNX.NWNX_Creature;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -232,5 +234,33 @@ public class PlayerGO {
         return castingSpeed;
     }
 
+    public int CalculateEffectAC(NWObject oPC)
+    {
+        int effectLevel = CustomEffectSystem.GetActiveEffectLevel(oPC, CustomEffectType.Aegis);
+        int aegisAC = 0;
+
+        if(effectLevel > 0)
+        {
+            switch(effectLevel)
+            {
+                case 1:
+                    aegisAC = 1;
+                    break;
+                case 2:
+                case 3:
+                    aegisAC = 2;
+                    break;
+                case 4:
+                    aegisAC = 3;
+                    break;
+                case 5:
+                    aegisAC = 4;
+                    break;
+                default: return 0;
+            }
+        }
+
+        return aegisAC;
+    }
 
 }

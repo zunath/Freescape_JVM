@@ -77,5 +77,6 @@ public class PerkID {
     public static final int Gate = 74;
     public static final int Purify = 75;
     public static final int Aegis = 76;
-    public static final int ManaWall = 77;
+    public static final int Recover = 77;
+    public static final int HolyShot = 78;
 }

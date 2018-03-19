@@ -7,13 +7,15 @@ import Entities.PCCustomEffectEntity;
 import GameObject.PlayerGO;
 import GameSystems.Models.CasterSpellModel;
 import Helper.ErrorHelper;
+import Helper.ScriptHelper;
 import org.nwnx.nwnx2.jvm.NWEffect;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.NWScript;
-import org.nwnx.nwnx2.jvm.Scheduler;
 import org.nwnx.nwnx2.jvm.constants.EffectType;
 
 import java.util.*;
+
+import static org.nwnx.nwnx2.jvm.NWScript.*;
 
 public class CustomEffectSystem {
     private static HashMap<CasterSpellModel, Integer> npcEffectList;
@@ -30,11 +32,11 @@ public class CustomEffectSystem {
         PlayerGO pcGO = new PlayerGO(oPC);
         CustomEffectRepository repo = new CustomEffectRepository();
         List<PCCustomEffectEntity> effects = repo.GetPCEffects(pcGO.getUUID());
-        String areaResref = NWScript.getResRef(NWScript.getArea(oPC));
+        String areaResref = getResRef(getArea(oPC));
 
         for(PCCustomEffectEntity effect : effects)
         {
-            if(NWScript.getCurrentHitPoints(oPC) <= -11 || areaResref.equals("death_realm"))
+            if(getCurrentHitPoints(oPC) <= -11 || areaResref.equals("death_realm"))
             {
                 RemovePCCustomEffect(oPC, effect.getCustomEffect().getCustomEffectID());
                 return;
@@ -43,7 +45,14 @@ public class CustomEffectSystem {
             PCCustomEffectEntity result = RunPCCustomEffectProcess(oPC, effect);
             if(result == null)
             {
-                NWScript.sendMessageToPC(oPC, effect.getCustomEffect().getWornOffMessage());
+                sendMessageToPC(oPC, effect.getCustomEffect().getWornOffMessage());
+                ICustomEffectHandler handler = (ICustomEffectHandler)ScriptHelper.GetClassByName("CustomEffect." + effect.getCustomEffect().getScriptHandler());
+                if(handler != null)
+                {
+                    handler.WearOff(null, oPC);
+                }
+
+                deleteLocalInt(oPC, "CUSTOM_EFFECT_ACTIVE_" + effect.getCustomEffect().getCustomEffectID());
                 repo.Delete(effect);
             }
             else
@@ -62,12 +71,13 @@ public class CustomEffectSystem {
             CasterSpellModel casterModel = entry.getKey();
             entry.setValue(entry.getValue() - 1);
             CustomEffectEntity entity = repo.GetEffectByID(casterModel.getCustomEffectID());
+            ICustomEffectHandler handler = (ICustomEffectHandler) ScriptHelper.GetClassByName("CustomEffect." + entity.getScriptHandler());
 
             try {
-                Class scriptClass = Class.forName("CustomEffect." + entity.getScriptHandler());
-                ICustomEffectHandler script = (ICustomEffectHandler)scriptClass.newInstance();
-                script.run(casterModel.getCaster(), casterModel.getTarget());
-                Scheduler.flushQueues();
+                if(handler != null)
+                {
+                    handler.Tick(casterModel.getCaster(), casterModel.getTarget());
+                }
             }
             catch(Exception ex)
             {
@@ -77,16 +87,23 @@ public class CustomEffectSystem {
 
             // Kill the effect if it has expired, target is invalid, or target is dead.
             if(entry.getValue() <= 0 ||
-                    !NWScript.getIsObjectValid(casterModel.getTarget()) ||
-                    NWScript.getCurrentHitPoints(casterModel.getTarget()) <= -11 ||
-                    NWScript.getIsDead(casterModel.getTarget()))
+                    !getIsObjectValid(casterModel.getTarget()) ||
+                    getCurrentHitPoints(casterModel.getTarget()) <= -11 ||
+                    getIsDead(casterModel.getTarget()))
             {
                 effectsToRemove.add(entry.getKey());
 
-                if(NWScript.getIsObjectValid(casterModel.getCaster()) && NWScript.getIsPC(casterModel.getCaster()))
+                if(handler != null)
                 {
-                    NWScript.sendMessageToPC(casterModel.getCaster(), "Your effect '" + casterModel.getEffectName() + "' has worn off of " + NWScript.getName(casterModel.getTarget(), false));
+                    handler.WearOff(casterModel.getCaster(), casterModel.getTarget());
                 }
+
+                if(getIsObjectValid(casterModel.getCaster()) && getIsPC(casterModel.getCaster()))
+                {
+                    sendMessageToPC(casterModel.getCaster(), "Your effect '" + casterModel.getEffectName() + "' has worn off of " + getName(casterModel.getTarget(), false));
+                }
+
+                deleteLocalInt(casterModel.getTarget(), "CUSTOM_EFFECT_ACTIVE_" + casterModel.getCustomEffectID());
             }
         }
 
@@ -102,35 +119,42 @@ public class CustomEffectSystem {
         effect.setTicks(effect.getTicks() - 1);
         if(effect.getTicks() < 0) return null;
 
-        NWScript.sendMessageToPC(oPC, effect.getCustomEffect().getContinueMessage());
-        try {
-            Class scriptClass = Class.forName("CustomEffect." + effect.getCustomEffect().getScriptHandler());
-            ICustomEffectHandler script = (ICustomEffectHandler)scriptClass.newInstance();
-            script.run(null, oPC);
-            Scheduler.flushQueues();
+        if(!effect.getCustomEffect().getContinueMessage().equals(""))
+        {
+            sendMessageToPC(oPC, effect.getCustomEffect().getContinueMessage());
         }
-        catch(Exception ex) {
-            ErrorHelper.HandleException(ex, "RunPCCustomEffectProcess was unable to run specific effect script: " + effect.getCustomEffect().getScriptHandler());
+
+        ICustomEffectHandler handler = (ICustomEffectHandler)ScriptHelper.GetClassByName("CustomEffect." + effect.getCustomEffect().getScriptHandler());
+        if(handler != null)
+        {
+            handler.Tick(null, oPC);
         }
 
         return effect;
     }
 
-    public static void ApplyCustomEffect(NWObject oCaster, NWObject oTarget, int customEffectID, int ticks)
+    public static void ApplyCustomEffect(NWObject oCaster, NWObject oTarget, int customEffectID, int ticks, int effectLevel)
     {
-        // No custom effects can be applied if player is under the effect of sanctuary.
-        for(NWEffect effect : NWScript.getEffects(oTarget))
+        // Can't apply the effect if the existing one is stronger.
+        int existingEffectLevel = GetActiveEffectLevel(oTarget, customEffectID);
+        if(existingEffectLevel > effectLevel)
         {
-            int type = NWScript.getEffectType(effect);
-            if(type == EffectType.SANCTUARY) return;
+            sendMessageToPC(oCaster, "A more powerful effect already exists on your target.");
+            return;
         }
 
+        // No custom effects can be applied if player is under the effect of sanctuary.
+        for(NWEffect effect : getEffects(oTarget))
+        {
+            int type = getEffectType(effect);
+            if(type == EffectType.SANCTUARY) return;
+        }
 
         CustomEffectRepository repo = new CustomEffectRepository();
         CustomEffectEntity effectEntity = repo.GetEffectByID(customEffectID);
 
         // PC custom effects are tracked in the database.
-        if(NWScript.getIsPC(oTarget) && !NWScript.getIsDM(oTarget) && !NWScript.getIsDMPossessed(oTarget))
+        if(getIsPC(oTarget) && !getIsDM(oTarget) && !getIsDMPossessed(oTarget))
         {
             PlayerGO pcGO = new PlayerGO(oTarget);
             PCCustomEffectEntity entity = repo.GetPCEffectByID(pcGO.getUUID(), customEffectID);
@@ -145,7 +169,7 @@ public class CustomEffectSystem {
             entity.setTicks(ticks);
             repo.Save(entity);
 
-            NWScript.sendMessageToPC(oTarget, effectEntity.getStartMessage());
+            sendMessageToPC(oTarget, effectEntity.getStartMessage());
         }
         // NPCs custom effects are tracked in server memory.
         else
@@ -174,8 +198,7 @@ public class CustomEffectSystem {
             npcEffectList.put(spellModel, ticks);
         }
 
-        // Serious limitations in NWN with adding custom effects / using custom icons. Commented out for now.
-        //EffectHelper.ApplyEffectIcon(oPC, effectEntity.getIconID(), ticks * 6.0f);
+        setLocalInt(oTarget, "CUSTOM_EFFECT_ACTIVE_" + customEffectID, effectLevel);
     }
 
     public static boolean DoesPCHaveCustomEffect(NWObject oPC, int customEffectID)
@@ -192,10 +215,18 @@ public class CustomEffectSystem {
         PlayerGO pcGO = new PlayerGO(oPC);
         CustomEffectRepository repo = new CustomEffectRepository();
         PCCustomEffectEntity effect = repo.GetPCEffectByID(pcGO.getUUID(), customEffectID);
+        NWScript.deleteLocalInt(oPC, "CUSTOM_EFFECT_ACTIVE_" + customEffectID);
 
         if(effect == null) return;
 
         repo.Delete(effect);
-        NWScript.sendMessageToPC(oPC, effect.getCustomEffect().getWornOffMessage());
+        sendMessageToPC(oPC, effect.getCustomEffect().getWornOffMessage());
     }
+
+    public static int GetActiveEffectLevel(NWObject oTarget, int customEffectID)
+    {
+        String varName = "CUSTOM_EFFECT_ACTIVE_" + customEffectID;
+        return getLocalInt(oTarget, varName);
+    }
+
 }

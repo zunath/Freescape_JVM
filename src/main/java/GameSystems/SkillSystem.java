@@ -4,10 +4,7 @@ import Common.Constants;
 import Data.Repository.PlayerRepository;
 import Data.Repository.SkillRepository;
 import Entities.*;
-import Enumerations.CustomAttributeType;
-import Enumerations.CustomItemType;
-import Enumerations.PerkID;
-import Enumerations.SkillID;
+import Enumerations.*;
 import GameObject.*;
 import NWNX.NWNX_Creature;
 import com.sun.tools.javac.util.Pair;
@@ -24,6 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static org.nwnx.nwnx2.jvm.NWScript.*;
+
 public class SkillSystem {
 
     private static HashMap<String, CreatureSkillRegistration> CreatureRegistrations = new HashMap<>();
@@ -36,9 +35,9 @@ public class SkillSystem {
 
     public static void OnModuleEnter()
     {
-        NWObject oPC = NWScript.getEnteringObject();
+        NWObject oPC = getEnteringObject();
 
-        if(NWScript.getIsPC(oPC) && !NWScript.getIsDM(oPC) && !NWScript.getIsDMPossessed(oPC))
+        if(getIsPC(oPC) && !getIsDM(oPC) && !getIsDMPossessed(oPC))
         {
             PlayerGO pcGO = new PlayerGO(oPC);
             SkillRepository repo = new SkillRepository();
@@ -49,8 +48,32 @@ public class SkillSystem {
 
     public static void OnModuleLeave()
     {
-        NWObject oPC = NWScript.getExitingObject();
+        NWObject oPC = getExitingObject();
+        RemovePlayerFromRegistrations(oPC);
+    }
 
+    public static void OnModuleItemEquipped()
+    {
+        NWObject oPC = getPCItemLastEquippedBy();
+        ApplyStatChanges(oPC, null);
+    }
+
+    public static void OnModuleItemUnequipped()
+    {
+        NWObject oPC = getPCItemLastUnequippedBy();
+        NWObject oItem = getPCItemLastUnequipped();
+        HandleGlovesUnequipEvent();
+        ApplyStatChanges(oPC, oItem);
+    }
+
+    public static void OnAreaExit()
+    {
+        NWObject oPC = getExitingObject();
+        RemovePlayerFromRegistrations(oPC);
+    }
+
+    private static void RemovePlayerFromRegistrations(NWObject oPC)
+    {
         for(CreatureSkillRegistration reg: CreatureRegistrations.values())
         {
             reg.RemovePlayerRegistration(oPC);
@@ -66,34 +89,20 @@ public class SkillSystem {
         }
     }
 
-    public static void OnModuleItemEquipped()
-    {
-        NWObject oPC = NWScript.getPCItemLastEquippedBy();
-        ApplyStatChanges(oPC, null);
-    }
-
-    public static void OnModuleItemUnequipped()
-    {
-        NWObject oPC = NWScript.getPCItemLastUnequippedBy();
-        NWObject oItem = NWScript.getPCItemLastUnequipped();
-        HandleGlovesUnequipEvent();
-        ApplyStatChanges(oPC, oItem);
-    }
-
     private static void HandleGlovesUnequipEvent()
     {
-        NWObject oPC = NWScript.getPCItemLastUnequippedBy();
-        NWObject oItem = NWScript.getPCItemLastUnequipped();
-        int type = NWScript.getBaseItemType(oItem);
+        NWObject oPC = getPCItemLastUnequippedBy();
+        NWObject oItem = getPCItemLastUnequipped();
+        int type = getBaseItemType(oItem);
 
-        if(!NWScript.getIsPC(oPC) || NWScript.getIsDM(oPC) || NWScript.getIsDMPossessed(oPC)) return;
+        if(!getIsPC(oPC) || getIsDM(oPC) || getIsDMPossessed(oPC)) return;
         if(type != BaseItem.BRACER && type != BaseItem.GLOVES) return;
 
         // If fist was unequipped, destroy it.
-        String resref = NWScript.getResRef(oItem);
+        String resref = getResRef(oItem);
         if(resref.equals("fist"))
         {
-            NWScript.destroyObject(oItem, 0.0f);
+            destroyObject(oItem, 0.0f);
         }
 
         // Check in 1 second to see if PC has a glove equipped. If they don't, create a fist glove and equip it.
@@ -104,13 +113,13 @@ public class SkillSystem {
     {
         Scheduler.delay(oPC, 1000, () -> {
 
-            NWObject glove = NWScript.getItemInSlot(InventorySlot.ARMS, oPC);
-            if(!NWScript.getIsObjectValid(glove))
+            NWObject glove = getItemInSlot(InventorySlot.ARMS, oPC);
+            if(!getIsObjectValid(glove))
             {
-                NWScript.clearAllActions(false);
-                glove = NWScript.createItemOnObject("fist", oPC, 1, "");
-                NWScript.actionEquipItem(glove, InventorySlot.ARMS);
-                NWScript.setLocalInt(glove, "UNBREAKABLE", 1);
+                clearAllActions(false);
+                glove = createItemOnObject("fist", oPC, 1, "");
+                actionEquipItem(glove, InventorySlot.ARMS);
+                setLocalInt(glove, "UNBREAKABLE", 1);
             }
         });
     }
@@ -143,7 +152,7 @@ public class SkillSystem {
 
     public static void GiveSkillXP(NWObject oPC, int skillID, int xp)
     {
-        if(skillID <= 0 || xp <= 0 || !NWScript.getIsPC(oPC) || NWScript.getIsDM(oPC) || NWScript.getIsDMPossessed(oPC)) return;
+        if(skillID <= 0 || xp <= 0 || !getIsPC(oPC) || getIsDM(oPC) || getIsDMPossessed(oPC)) return;
 
         PlayerGO pcGO = new PlayerGO(oPC);
         PlayerRepository playerRepo = new PlayerRepository();
@@ -164,7 +173,7 @@ public class SkillSystem {
         }
 
         skill.setXp(skill.getXp() + xp);
-        NWScript.sendMessageToPC(oPC, "You earned " + skill.getSkill().getName() + " skill experience. (" + xp + ")");
+        sendMessageToPC(oPC, "You earned " + skill.getSkill().getName() + " skill experience. (" + xp + ")");
 
         // Skill is at cap and player would level up.
         // Reduce XP to required amount minus 1 XP
@@ -183,7 +192,7 @@ public class SkillSystem {
                 player.setTotalSPAcquired(player.getTotalSPAcquired() + 1);
             }
             skill.setRank(skill.getRank() + 1);
-            NWScript.floatingTextStringOnCreature("Your " + skill.getSkill().getName() + " skill level increased!", oPC, false);
+            floatingTextStringOnCreature("Your " + skill.getSkill().getName() + " skill level increased!", oPC, false);
 
             req = skillRepo.GetSkillXPRequirementByRank(skillID, skill.getRank());
         }
@@ -271,7 +280,7 @@ public class SkillSystem {
 
     public static PCSkillEntity GetPCSkill(NWObject oPC, int skillID)
     {
-        if(!NWScript.getIsPC(oPC) || NWScript.getIsDM(oPC) || NWScript.getIsDMPossessed(oPC)) return null;
+        if(!getIsPC(oPC) || getIsDM(oPC) || getIsDMPossessed(oPC)) return null;
         PlayerGO pcGO = new PlayerGO(oPC);
         SkillRepository repo = new SkillRepository();
         return repo.GetPCSkillByID(pcGO.getUUID(), skillID);
@@ -280,7 +289,7 @@ public class SkillSystem {
     private static int GetWeaponSkillID(NWObject item)
     {
         int skillID = -1;
-        Integer type = NWScript.getBaseItemType(item);
+        Integer type = getBaseItemType(item);
         Integer[] oneHandedTypes = {
                 BaseItem.BASTARDSWORD,
                 BaseItem.BATTLEAXE,
@@ -368,13 +377,13 @@ public class SkillSystem {
 
     public static void OnHitCastSpell(NWObject oPC)
     {
-        if(!NWScript.getIsPC(oPC) || NWScript.getIsDM(oPC) || NWScript.getIsDMPossessed(oPC)) return;
-        NWObject oSpellOrigin = NWScript.getSpellCastItem();
-        NWObject oTarget = NWScript.getSpellTargetObject();
+        if(!getIsPC(oPC) || getIsDM(oPC) || getIsDMPossessed(oPC)) return;
+        NWObject oSpellOrigin = getSpellCastItem();
+        NWObject oTarget = getSpellTargetObject();
 
         int skillID = GetWeaponSkillID(oSpellOrigin);
         if(skillID <= -1) return;
-        if(NWScript.getIsPC(oTarget) || NWScript.getIsDM(oTarget)) return;
+        if(getIsPC(oTarget) || getIsDM(oTarget)) return;
 
         ItemGO itemGO = new ItemGO(oSpellOrigin);
         CreatureGO creatureGO = new CreatureGO(oTarget);
@@ -384,14 +393,44 @@ public class SkillSystem {
 
         // Add a registration point if a shield is equipped. This is to prevent players from swapping out a weapon for a shield
         // just before they kill an enemy.
-        NWObject oShield = NWScript.getItemInSlot(InventorySlot.LEFTHAND, oPC);
-        int offHandType = NWScript.getBaseItemType(oShield);
+        NWObject oShield = getItemInSlot(InventorySlot.LEFTHAND, oPC);
+        int offHandType = getBaseItemType(oShield);
         if(offHandType == BaseItem.SMALLSHIELD ||
                 offHandType == BaseItem.LARGESHIELD ||
                 offHandType == BaseItem.TOWERSHIELD)
         {
             itemGO = new ItemGO(oShield);
             reg.AddSkillRegistrationPoint(oPC, SkillID.Shields, itemGO.getRecommendedLevel());
+        }
+    }
+
+    public static void RegisterPCToNPCForSkill(NWObject pc, NWObject npc, int skillID)
+    {
+        if(!getIsPC(pc) || getIsDM(pc) || getIsDMPossessed(pc) || !getIsObjectValid(pc)) return;
+        if(getIsPC(npc) || getIsDM(npc) || !getIsObjectValid(npc)) return;
+        if(skillID <= 0) return;
+
+        PCSkillEntity pcSkill = GetPCSkill(pc, skillID);
+        if(pcSkill == null) return;
+
+        CreatureGO npcGO = new CreatureGO(npc);
+        CreatureSkillRegistration reg = GetCreatureSkillRegistration(npcGO.getGlobalUUID());
+        reg.AddSkillRegistrationPoint(pc, skillID, pcSkill.getRank());
+    }
+
+    public static void RegisterPCToAllCombatTargetsForSkill(NWObject pc, int skillID)
+    {
+        if(!getIsPC(pc) || getIsDM(pc) || getIsDMPossessed(pc)) return;
+        if(skillID <= 0) return;
+
+        NWObject[] members = getFactionMembers(pc, true);
+        for(NWObject member: members)
+        {
+            NWObject target = getAttackTarget(member);
+            if(!getIsObjectValid(target)) continue;
+            if(!getArea(target).equals(getArea(pc))) continue;
+
+            RegisterPCToNPCForSkill(pc, target, skillID);
         }
     }
 
@@ -420,9 +459,9 @@ public class SkillSystem {
             // Player must be valid.
             // Player must be in the same area as the creature that just died.
             // Player must be within 30 meters of the creature that just died.
-            if(!NWScript.getIsObjectValid(preg.getPC()) ||
-                    !NWScript.getResRef(NWScript.getArea(preg.getPC())).equals(NWScript.getResRef(NWScript.getArea(creature))) ||
-                    NWScript.getDistanceBetween(preg.getPC(), creature) > 30.0f)
+            if(!getIsObjectValid(preg.getPC()) ||
+                    !getResRef(getArea(preg.getPC())).equals(getResRef(getArea(creature))) ||
+                    getDistanceBetween(preg.getPC(), creature) > 30.0f)
                 continue;
 
             PlayerGO pcGO = new PlayerGO(preg.getPC());
@@ -455,7 +494,7 @@ public class SkillSystem {
                 GiveSkillXP(preg.getPC(), skillID, (int)(adjustedXP));
             }
 
-            ItemGO itemGO = new ItemGO(NWScript.getItemInSlot(InventorySlot.CHEST, preg.getPC()));
+            ItemGO itemGO = new ItemGO(getItemInSlot(InventorySlot.CHEST, preg.getPC()));
             if(itemGO.getCustomItemType() == CustomItemType.LightArmor)
             {
                 int skillRank = skillRepo.GetPCSkillByID(pcGO.getUUID(), SkillID.LightArmor).getRank();
@@ -493,7 +532,7 @@ public class SkillSystem {
     @SuppressWarnings("ConstantConditions")
     public static void ApplyStatChanges(NWObject oPC, NWObject ignoreItem)
     {
-        if(!NWScript.getIsPC(oPC) || NWScript.getIsDM(oPC) || NWScript.getIsDMPossessed(oPC)) return;
+        if(!getIsPC(oPC) || getIsDM(oPC) || getIsDMPossessed(oPC)) return;
 
         PlayerGO pcGO = new PlayerGO(oPC);
         SkillRepository skillRepo = new SkillRepository();
@@ -556,7 +595,7 @@ public class SkillSystem {
         NWNX_Creature.SetRawAbilityScore(oPC, Ability.CHARISMA, (int)chaBonus + pcEntity.getChaBase());
 
         // Apply AC
-        int ac = CalculateAC(oPC, ignoreItem);
+        int ac = CalculateItemAC(oPC, ignoreItem) + pcGO.CalculateEffectAC(oPC);
         NWNX_Creature.SetBaseAC(oPC, ac);
 
         // Apply BAB
@@ -564,7 +603,7 @@ public class SkillSystem {
         NWNX_Creature.SetBaseAttackBonus(oPC, bab);
 
         // Apply HP
-        int hp = 30 + NWScript.getAbilityModifier(Ability.CONSTITUTION, oPC)  * 5;
+        int hp = 30 + getAbilityModifier(Ability.CONSTITUTION, oPC)  * 5;
         hp += PerkSystem.GetPCPerkLevel(oPC, PerkID.Health) * 5;
         if(hp > 255) hp = 255;
         if(hp < 20) hp = 20;
@@ -572,9 +611,9 @@ public class SkillSystem {
 
         // Apply Mana
         int mana = 20;
-        mana += (NWScript.getAbilityModifier(Ability.INTELLIGENCE, oPC) +
-                NWScript.getAbilityModifier(Ability.WISDOM, oPC) +
-                NWScript.getAbilityModifier(Ability.CHARISMA, oPC)) * 5;
+        mana += (getAbilityModifier(Ability.INTELLIGENCE, oPC) +
+                getAbilityModifier(Ability.WISDOM, oPC) +
+                getAbilityModifier(Ability.CHARISMA, oPC)) * 5;
         mana += PerkSystem.GetPCPerkLevel(oPC, PerkID.Mana) * 5;
         if(mana < 0) mana = 0;
         pcEntity.setMaxMana(mana);
@@ -584,7 +623,7 @@ public class SkillSystem {
 
     private static int CalculateBAB(NWObject oPC, NWObject ignoreItem)
     {
-        NWObject weapon = NWScript.getItemInSlot(InventorySlot.RIGHTHAND, oPC);
+        NWObject weapon = getItemInSlot(InventorySlot.RIGHTHAND, oPC);
 
         // The unequip event fires before the item is actually unequipped, so we need
         // to have additional checks to make sure we're not getting the weapon that's about to be
@@ -592,7 +631,7 @@ public class SkillSystem {
         if(weapon.equals(ignoreItem))
         {
             weapon = NWObject.INVALID;
-            NWObject offHand = NWScript.getItemInSlot(InventorySlot.LEFTHAND, oPC);
+            NWObject offHand = getItemInSlot(InventorySlot.LEFTHAND, oPC);
             ItemGO offGO = new ItemGO(offHand);
             if(offGO.IsBlade() ||
                offGO.IsFinesseBlade() ||
@@ -610,11 +649,11 @@ public class SkillSystem {
             }
         }
 
-        if(!NWScript.getIsObjectValid(weapon))
+        if(!getIsObjectValid(weapon))
         {
-            weapon = NWScript.getItemInSlot(InventorySlot.ARMS, oPC);
+            weapon = getItemInSlot(InventorySlot.ARMS, oPC);
         }
-        if(!NWScript.getIsObjectValid(weapon)) return 0;
+        if(!getIsObjectValid(weapon)) return 0;
 
         int weaponSkillID = GetWeaponSkillID(weapon);
         PCSkillEntity skill = GetPCSkill(oPC, weaponSkillID);
@@ -630,12 +669,12 @@ public class SkillSystem {
         return skillBAB + perkBAB;
     }
 
-    private static int CalculateAC(NWObject oPC, NWObject ignoreItem)
+    private static int CalculateItemAC(NWObject oPC, NWObject ignoreItem)
     {
         int ac = 0;
         for(int slot = 0; slot < Constants.NumberOfInventorySlots; slot++)
         {
-            NWObject oItem = NWScript.getItemInSlot(slot, oPC);
+            NWObject oItem = getItemInSlot(slot, oPC);
             if(oItem.equals(ignoreItem))
                 continue;
 
@@ -647,7 +686,6 @@ public class SkillSystem {
                 ac += itemAC;
             }
         }
-
         return ac;
     }
 

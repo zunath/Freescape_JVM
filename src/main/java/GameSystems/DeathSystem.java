@@ -19,7 +19,7 @@ public class DeathSystem {
     // Resref and tag of the player corpse placeable
     private static final String CorpsePlaceableResref = "pc_corpse";
 
-// Message which displays on the Respawn pop up menu
+    // Message which displays on the Respawn pop up menu
     private static final String  RespawnMessage = "You have died. You can wait for another player to revive you or give up and permanently go to the death realm.";
 
 
@@ -209,22 +209,34 @@ public class DeathSystem {
         if(entity.getCurrentHunger() < 50)
             entity.setCurrentHunger(50);
 
+        TeleportPlayerToBindPoint(oPC, entity);
+        repo.save(entity);
+    }
+
+    public static void TeleportPlayerToBindPoint(NWObject pc)
+    {
+        PlayerGO pcGO = new PlayerGO(pc);
+        PlayerRepository playerRepo = new PlayerRepository();
+        PlayerEntity entity = playerRepo.GetByPlayerID(pcGO.getUUID());
+        TeleportPlayerToBindPoint(pc, entity);
+    }
+
+    private static void TeleportPlayerToBindPoint(NWObject pc, PlayerEntity entity)
+    {
         if(Objects.equals(entity.getRespawnAreaTag(), ""))
         {
-            NWObject defaultRespawn = NWScript.getWaypointByTag("RUBY_OUTPOST_STARTING_LOCATION");
+            NWObject defaultRespawn = NWScript.getWaypointByTag("DEFAULT_RESPAWN_POINT");
             final NWLocation location = NWScript.getLocation(defaultRespawn);
 
-            Scheduler.assign(oPC, () -> NWScript.actionJumpToLocation(location));
+            Scheduler.assign(pc, () -> NWScript.actionJumpToLocation(location));
         }
         else {
-            Scheduler.assign(oPC, () -> {
+            Scheduler.assign(pc, () -> {
                 NWObject area = NWScript.getObjectByTag(entity.getRespawnAreaTag(), 0);
                 NWVector position = NWScript.vector(entity.getRespawnLocationX(), entity.getRespawnLocationY(), entity.getRespawnLocationZ());
                 NWLocation location = NWScript.location(area, position, entity.getRespawnLocationOrientation());
                 NWScript.actionJumpToLocation(location);
             });
         }
-
-        repo.save(entity);
     }
 }

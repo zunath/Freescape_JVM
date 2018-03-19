@@ -1,7 +1,9 @@
 package Perks.Evocation;
 
 import Enumerations.PerkID;
+import Enumerations.SkillID;
 import GameSystems.PerkSystem;
+import GameSystems.SkillSystem;
 import Perks.IPerk;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.constants.*;
@@ -73,6 +75,12 @@ public class GraspingIce implements IPerk {
                 return;
         }
 
+        int wisdom = getAbilityModifier(Ability.WISDOM, oPC);
+        int intelligence = getAbilityModifier(Ability.INTELLIGENCE, oPC);
+
+        float damageMultiplier = 1.0f + (intelligence * 0.2f) + (wisdom * 0.1f);
+        damage = (int)((float)damage * damageMultiplier);
+
         applyEffectToObject(DurationType.INSTANT, effectVisualEffect(VfxFnf.HOWL_MIND, false), oTarget, 0.0f);
 
         if(slowLength > 0.0f)
@@ -81,6 +89,7 @@ public class GraspingIce implements IPerk {
         }
 
         applyEffectToObject(DurationType.INSTANT, effectDamage(damage, DamageType.MAGICAL, DamagePower.NORMAL), oTarget, 0.0f);
+        SkillSystem.RegisterPCToNPCForSkill(oPC, oTarget, SkillID.EvocationMagic);
     }
 
     @Override

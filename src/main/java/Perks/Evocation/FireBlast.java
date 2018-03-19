@@ -2,8 +2,10 @@ package Perks.Evocation;
 
 import Enumerations.CustomEffectType;
 import Enumerations.PerkID;
+import Enumerations.SkillID;
 import GameSystems.CustomEffectSystem;
 import GameSystems.PerkSystem;
+import GameSystems.SkillSystem;
 import Perks.IPerk;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.constants.*;
@@ -75,9 +77,16 @@ public class FireBlast implements IPerk {
                 return;
         }
 
+        int wisdom = getAbilityModifier(Ability.WISDOM, oPC);
+        int intelligence = getAbilityModifier(Ability.INTELLIGENCE, oPC);
+
+        float damageMultiplier = 1.0f + (intelligence * 0.2f) + (wisdom * 0.1f);
+        damage = (int)((float)damage * damageMultiplier);
+
         applyEffectToObject(DurationType.INSTANT, effectVisualEffect(Vfx.COM_HIT_FIRE, false), oTarget, 0.0f);
-        CustomEffectSystem.ApplyCustomEffect(oPC, oTarget, CustomEffectType.Burning, ticks);
+        CustomEffectSystem.ApplyCustomEffect(oPC, oTarget, CustomEffectType.Burning, ticks, level);
         applyEffectToObject(DurationType.INSTANT, effectDamage(damage, DamageType.FIRE, DamagePower.NORMAL), oTarget, 0.0f);
+        SkillSystem.RegisterPCToNPCForSkill(oPC, oTarget, SkillID.EvocationMagic);
     }
 
     @Override

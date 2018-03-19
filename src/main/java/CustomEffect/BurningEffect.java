@@ -12,9 +12,14 @@ import static org.nwnx.nwnx2.jvm.NWScript.*;
 
 public class BurningEffect implements ICustomEffectHandler {
     @Override
-    public void run(NWObject oCaster, NWObject oTarget) {
+    public void Tick(NWObject oCaster, NWObject oTarget) {
         int damage = ThreadLocalRandom.current().nextInt(2) + 1;
         applyEffectToObject(DurationType.INSTANT, effectDamage(damage, DamageType.FIRE, DamagePower.NORMAL), oTarget, 0.0f);
         applyEffectToObject(DurationType.INSTANT, effectVisualEffect(VfxCom.HIT_FIRE, false), oTarget, 0.0f);
+    }
+
+    @Override
+    public void WearOff(NWObject oCaster, NWObject oTarget) {
+
     }
 }
