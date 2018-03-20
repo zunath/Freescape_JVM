@@ -1,0 +1,44 @@
+docker run --rm -it ^
+-p 5121:5121 -p 5121:5121/udp ^
+-e NWN_PORT=5121 ^
+-v c:/nwn-ee:/nwn/home ^
+-e NWN_SERVERNAME="Freescape" ^
+-e NWN_MODULE="Freescape v2 CEP265" ^
+-e NWN_PUBLICSERVER=1 ^
+-e NWN_MAXCLIENTS=96 ^
+-e NWN_MINLEVEL=1 ^
+-e NWN_MAXLEVEL=40 ^
+-e NWN_PAUSEANDPLAY=0 ^
+-e NWN_PVP=2 ^
+-e NWN_SERVERVAULT=1 ^
+-e NWN_ELC=0 ^
+-e NWN_ILR=0 ^
+-e NWN_GAMETYPE=3 ^
+-e NWN_ONEPARTY=0 ^
+-e NWN_DIFFICULTY=3 ^
+-e NWN_AUTOSAVEINTERVAL=0 ^
+-e NWN_RELOADWHENEMPTY=0 ^
+-e NWN_PLAYERPASSWORD=playerPassword ^
+-e NWN_DMPASSWORD=dmPassword ^
+-e NWN_ADMINPASSWORD=adminPassword ^
+-e NWNX_CORE_LOG_LEVEL=0 ^
+-e NWNX_JVM_LOG_LEVEL=0 ^
+-e NWNX_ADMINISTRATION_SKIP=y ^
+-e NWNX_BEHAVIOURTREE_SKIP=y ^
+-e NWNX_CHAT_SKIP=n ^
+-e NWNX_CREATURE_SKIP=n ^
+-e NWNX_EVENTS_SKIP=n ^
+-e NWNX_DATA_SKIP=y ^
+-e NWNX_JVM_SKIP=n ^
+-e NWNX_METRICS_INFLUXDB_SKIP=y ^
+-e NWNX_OBJECT_SKIP=n ^
+-e NWNX_PLAYER_SKIP=n ^
+-e NWNX_RUBY_SKIP=y ^
+-e NWNX_SERVERLOGREDIRECTOR_SKIP=y ^
+-e NWNX_SQL_SKIP=y ^
+-e NWNX_THREADWATCHDOG_SKIP=y ^
+-e NWNX_TRACKING_SKIP=y ^
+-e NWNX_JVM_INIT_LISTENER="Common/StartUp" ^
+-e NWNX_JVM_CLASSPATH="/nwn/home/jvm/org.nwnx.nwnx2.jvm.jar:/nwn/home/jvm/Freescape.jar" ^
+-e NWNX_JVM_JVM_ARGUMENTS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8000" ^
+nwnxee/nwserver:8164.java
