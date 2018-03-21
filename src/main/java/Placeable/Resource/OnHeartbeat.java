@@ -20,6 +20,6 @@ public class OnHeartbeat implements IScriptEventHandler {
         if(propResref.equals("")) return;
 
         NWLocation location = getLocation(objSelf);
-        createObject(ObjectType.PLACEABLE, propResref, location, false, "");
+        createObject(ObjectType.PLACEABLE, propResref, location, false, getResRef(objSelf));
     }
 }
