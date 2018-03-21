@@ -59,14 +59,15 @@ public class ViewSkills extends DialogBase implements IDialogHandler {
 
     private void LoadSkillResponses()
     {
+        PlayerGO pcGO = new PlayerGO(GetPC());
         SkillMenuViewModel vm = (SkillMenuViewModel)GetDialogCustomData();
         SkillRepository repo = new SkillRepository();
-        List<SkillEntity> skills = repo.GetActiveSkillsForCategory(vm.getSelectedCategoryID());
+        List<PCSkillEntity> skills = repo.GetPCSkillsForCategory(pcGO.getUUID(), vm.getSelectedCategoryID());
 
         ClearPageResponses("SkillListPage");
-        for(SkillEntity skill : skills)
+        for(PCSkillEntity skill : skills)
         {
-            AddResponseToPage("SkillListPage", skill.getName(), true, skill.getSkillID());
+            AddResponseToPage("SkillListPage", skill.getSkill().getName() + " (Lvl. " + skill.getRank() + ")", true, skill.getSkill().getSkillID());
         }
         AddResponseToPage("SkillListPage", "Back", true, -1);
     }

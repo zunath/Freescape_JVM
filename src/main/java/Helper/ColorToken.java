@@ -24,7 +24,7 @@ public class ColorToken {
 // Common.Constants
 ///////////////////////////////////////////////////////////////////////////////
 
-    static final String ColorArray = "     !##$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹ŒŽ‘’“”•–—˜™š›œžŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþþ";
+    private static final String ColorArray = "     !##$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹ŒŽ‘’“”•–—˜™š›œžŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþþ";
 
 ///////////////////////////////////////////////////////////////////////////////
 // Basic Functions
@@ -191,6 +191,20 @@ public class ColorToken {
         return "<c" + NWScript.getSubString(ColorArray, 255, 1) +
                 NWScript.getSubString(ColorArray, 255, 1) +
                 NWScript.getSubString(ColorArray, 0, 1) + ">";
+    }
+
+
+
+    ///////////////////////////////////////////////////////////////////////////////
+// ColorTokenCyan()
+//
+// Supplies a String that changes the text to yellow.
+//
+    public static String Cyan()
+    {
+        return "<c" + NWScript.getSubString(ColorArray, 0, 1) +
+                NWScript.getSubString(ColorArray, 255, 1) +
+                NWScript.getSubString(ColorArray, 255, 1) + ">";
     }
 
 

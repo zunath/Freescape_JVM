@@ -16,7 +16,6 @@ import org.nwnx.nwnx2.jvm.NWScript;
 import org.nwnx.nwnx2.jvm.constants.DurationType;
 import org.nwnx.nwnx2.jvm.constants.ObjectType;
 
-import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class OnDamaged implements IScriptEventHandler {
@@ -38,7 +37,6 @@ public class OnDamaged implements IScriptEventHandler {
         int activityID = NWScript.getLocalInt(objSelf, "RESOURCE_ACTIVITY");
         String resourceName = NWScript.getLocalString(objSelf, "RESOURCE_NAME");
         int resourceCount = NWScript.getLocalInt(objSelf, "RESOURCE_COUNT");
-        String resourceProp = NWScript.getLocalString(objSelf, "RESOURCE_PROP");
         int difficultyRating = NWScript.getLocalInt(objSelf, "RESOURCE_DIFFICULTY_RATING");
         int weaponChanceBonus;
         int skillID;
@@ -88,11 +86,44 @@ public class OnDamaged implements IScriptEventHandler {
         chance += CalculateSuccessChanceDeltaModifier(difficultyRating, skill.getRank());
         chance += perkChanceBonus;
 
+        boolean givePityItem = false;
+        if(chance > 0)
+        {
+            if(ThreadLocalRandom.current().nextInt(100) + 1 <= hasteChance)
+            {
+                NWScript.applyEffectToObject(DurationType.TEMPORARY, NWScript.effectHaste(), oPC, 8.0f);
+            }
+
+            // Give an item if the player hasn't gotten anything after 6-8 attempts.
+            int attemptFailureCount = NWScript.getLocalInt(oPC, "RESOURCE_ATTEMPT_FAILURE_COUNT") + 1;
+            NWObject resource = NWScript.getLocalObject(oPC, "RESOURCE_ATTEMPT_FAILURE_OBJECT");
+
+            if(!NWScript.getIsObjectValid(resource) || !resource.equals(objSelf))
+            {
+                resource = objSelf;
+                attemptFailureCount = 1;
+            }
+
+            int pityItemChance = 0;
+            if(attemptFailureCount == 6) pityItemChance = 60;
+            else if(attemptFailureCount == 7) pityItemChance = 80;
+            else if(attemptFailureCount >= 8) pityItemChance = 100;
+
+            if(ThreadLocalRandom.current().nextInt(100) + 1 <= pityItemChance)
+            {
+                givePityItem = true;
+                attemptFailureCount = 0;
+            }
+
+            NWScript.setLocalInt(oPC, "RESOURCE_ATTEMPT_FAILURE_COUNT", attemptFailureCount);
+            NWScript.setLocalObject(oPC, "RESOURCE_ATTEMPT_FAILURE_OBJECT", resource);
+        }
+
         if(chance <= 0)
         {
             NWScript.floatingTextStringOnCreature("You do not have enough skill to harvest this resource...", oPC, false);
         }
-        else if(ThreadLocalRandom.current().nextInt(100) <= chance)
+        else if(ThreadLocalRandom.current().nextInt(100) <= chance || givePityItem)
         {
             NWScript.createObject(ObjectType.ITEM, resourceItemResref, location, false, "");
 
@@ -110,25 +141,20 @@ public class OnDamaged implements IScriptEventHandler {
             float baseXP = (100 + ThreadLocalRandom.current().nextInt(20)) * deltaModifier;
             int xp = (int)SkillSystem.CalculateSkillAdjustedXP(baseXP, weaponGO.getRecommendedLevel(), skill.getRank());
             SkillSystem.GiveSkillXP(oPC, skillID, xp);
-        }
 
-        if(chance > 0)
-        {
-            if(ThreadLocalRandom.current().nextInt(100) + 1 <= hasteChance)
-            {
-                NWScript.applyEffectToObject(DurationType.TEMPORARY, NWScript.effectHaste(), oPC, 8.0f);
-            }
+            NWScript.deleteLocalInt(oPC, "RESOURCE_ATTEMPT_FAILURE_COUNT");
+            NWScript.deleteLocalInt(oPC, "RESOURCE_ATTEMPT_FAILURE_OBJECT");
         }
 
         if(resourceCount <= 0)
         {
-            if(!Objects.equals(resourceProp, ""))
+            NWObject prop = NWScript.getLocalObject(objSelf, "RESOURCE_PROP");
+            if(NWScript.getIsObjectValid(prop))
             {
-                NWObject prop = NWScript.getNearestObjectByTag(resourceProp, objSelf, 1);
                 NWScript.destroyObject(prop, 0.0f);
             }
 
-            NWScript.destroyObject(objSelf, 0.0f);
+            NWScript.destroyObject(objSelf, 0.1f);
         }
 
     }

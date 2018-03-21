@@ -1,4 +1,3 @@
-
 SELECT sc.StructureCategoryID ,
        sc.Name ,
        sc.Description ,
@@ -14,6 +13,7 @@ WHERE sc.StructureCategoryID IN (
 		AND (pcs.PlayerID = pcp.PlayerID)
 	WHERE sb2.IsActive = 1
 		AND sb2.IsTerritoryFlag = :isTerritoryFlagCategory
-		AND (sb2.Level <= pcs.Rank+1)
+		AND (sb2.Level <= pcs.Rank+2)
+		AND (pcp.PCPerkID IS NOT NULL OR sb2.PerkID IS NULL)
 )
 ORDER BY sc.Name ASC

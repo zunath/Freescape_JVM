@@ -30,6 +30,7 @@ public class PlayerInitializationSystem {
             pcGO.destroyAllInventoryItems(true);
 
             NWScript.createItemOnObject(Constants.PCDatabaseTag, oPC, 1, "");
+            NWScript.createItemOnObject("open_rest_menu", oPC, 1, "");
 
             Scheduler.assign(oPC, () -> NWScript.takeGoldFromCreature(NWScript.getGold(oPC), oPC, true));
 

@@ -1,6 +1,7 @@
 package Trigger;
 
 import Common.IScriptEventHandler;
+import Helper.ColorToken;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.NWScript;
 
@@ -24,7 +25,7 @@ public class ExplorationTrigger implements IScriptEventHandler {
         if(getLocalInt(oPC, triggerID) == 1) return;
 
         String message = getLocalString(objSelf, "DISPLAY_TEXT");
-        NWScript.sendMessageToPC(oPC, message);
+        NWScript.sendMessageToPC(oPC, ColorToken.Cyan() + message + ColorToken.End());
         setLocalInt(oPC, triggerID, 1);
     }
 }

@@ -15,12 +15,13 @@ public class SkillRepository {
         }
     }
 
-    public List<SkillEntity> GetActiveSkillsForCategory(int skillCategoryID)
+    public List<PCSkillEntity> GetPCSkillsForCategory(String uuid, int skillCategoryID)
     {
         try(DataContext context = new DataContext())
         {
-            return context.executeSQLList("Skills/GetActiveSkillsForCategory", SkillEntity.class,
-                    new SqlParameter("skillCategoryID", skillCategoryID));
+            return context.executeSQLList("Skills/GetPCSkillsForCategory", PCSkillEntity.class,
+                    new SqlParameter("skillCategoryID", skillCategoryID),
+                    new SqlParameter("playerID", uuid));
         }
     }
 
