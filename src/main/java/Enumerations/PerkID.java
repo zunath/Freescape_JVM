@@ -79,4 +79,8 @@ public class PerkID {
     public static final int Aegis = 76;
     public static final int Recover = 77;
     public static final int HolyShot = 78;
+    public static final int SpeedySmelter = 79;
+    public static final int SmeltingMastery = 80;
+    public static final int CoalManagement = 81;
+    public static final int Smelting = 82;
 }
