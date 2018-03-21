@@ -1,4 +1,4 @@
-package Placeable.StructureSystem.Resource;
+package Placeable.Resource;
 
 import Common.IScriptEventHandler;
 import org.nwnx.nwnx2.jvm.NWObject;
@@ -10,8 +10,6 @@ public class OnUsed implements IScriptEventHandler {
     public void runScript(NWObject objSelf) {
         NWObject oPC = NWScript.getLastUsedBy();
 
-        Scheduler.assign(oPC, () -> {
-            NWScript.actionAttack(objSelf, false);
-        });
+        Scheduler.assign(oPC, () -> NWScript.actionAttack(objSelf, false));
     }
 }

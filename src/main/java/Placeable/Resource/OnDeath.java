@@ -1,4 +1,4 @@
-package Placeable.StructureSystem.Resource;
+package Placeable.Resource;
 
 import Common.IScriptEventHandler;
 import org.nwnx.nwnx2.jvm.NWLocation;

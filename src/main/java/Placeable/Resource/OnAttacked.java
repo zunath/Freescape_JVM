@@ -1,4 +1,4 @@
-package Placeable.StructureSystem.Resource;
+package Placeable.Resource;
 
 import Common.IScriptEventHandler;
 import GameObject.ItemGO;
@@ -30,12 +30,27 @@ public class OnAttacked implements IScriptEventHandler {
             oWeapon = NWScript.getItemInSlot(InventorySlot.RIGHTHAND, oPC);
         }
 
+        int activityID = NWScript.getLocalInt(objSelf, "RESOURCE_ACTIVITY");
         ItemGO weaponGO = new ItemGO(oWeapon);
-        // Weapon used isn't one of the allowed types.
-        if(!weaponGO.IsBlade())
+
+        String improperWeaponMessage = "";
+        boolean usingCorrectWeapon = true;
+        if(activityID == 1) // 1 = Logging
+        {
+            usingCorrectWeapon = weaponGO.IsBlade() || weaponGO.IsTwinBlade() || weaponGO.IsHeavyBlade() || weaponGO.IsFinesseBlade() || weaponGO.IsPolearm();
+            improperWeaponMessage = "You must be using a blade to harvest this object.";
+        }
+        else if(activityID == 2) // Mining
+        {
+            usingCorrectWeapon = weaponGO.IsBlade() || weaponGO.IsTwinBlade() || weaponGO.IsHeavyBlade() || weaponGO.IsFinesseBlade() || weaponGO.IsPolearm() ||
+                                 weaponGO.IsBlunt() || weaponGO.IsHeavyBlunt();
+            improperWeaponMessage = "You must be using a blade or a blunt weapon to harvest this object.";
+        }
+
+        if(!usingCorrectWeapon)
         {
             NWScript.setPlotFlag(objSelf, true);
-            NWScript.sendMessageToPC(oPC, ColorToken.Red() + "You must be using a blade to harvest this object." + ColorToken.End());
+            NWScript.sendMessageToPC(oPC, ColorToken.Red() + improperWeaponMessage + ColorToken.End());
             NWScript.setLocalInt(oPC, "NOT_USING_CORRECT_WEAPON", 1);
             Scheduler.assign(oPC, () -> NWScript.clearAllActions(false));
 
