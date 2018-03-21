@@ -2,6 +2,7 @@ package Event.Module;
 
 import Common.IScriptEventHandler;
 import GameSystems.AreaInstanceSystem;
+import GameSystems.ObjectProcessingSystem;
 import NWNX.*;
 import GameSystems.DeathSystem;
 import GameSystems.StructureSystem;
@@ -21,7 +22,7 @@ public class OnLoad implements IScriptEventHandler {
         DeathSystem.OnModuleLoad();
 		StructureSystem.OnModuleLoad();
 		AreaInstanceSystem.OnModuleLoad();
-
+		ObjectProcessingSystem.OnModuleLoad();
 	}
 
 	private void AddAreaEventHandlers()

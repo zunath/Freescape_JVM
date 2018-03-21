@@ -75,4 +75,12 @@ public class PlayerInitializationSystem {
             Scheduler.delay(oPC, 1000, () -> NWScript.applyEffectToObject(DurationType.INSTANT, NWScript.effectHeal(999), oPC, 0.0f));
         }
     }
+
+    public static boolean IsPCInitialized(NWObject oPC)
+    {
+        PlayerGO pcGO = new PlayerGO(oPC);
+        NWObject oDatabase = pcGO.GetDatabaseItem();
+        boolean missingStringID = NWScript.getLocalString(oDatabase, Constants.PCIDNumberVariable).equals("");
+        return !missingStringID && NWScript.getIsObjectValid(oDatabase);
+    }
 }

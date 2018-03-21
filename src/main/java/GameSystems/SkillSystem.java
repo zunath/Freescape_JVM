@@ -533,6 +533,7 @@ public class SkillSystem {
     public static void ApplyStatChanges(NWObject oPC, NWObject ignoreItem)
     {
         if(!getIsPC(oPC) || getIsDM(oPC) || getIsDMPossessed(oPC)) return;
+        if(!PlayerInitializationSystem.IsPCInitialized(oPC)) return;
 
         PlayerGO pcGO = new PlayerGO(oPC);
         SkillRepository skillRepo = new SkillRepository();
