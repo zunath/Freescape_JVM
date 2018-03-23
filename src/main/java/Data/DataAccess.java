@@ -68,8 +68,7 @@ public class DataAccess {
         _configuration.addAnnotatedClass(CraftBlueprintCategoryEntity.class);
         _configuration.addAnnotatedClass(CraftBlueprintEntity.class);
         _configuration.addAnnotatedClass(CraftComponentEntity.class);
-        _configuration.addAnnotatedClass(CraftEntity.class);
-        _configuration.addAnnotatedClass(CraftLevelEntity.class);
+        _configuration.addAnnotatedClass(CraftDeviceEntity.class);
         _configuration.addAnnotatedClass(CreatureEntity.class);
         _configuration.addAnnotatedClass(CustomEffectEntity.class);
         _configuration.addAnnotatedClass(DMRoleEntity.class);
@@ -82,11 +81,9 @@ public class DataAccess {
         _configuration.addAnnotatedClass(LootTableEntity.class);
         _configuration.addAnnotatedClass(LootTableItemEntity.class);
         _configuration.addAnnotatedClass(NPCGroupEntity.class);
-        _configuration.addAnnotatedClass(PCBlueprintEntity.class);
         _configuration.addAnnotatedClass(PCCooldownEntity.class);
         _configuration.addAnnotatedClass(PCCorpseEntity.class);
         _configuration.addAnnotatedClass(PCCorpseItemEntity.class);
-        _configuration.addAnnotatedClass(PCCraftEntity.class);
         _configuration.addAnnotatedClass(PCCustomEffectEntity.class);
         _configuration.addAnnotatedClass(PCKeyItemEntity.class);
         _configuration.addAnnotatedClass(PCMigrationEntity.class);
@@ -105,7 +102,6 @@ public class DataAccess {
         _configuration.addAnnotatedClass(PCTerritoryFlagPermissionEntity.class);
         _configuration.addAnnotatedClass(PCTerritoryFlagStructureEntity.class);
         _configuration.addAnnotatedClass(PCTerritoryFlagStructureItemEntity.class);
-        _configuration.addAnnotatedClass(PCTerritoryFlagsStructuresResearchQueueEntity.class);
         _configuration.addAnnotatedClass(PerkCategoryEntity.class);
         _configuration.addAnnotatedClass(PerkEntity.class);
         _configuration.addAnnotatedClass(PerkExecutionTypeID.class);
@@ -120,7 +116,6 @@ public class DataAccess {
         _configuration.addAnnotatedClass(QuestRewardItemEntity.class);
         _configuration.addAnnotatedClass(QuestStateEntity.class);
         _configuration.addAnnotatedClass(QuestTypeEntity.class);
-        _configuration.addAnnotatedClass(ResearchBlueprintEntity.class);
         _configuration.addAnnotatedClass(ServerConfigurationEntity.class);
         _configuration.addAnnotatedClass(SkillCategoryEntity.class);
         _configuration.addAnnotatedClass(SkillEntity.class);

@@ -13,9 +13,9 @@
     <file url="file://$PROJECT_DIR$/src/main/resources/sql/Cooldown/GetPCCooldownByID.sql" />
     <file url="file://$PROJECT_DIR$/src/main/resources/sql/Craft/GetAllCrafts.sql" />
     <file url="file://$PROJECT_DIR$/src/main/resources/sql/Craft/GetBlueprintByID.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Craft/GetCategoriesAvailableToPC.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Craft/GetCategoriesAvailableToPCByDeviceID.sql" />
     <file url="file://$PROJECT_DIR$/src/main/resources/sql/Craft/GetCraftByID.sql" />
-    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Craft/GetCraftCategoriesAvailableToPC.sql" />
-    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Craft/GetCraftCategoriesAvailableToPCByCraftID.sql" />
     <file url="file://$PROJECT_DIR$/src/main/resources/sql/Craft/GetPCBlueprintByID.sql" />
     <file url="file://$PROJECT_DIR$/src/main/resources/sql/Craft/GetPCBlueprintsByCategoryID.sql" />
     <file url="file://$PROJECT_DIR$/src/main/resources/sql/Craft/GetPCBlueprintsForCraftByCategoryID.sql" />
@@ -37,10 +37,8 @@
     <file url="file://$PROJECT_DIR$/src/main/resources/sql/PCCorpse/GetByID.sql" />
     <file url="file://$PROJECT_DIR$/src/main/resources/sql/PCMigration/GetByMigrationID.sql" />
     <file url="file://$PROJECT_DIR$/src/main/resources/sql/PCOutfit/GetByUUID.sql" />
-    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Perk/GetActivePerkCategories.sql" />
     <file url="file://$PROJECT_DIR$/src/main/resources/sql/Perk/GetPCPerkByID.sql" />
     <file url="file://$PROJECT_DIR$/src/main/resources/sql/Perk/GetPCPerksByCategoryID.sql" />
-    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Perk/GetPerkByFeatID.sql" />
     <file url="file://$PROJECT_DIR$/src/main/resources/sql/Perk/GetPerkByID.sql" />
     <file url="file://$PROJECT_DIR$/src/main/resources/sql/Player/GetByPlayerID.sql" />
     <file url="file://$PROJECT_DIR$/src/main/resources/sql/Quest/GetAllCompletedQuestIDs.sql" />

@@ -90,20 +90,16 @@ public class RestMenu extends DialogBase implements IDialogHandler {
                             NWScript.actionStartConversation(oPC, "dmfi_universal", true, false);
                         });
                         break;
-                    // View Crafts
-                    case 6:
-                        SwitchConversation("ViewCrafts");
-                        break;
                     // Key Item Categories Page
-                    case 7:
+                    case 6:
                         SwitchConversation("KeyItems");
                         break;
                     // Modify Clothes
-                    case 8:
+                    case 7:
                         Scheduler.assign(oPC, () -> NWScript.actionStartConversation(oPC, "x0_skill_ctrap", true, false));
                         break;
                     // Character Management
-                    case 9:
+                    case 8:
                         SwitchConversation("CharacterManagement");
                         break;
                 }

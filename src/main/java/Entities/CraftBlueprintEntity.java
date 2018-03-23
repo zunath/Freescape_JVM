@@ -31,8 +31,18 @@ public class CraftBlueprintEntity {
     private CraftBlueprintCategoryEntity category;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "CraftID")
-    private CraftEntity craft;
+    @JoinColumn(name = "SkillID")
+    private SkillEntity skill;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "CraftDeviceID")
+    private CraftDeviceEntity device;
+
+    @Column(name = "RequiredPerkLevel")
+    private int requiredPerkLevel;
+
+    @Column(name = "IsActive")
+    private boolean isActive;
 
     public int getCraftBlueprintID() {
         return craftBlueprintID;
@@ -90,11 +100,35 @@ public class CraftBlueprintEntity {
         this.category = category;
     }
 
-    public CraftEntity getCraft() {
-        return craft;
+    public SkillEntity getSkill() {
+        return skill;
     }
 
-    public void setCraft(CraftEntity craft) {
-        this.craft = craft;
+    public void setSkill(SkillEntity skill) {
+        this.skill = skill;
+    }
+
+    public CraftDeviceEntity getDevice() {
+        return device;
+    }
+
+    public void setDevice(CraftDeviceEntity device) {
+        this.device = device;
+    }
+
+    public int getRequiredPerkLevel() {
+        return requiredPerkLevel;
+    }
+
+    public void setRequiredPerkLevel(int requiredPerkLevel) {
+        this.requiredPerkLevel = requiredPerkLevel;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
     }
 }

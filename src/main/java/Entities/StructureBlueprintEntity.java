@@ -44,12 +44,6 @@ public class StructureBlueprintEntity {
     @Column(name = "MaxBuildDistance")
     private double maxBuildDistance;
 
-    @Column(name = "ResearchSlots")
-    private int researchSlots;
-
-    @Column(name = "RPPerSecond")
-    private int rpPerSecond;
-
     @Column(name = "Level")
     private int level;
 
@@ -153,22 +147,6 @@ public class StructureBlueprintEntity {
 
     public void setIsUseable(boolean isUseable) {
         this.isUseable = isUseable;
-    }
-
-    public int getResearchSlots() {
-        return researchSlots;
-    }
-
-    public void setResearchSlots(int researchSlots) {
-        this.researchSlots = researchSlots;
-    }
-
-    public int getRpPerSecond() {
-        return rpPerSecond;
-    }
-
-    public void setRpPerSecond(int rpPerSecond) {
-        this.rpPerSecond = rpPerSecond;
     }
 
     public void setActive(boolean active) {

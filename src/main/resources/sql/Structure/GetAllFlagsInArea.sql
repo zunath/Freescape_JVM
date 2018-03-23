@@ -19,8 +19,6 @@ SELECT pctf.PCTerritoryFlagID ,
        sb.ItemStorageCount ,
        sb.MaxStructuresCount ,
        sb.MaxBuildDistance ,
-       sb.ResearchSlots ,
-       sb.RPPerSecond,
        sb.Level,
        sb.GivesSkillXP
 FROM dbo.PCTerritoryFlags pctf

@@ -1,10 +1,12 @@
 package GameSystems;
 
+import Data.Repository.SkillRepository;
 import Entities.*;
 import GameObject.PlayerGO;
 import Helper.ColorToken;
 import Helper.ErrorHelper;
 import Data.Repository.CraftRepository;
+import Helper.ItemHelper;
 import NWNX.NWNX_Player;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.NWScript;
@@ -122,12 +124,14 @@ public class CraftSystem {
     {
         NWObject tempStorage = NWScript.getLocalObject(device, "CRAFT_TEMP_STORAGE");
         PlayerGO pcGO = new PlayerGO(oPC);
-        CraftRepository repo = new CraftRepository();
-        PCBlueprintEntity pcBlueprint = repo.GetPCBlueprintByID(pcGO.getUUID(), blueprintID);
-        CraftBlueprintEntity blueprint = pcBlueprint.getBlueprint();
-        PCCraftEntity craft = repo.GetPCCraftByID(pcGO.getUUID(), blueprint.getCraft().getCraftID());
-        float chance = CalculateChanceToCreateItem(craft.getLevel(), blueprint.getLevel());
+        CraftRepository craftRepo = new CraftRepository();
+        SkillRepository skillRepo = new SkillRepository();
+
+        CraftBlueprintEntity blueprint = craftRepo.GetBlueprintByID(blueprintID);
+        PCSkillEntity pcSkill = skillRepo.GetPCSkillByID(pcGO.getUUID(), blueprint.getSkill().getSkillID());
+        float chance = CalculateChanceToCreateItem(pcSkill.getRank(), blueprint.getLevel());
         float roll = ThreadLocalRandom.current().nextFloat() * 100.0f;
+        float xpModifier;
 
         if(roll <= chance)
         {
@@ -139,7 +143,7 @@ public class CraftSystem {
 
             NWScript.createItemOnObject(blueprint.getItemResref(), oPC, blueprint.getQuantity(), "");
             NWScript.sendMessageToPC(oPC, "You created " + blueprint.getQuantity() + "x " + blueprint.getItemName() + "!");
-            GiveCraftingExperience(oPC, blueprint.getCraft().getCraftID(), CalculateExperience(craft.getLevel(), blueprint.getLevel()));
+            xpModifier = 1.0f;
         }
         else
         {
@@ -157,9 +161,12 @@ public class CraftSystem {
             }
 
             NWScript.sendMessageToPC(oPC, "You failed to create that item...");
+            xpModifier = 0.2f;
         }
 
+        float xp = SkillSystem.CalculateSkillAdjustedXP(250, blueprint.getLevel(), pcSkill.getRank()) * xpModifier;
         NWScript.destroyObject(tempStorage, 0.0f);
+        SkillSystem.GiveSkillXP(oPC, blueprint.getSkill().getSkillID(), (int)xp);
     }
 
     private static String CalculateDifficulty(int pcLevel, int blueprintLevel)
@@ -259,95 +266,25 @@ public class CraftSystem {
         return percentage;
     }
 
-    private static int CalculateExperience(int pcLevel, int blueprintLevel)
-    {
-        int exp = 0;
-        int delta = pcLevel - blueprintLevel;
-
-        if(delta <= -5) exp = 200;
-        else if(delta >= 4) exp = 0;
-        else
-        {
-            switch (delta)
-            {
-                case -4:
-                    exp = 200;
-                    break;
-                case -3:
-                    exp = 170;
-                    break;
-                case -2:
-                    exp = 140;
-                    break;
-                case -1:
-                    exp = 120;
-                    break;
-                case 0:
-                    exp = 100;
-                    break;
-                case 1:
-                    exp = 80;
-                    break;
-                case 2:
-                    exp = 50;
-                    break;
-                case 3:
-                    exp = 30;
-                    break;
-            }
-        }
-
-        return exp;
-    }
-
-
-    private static void GiveCraftingExperience(NWObject oPC, int craftID, int experience)
-    {
-        if(experience <= 0 || !NWScript.getIsPC(oPC) || NWScript.getIsDM(oPC)) return;
-
-        PlayerGO pcGO = new PlayerGO(oPC);
-        CraftRepository repo = new CraftRepository();
-        PCCraftEntity entity = repo.GetPCCraftByID(pcGO.getUUID(), craftID);
-        entity.setExperience(entity.getExperience() + experience);
-        CraftLevelEntity level = repo.GetCraftLevelByLevel(craftID, entity.getLevel());
-        CraftEntity craft = repo.GetCraftByID(craftID);
-        long maxLevel = repo.GetCraftMaxLevel(craftID);
-
-        NWScript.sendMessageToPC(oPC, "You earned " + craft.getName() + " experience.");
-        if(entity.getLevel() >= maxLevel)
-        {
-            entity.setExperience(level.getExperience() - 1);
-        }
-
-        while(entity.getExperience() >= level.getExperience())
-        {
-            entity.setExperience(entity.getExperience() - level.getExperience());
-            entity.setLevel(entity.getLevel() + 1);
-            NWScript.sendMessageToPC(oPC, "You attained level " + entity.getLevel() + " in " + craft.getName() + "!");
-        }
-
-        repo.Save(entity);
-    }
-
     public static String BuildBlueprintHeader(NWObject oPC, int blueprintID)
     {
         PlayerGO pcGO = new PlayerGO(oPC);
-        CraftRepository repo = new CraftRepository();
-        CraftBlueprintEntity blueprint = repo.GetBlueprintByID(blueprintID);
-        CraftEntity craft = blueprint.getCraft();
-        PCCraftEntity pcCraft = repo.GetPCCraftByID(pcGO.getUUID(), craft.getCraftID());
-        NWObject tempStorage = NWScript.getObjectByTag("craft_temp_storage", 0);
+        CraftRepository craftRepo = new CraftRepository();
+        SkillRepository skillRepo = new SkillRepository();
+
+        CraftBlueprintEntity blueprint = craftRepo.GetBlueprintByID(blueprintID);
+        PCSkillEntity pcSkill = skillRepo.GetPCSkillByID(pcGO.getUUID(), blueprint.getSkill().getSkillID());
+
 
         String header = ColorToken.Green() + "Blueprint: " + ColorToken.End() + ColorToken.White() + blueprint.getItemName() + ColorToken.End() + "\n\n";
-        header += ColorToken.Green() + "Skill: " + ColorToken.End() + ColorToken.White() + craft.getName() + " (" + pcCraft.getLevel() + ")" + ColorToken.End() + "\n";
-        header += ColorToken.Green() + "Difficulty: " + ColorToken.End() + CalculateDifficulty(pcCraft.getLevel(), blueprint.getLevel()) + "\n\n";
+        header += ColorToken.Green() + "Skill: " + ColorToken.End() + ColorToken.White() + pcSkill.getSkill().getName() + " (" + pcSkill.getRank() + ")" + ColorToken.End() + "\n";
+        header += ColorToken.Green() + "Difficulty: " + ColorToken.End() + CalculateDifficulty(pcSkill.getRank(), blueprint.getLevel()) + "\n\n";
         header += ColorToken.Green() + "Components: " + ColorToken.End() + "\n\n";
 
         for(CraftComponentEntity component : blueprint.getComponents())
         {
-            NWObject item = NWScript.createItemOnObject(component.getItemResref(), tempStorage, 1, "");
-            header += ColorToken.White() + component.getQuantity() + "x " + NWScript.getName(item, false) + ColorToken.End() + "\n";
-            NWScript.destroyObject(item, 0.0f);
+            String name = ItemHelper.GetNameByResref(component.getItemResref());
+            header += ColorToken.White() + component.getQuantity() + "x " + name + ColorToken.End() + "\n";
         }
 
         return header;

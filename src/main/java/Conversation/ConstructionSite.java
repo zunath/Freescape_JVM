@@ -224,14 +224,6 @@ public class ConstructionSite extends DialogBase implements IDialogHandler {
             {
                 header += ColorToken.Green() + "Item Storage: " + ColorToken.End() + entity.getBlueprint().getItemStorageCount() + " items" + "\n";
             }
-            if(entity.getBlueprint().getResearchSlots() > 0)
-            {
-                header += ColorToken.Green() + "Research Slots: "  + ColorToken.End() + entity.getBlueprint().getResearchSlots() + " slots" + "\n";
-            }
-            if(entity.getBlueprint().getRpPerSecond() > 0)
-            {
-                header += ColorToken.Green() + "RP/Sec: " + ColorToken.End() + entity.getBlueprint().getRpPerSecond() + "\n";
-            }
 
             header += ColorToken.Green() + "Resources Required: " + ColorToken.End() + "\n\n";
 
@@ -365,7 +357,10 @@ public class ConstructionSite extends DialogBase implements IDialogHandler {
         DialogPage page = GetPageByName("BlueprintListPage");
         page.getResponses().clear();
         NWLocation location = NWScript.getLocation(GetDialogTarget());
-        int rank = SkillSystem.GetPCSkill(GetPC(), SkillID.Construction).getRank();
+        PCSkillEntity pcSkill = SkillSystem.GetPCSkill(GetPC(), SkillID.Construction);
+        if(pcSkill == null) return;
+        int rank = pcSkill.getRank();
+
 
         List<StructureBlueprintEntity> entities = repo.GetStructuresByCategoryAndPlayerRank(pcGO.getUUID(), model.getCategoryID(), rank);
         for(StructureBlueprintEntity entity : entities)

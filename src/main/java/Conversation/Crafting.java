@@ -18,7 +18,7 @@ public class Crafting extends DialogBase implements IDialogHandler {
     public PlayerDialog SetUp(NWObject oPC) {
         PlayerDialog dialog = new PlayerDialog("MainPage");
         DialogPage mainPage = new DialogPage(
-                "Please select a blueprint. Only blueprints you've added to your collection will be displayed here.",
+                "Please select a blueprint. Only blueprints you've learned will be displayed here. Learn more blueprints by purchasing crafting perks!",
                 "Back"
         );
         DialogPage blueprintPage = new DialogPage(
@@ -28,7 +28,7 @@ public class Crafting extends DialogBase implements IDialogHandler {
                 "Back"
         );
         DialogPage blueprintListPage = new DialogPage(
-                "Please select a blueprint. Only blueprints you've added to your collection will be displayed here.",
+                "Please select a blueprint. Only blueprints you've learned will be displayed here. Learn more blueprints by purchasing crafting perks!",
                 "Back"
         );
 
@@ -66,10 +66,11 @@ public class Crafting extends DialogBase implements IDialogHandler {
 
     private void LoadCategoryResponses()
     {
-        int craftID = NWScript.getLocalInt(GetDialogTarget(), "CRAFT_ID");
+        NWObject device = GetDialogTarget();
+        int deviceID = NWScript.getLocalInt(device, "CRAFT_DEVICE_ID");
         PlayerGO pcGO = new PlayerGO(GetPC());
         CraftRepository repo = new CraftRepository();
-        List<CraftBlueprintCategoryEntity> categories = repo.GetCategoriesAvailableToPCByCraftID(pcGO.getUUID(), craftID);
+        List<CraftBlueprintCategoryEntity> categories = repo.GetCategoriesAvailableToPCByDeviceID(pcGO.getUUID(), deviceID);
         DialogPage page = GetPageByName("MainPage");
         page.getResponses().clear();
 
@@ -84,16 +85,17 @@ public class Crafting extends DialogBase implements IDialogHandler {
     private void LoadBlueprintListPage(int categoryID)
     {
         PlayerGO pcGO = new PlayerGO(GetPC());
-        CraftRepository repo = new CraftRepository();
-        int craftID = NWScript.getLocalInt(GetDialogTarget(), "CRAFT_ID");
+        CraftRepository craftRepo = new CraftRepository();
+        NWObject device = GetDialogTarget();
+        int deviceID = NWScript.getLocalInt(device, "CRAFT_DEVICE_ID");
 
-        List<PCBlueprintEntity> blueprints = repo.GetPCBlueprintsForCraftByCategoryID(pcGO.getUUID(), craftID, categoryID);
+        List<CraftBlueprintEntity> blueprints = craftRepo.GetPCBlueprintsByDeviceAndCategoryID(pcGO.getUUID(), deviceID, categoryID);
         DialogPage page = GetPageByName("BlueprintListPage");
         page.getResponses().clear();
 
-        for(PCBlueprintEntity bp : blueprints)
+        for(CraftBlueprintEntity bp : blueprints)
         {
-            page.addResponse(bp.getBlueprint().getItemName(), true, bp.getBlueprint().getCraftBlueprintID());
+            page.addResponse(bp.getItemName(), true, bp.getCraftBlueprintID());
         }
 
         page.addResponse("Back", true);

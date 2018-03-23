@@ -1,7 +1,7 @@
 package Placeable.CraftingDevice;
 
 import Dialog.DialogManager;
-import Entities.PCBlueprintEntity;
+import Entities.CraftBlueprintEntity;
 import GameObject.PlayerGO;
 import Helper.ColorToken;
 import Common.IScriptEventHandler;
@@ -46,7 +46,8 @@ public class OnDisturbed implements IScriptEventHandler {
         PlayerGO pcGO = new PlayerGO(oPC);
         CraftRepository repo = new CraftRepository();
         int blueprintID = NWScript.getLocalInt(device, "CRAFT_BLUEPRINT_ID");
-        PCBlueprintEntity pcBlueprint = repo.GetPCBlueprintByID(pcGO.getUUID(), blueprintID);
+        int deviceID = NWScript.getLocalInt(device, "CRAFT_DEVICE_ID");
+        CraftBlueprintEntity pcBlueprint = repo.GetBlueprintKnownByPC(pcGO.getUUID(), blueprintID, deviceID);
 
         if(pcBlueprint == null)
         {
