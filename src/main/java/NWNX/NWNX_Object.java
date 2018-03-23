@@ -146,4 +146,24 @@ public class NWNX_Object {
         return NWNX_GetReturnValueString(NWNX_Object, sFunc);
     }
 
+
+    public static void NWNX_Object_SetAppearance(NWObject obj, int app)
+    {
+        String sFunc = "SetAppearance";
+
+        NWNX_PushArgumentInt(NWNX_Object, sFunc, app);
+        NWNX_PushArgumentObject(NWNX_Object, sFunc, obj);
+
+        NWNX_CallFunction(NWNX_Object, sFunc);
+    }
+
+    public static int NWNX_Object_GetAppearance(NWObject obj)
+    {
+        String sFunc = "GetAppearance";
+
+        NWNX_PushArgumentObject(NWNX_Object, sFunc, obj);
+
+        NWNX_CallFunction(NWNX_Object, sFunc);
+        return NWNX_GetReturnValueInt(NWNX_Object, sFunc);
+    }
 }

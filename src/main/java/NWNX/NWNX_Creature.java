@@ -566,4 +566,36 @@ public class NWNX_Creature {
         NWNX_CallFunction(NWNX_Creature, sFunc);
     }
 
+
+    public static void SetRacialType(NWObject creature, int racialtype)
+    {
+        String sFunc = "SetRacialType";
+        NWNX_PushArgumentInt(NWNX_Creature, sFunc, racialtype);
+        NWNX_PushArgumentObject(NWNX_Creature, sFunc, creature);
+
+        NWNX_CallFunction(NWNX_Creature, sFunc);
+    }
+
+    public static int GetMovementType(NWObject creature)
+    {
+        String sFunc = "GetMovementType";
+        NWNX_PushArgumentObject(NWNX_Creature, sFunc, creature);
+
+        NWNX_CallFunction(NWNX_Creature, sFunc);
+        return NWNX_GetReturnValueInt(NWNX_Creature, sFunc);
+    }
+
+    // Sets the maximum movement rate a creature can have while walking (not running)
+    // This allows a creature with movement speed enhancemens to walk at a normal rate.
+    // Setting the value to -1.0 will remove the cap.
+    // Default value is 2000.0, which is the base human walk speed.
+    public static void SetWalkRateCap(NWObject creature, float fWalkRate) // Default fWalkRate = 2000.0f
+    {
+        String sFunc = "SetWalkRateCap";
+        NWNX_PushArgumentFloat(NWNX_Creature, sFunc, fWalkRate);
+        NWNX_PushArgumentObject(NWNX_Creature, sFunc, creature);
+
+        NWNX_CallFunction(NWNX_Creature, sFunc);
+    }
+
 }

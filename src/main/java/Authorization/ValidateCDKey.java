@@ -1,10 +1,8 @@
 package Authorization;
 
 import Common.IScriptEventHandler;
-import Entities.AuthorizedDMEntity;
-
-import NWNX.NWNX_Admin;
 import Data.Repository.AuthorizedDMRepository;
+import Entities.AuthorizedDMEntity;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.NWScript;
 
@@ -35,7 +33,7 @@ public class ValidateCDKey implements IScriptEventHandler {
             else
             {
                 NWScript.sendMessageToAllDMs("<WARNING, UNAUTHORIZED DM JOIN ATTEMPT BY " + sCDKey + ", " + sPlayerName + ", " + sIP + ">" );
-                NWNX_Admin.BootPCWithMessage(pc, 16782504);
+                NWScript.bootPC(pc);
             }
         }
     }

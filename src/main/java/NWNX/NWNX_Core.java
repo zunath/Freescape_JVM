@@ -80,22 +80,22 @@ public class NWNX_Core {
 
     private static void NWNX_INTERNAL_CallFunction(String pluginName, String functionName)
     {
-        NWScript.setLocalString(NWScript.getModule(), "NWNX!CALL_FUNCTION!" + pluginName + "!" + functionName, "1");
+        NWScript.setLocalString(NWScript.getModule(), "NWNXEE!CALL_FUNCTION!" + pluginName + "!" + functionName, "1");
     }
 
     private static void NWNX_INTERNAL_PushArgument(String pluginName, String functionName, String value)
     {
-        NWScript.setLocalString(NWScript.getModule(), "NWNX!PUSH_ARGUMENT!" + pluginName + "!" + functionName, value);
+        NWScript.setLocalString(NWScript.getModule(), "NWNXEE!PUSH_ARGUMENT!" + pluginName + "!" + functionName, value);
     }
 
     private static String NWNX_INTERNAL_GetReturnValueString(String pluginName, String functionName, String type)
     {
-        return NWScript.getLocalString(NWScript.getModule(), "NWNX!GET_RETURN_VALUE!" + pluginName + "!" + functionName + "!" + type);
+        return NWScript.getLocalString(NWScript.getModule(), "NWNXEE!GET_RETURN_VALUE!" + pluginName + "!" + functionName + "!" + type);
     }
 
     private static NWObject NWNX_INTERNAL_GetReturnValueObject(String pluginName, String functionName, String type)
     {
-        return NWScript.getLocalObject(NWScript.getModule(), "NWNX!GET_RETURN_VALUE!" + pluginName + "!" + functionName + "!" + type);
+        return NWScript.getLocalObject(NWScript.getModule(), "NWNXEE!GET_RETURN_VALUE!" + pluginName + "!" + functionName + "!" + type);
     }
 
 

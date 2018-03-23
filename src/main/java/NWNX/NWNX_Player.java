@@ -72,5 +72,13 @@ public class NWNX_Player {
         }
     }
 
+    public static void NWNX_Player_SetAlwaysWalk(NWObject player, int bWalk)
+    {
+        String sFunc = "SetAlwaysWalk";
+        NWNX_PushArgumentInt(NWNX_Player, sFunc, bWalk);
+        NWNX_PushArgumentObject(NWNX_Player, sFunc, player);
+
+        NWNX_CallFunction(NWNX_Player, sFunc);
+    }
 
 }
