@@ -601,7 +601,7 @@ public class SkillSystem {
 
         // Apply BAB
         int bab = CalculateBAB(oPC, ignoreItem);
-        //NWNX_Creature.SetBaseAttackBonus(oPC, bab); // TODO: This is causing crashes. Find out if something in NWNX changed.
+        NWNX_Creature.SetBaseAttackBonus(oPC, bab);
 
         // Apply HP
         int hp = 30 + getAbilityModifier(Ability.CONSTITUTION, oPC)  * 5;
@@ -667,7 +667,7 @@ public class SkillSystem {
             perkBAB += PerkSystem.GetPCPerkLevel(oPC, PerkID.TossAccuracy);
         }
 
-        return skillBAB + perkBAB;
+        return 1 + skillBAB + perkBAB; // Note: Always add 1 to BAB. 0 will cause a crash in NWNX.
     }
 
     private static int CalculateItemAC(NWObject oPC, NWObject ignoreItem)
