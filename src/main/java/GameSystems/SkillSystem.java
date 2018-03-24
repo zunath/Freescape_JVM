@@ -601,7 +601,7 @@ public class SkillSystem {
 
         // Apply BAB
         int bab = CalculateBAB(oPC, ignoreItem);
-        NWNX_Creature.SetBaseAttackBonus(oPC, bab);
+        //NWNX_Creature.SetBaseAttackBonus(oPC, bab); // TODO: This is causing crashes. Find out if something in NWNX changed.
 
         // Apply HP
         int hp = 30 + getAbilityModifier(Ability.CONSTITUTION, oPC)  * 5;

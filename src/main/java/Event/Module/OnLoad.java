@@ -2,12 +2,16 @@ package Event.Module;
 
 import Common.IScriptEventHandler;
 import GameSystems.AreaInstanceSystem;
-import GameSystems.ObjectProcessingSystem;
-import NWNX.*;
 import GameSystems.DeathSystem;
+import GameSystems.ObjectProcessingSystem;
 import GameSystems.StructureSystem;
+import NWNX.EventType;
+import NWNX.NWNX_Chat;
+import NWNX.NWNX_Events;
 import org.nwnx.nwnx2.jvm.NWObject;
-import org.nwnx.nwnx2.jvm.NWScript;
+import org.nwnx.nwnx2.jvm.constants.EventScript;
+
+import static org.nwnx.nwnx2.jvm.NWScript.*;
 
 @SuppressWarnings("unused")
 public class OnLoad implements IScriptEventHandler {
@@ -18,7 +22,7 @@ public class OnLoad implements IScriptEventHandler {
 		AddAreaEventHandlers();
 
 		// Bioware default
-		NWScript.executeScript("x2_mod_def_load", objSelf);
+		executeScript("x2_mod_def_load", objSelf);
         DeathSystem.OnModuleLoad();
 		StructureSystem.OnModuleLoad();
 		AreaInstanceSystem.OnModuleLoad();
@@ -27,15 +31,15 @@ public class OnLoad implements IScriptEventHandler {
 
 	private void AddAreaEventHandlers()
 	{
-		NWObject area = NWScript.getFirstArea();
-		while(NWScript.getIsObjectValid(area))
+		NWObject area = getFirstArea();
+		while(getIsObjectValid(area))
 		{
-			NWNX_Object.SetEventHandler(area, AreaObjectScript.OnEnter, "area_enter");
-			NWNX_Object.SetEventHandler(area, AreaObjectScript.OnExit, "area_exit");
-			NWNX_Object.SetEventHandler(area, AreaObjectScript.OnHeartbeat, "area_heartbeat");
-			NWNX_Object.SetEventHandler(area, AreaObjectScript.OnUserDefinedEvent, "area_user");
+			setEventScript(area, EventScript.AREA_ON_ENTER, "area_enter");
+			setEventScript(area, EventScript.AREA_ON_EXIT, "area_exit");
+			setEventScript(area, EventScript.AREA_ON_HEARTBEAT, "area_heartbeat");
+			setEventScript(area, EventScript.AREA_ON_USER_DEFINED_EVENT, "area_user");
 
-			area = NWScript.getNextArea();
+			area = getNextArea();
 		}
 	}
 

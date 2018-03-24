@@ -1,10 +1,9 @@
 package Placeable.Resource;
 
 import Common.IScriptEventHandler;
-import NWNX.CreatureObjectScript;
-import NWNX.NWNX_Object;
 import org.nwnx.nwnx2.jvm.NWLocation;
 import org.nwnx.nwnx2.jvm.NWObject;
+import org.nwnx.nwnx2.jvm.constants.EventScript;
 import org.nwnx.nwnx2.jvm.constants.ObjectType;
 
 import static org.nwnx.nwnx2.jvm.NWScript.*;
@@ -14,7 +13,8 @@ import static org.nwnx.nwnx2.jvm.NWScript.*;
 public class OnHeartbeat implements IScriptEventHandler {
     @Override
     public void runScript(NWObject objSelf) {
-        NWNX_Object.SetEventHandler(objSelf, CreatureObjectScript.OnHeartbeat, "");
+        setEventScript(objSelf, EventScript.CREATURE_ON_HEARTBEAT, "");
+
 
         String propResref = getLocalString(objSelf, "RESOURCE_PROP");
         if(propResref.equals("")) return;

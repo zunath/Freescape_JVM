@@ -12,7 +12,6 @@ public class EventReceiver implements SchedulerListener {
     public void context(NWObject objSelf) {}
 
     public void event(NWObject objSelf, String event) {
-
         // Try to locate a matching class name based on the event passed in from NWN JVM_EVENT call.
         try {
             Class scriptClass = Class.forName(event);

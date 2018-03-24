@@ -33,7 +33,7 @@ public class ValidateCDKey implements IScriptEventHandler {
             else
             {
                 NWScript.sendMessageToAllDMs("<WARNING, UNAUTHORIZED DM JOIN ATTEMPT BY " + sCDKey + ", " + sPlayerName + ", " + sIP + ">" );
-                NWScript.bootPC(pc);
+                NWScript.bootPC(pc, "You are not authorized to join as a DM.");
             }
         }
     }

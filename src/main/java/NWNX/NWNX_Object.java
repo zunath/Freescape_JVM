@@ -1,9 +1,13 @@
 package NWNX;
 
 import org.nwnx.nwnx2.jvm.NWObject;
+import org.nwnx.nwnx2.jvm.NWScript;
 import org.nwnx.nwnx2.jvm.NWVector;
+import org.nwnx.nwnx2.jvm.constants.Area;
+import org.nwnx.nwnx2.jvm.constants.ObjectType;
 
 import static NWNX.NWNX_Core.*;
+import static org.nwnx.nwnx2.jvm.NWScript.*;
 
 public class NWNX_Object {
     private static final String NWNX_Object = "NWNX_Object";
@@ -40,28 +44,6 @@ public class NWNX_Object {
         NWNX_PushArgumentString(NWNX_Object, sFunc, id);
         NWNX_CallFunction(NWNX_Object, sFunc);
         return NWNX_GetReturnValueObject(NWNX_Object, sFunc);
-    }
-
-    public static String GetEventHandler(NWObject obj, int handler)
-    {
-        String sFunc = "GetEventHandler";
-
-        NWNX_PushArgumentInt(NWNX_Object, sFunc, handler);
-        NWNX_PushArgumentObject(NWNX_Object, sFunc, obj);
-        NWNX_CallFunction(NWNX_Object, sFunc);
-
-        return NWNX_GetReturnValueString(NWNX_Object, sFunc);
-    }
-
-    public static void SetEventHandler(NWObject obj, int handler, String script)
-    {
-        String sFunc = "SetEventHandler";
-
-        NWNX_PushArgumentString(NWNX_Object, sFunc, script);
-        NWNX_PushArgumentInt(NWNX_Object, sFunc, handler);
-        NWNX_PushArgumentObject(NWNX_Object, sFunc, obj);
-        NWNX_CallFunction(NWNX_Object, sFunc);
-
     }
 
     public static void SetPosition(NWObject obj, NWVector pos)

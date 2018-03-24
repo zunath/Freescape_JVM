@@ -10,8 +10,10 @@ import java.util.Objects;
 public class OnPlayerEquipItem implements IScriptEventHandler {
 	@Override
 	public void runScript(final NWObject objSelf) {
+
 		// Bioware Default
 		NWScript.executeScript("x2_mod_def_equ", objSelf);
+
         DurabilitySystem.OnModuleEquip();
 		SkillSystem.OnModuleItemEquipped();
 		PerkSystem.OnModuleItemEquipped();
