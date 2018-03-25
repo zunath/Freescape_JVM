@@ -147,6 +147,7 @@ public class CraftSystem {
     private static void RunCreateItem(NWObject oPC, NWObject device, int blueprintID)
     {
         NWObject tempStorage = getLocalObject(device, "CRAFT_TEMP_STORAGE");
+        NWObject tools = getLocalObject(device, "CRAFT_DEVICE_TOOLS");
         PlayerGO pcGO = new PlayerGO(oPC);
         CraftRepository craftRepo = new CraftRepository();
         SkillRepository skillRepo = new SkillRepository();
@@ -194,6 +195,15 @@ public class CraftSystem {
         float xp = SkillSystem.CalculateSkillAdjustedXP(250, blueprint.getLevel(), pcSkill.getRank()) * xpModifier;
         destroyObject(tempStorage, 0.0f);
         SkillSystem.GiveSkillXP(oPC, blueprint.getSkill().getSkillID(), (int)xp);
+
+        if(getIsObjectValid(tools))
+        {
+            float min = 0.05f;
+            float max = 0.1f;
+            float reduceDurability = min + ThreadLocalRandom.current().nextFloat() * (max - min);
+            DurabilitySystem.RunItemDecay(oPC, tools, reduceDurability);
+        }
+
     }
 
     private static String CalculateDifficulty(int pcLevel, int blueprintLevel)
@@ -310,6 +320,7 @@ public class CraftSystem {
                 case CraftDeviceID.Cookpot: toolBonus = toolsGO.getCraftBonusCooking(); break;
                 case CraftDeviceID.MetalworkingBench: toolBonus = toolsGO.getCraftBonusMetalworking(); break;
                 case CraftDeviceID.WeaponsmithBench: toolBonus = toolsGO.getCraftBonusWeaponsmith(); break;
+                case CraftDeviceID.WoorkworkingBench: toolBonus = toolsGO.getCraftBonusWoodworking(); break;
             }
 
             effectiveLevel += toolBonus;

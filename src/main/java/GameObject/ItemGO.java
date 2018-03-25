@@ -167,6 +167,16 @@ public class ItemGO {
         setLocalInt(item, "CUSTOM_ITEM_PROPERTY_CRAFT_BONUS_COOKING", craftBonus);
     }
 
+    public int getCraftBonusWoodworking()
+    {
+        return getLocalInt(item, "CUSTOM_ITEM_PROPERTY_CRAFT_BONUS_WOODWORKING");
+    }
+
+    public void setCraftBonusWoodworking(int craftBonus)
+    {
+        setLocalInt(item, "CUSTOM_ITEM_PROPERTY_CRAFT_BONUS_WOODWORKING", craftBonus);
+    }
+
     public int getAssociatedSkillID()
     {
         return getLocalInt(item, "CUSTOM_ITEM_PROPERTY_ASSOCIATED_SKILL_ID");

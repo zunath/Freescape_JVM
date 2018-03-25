@@ -44,12 +44,17 @@ public class DurabilitySystem {
     }
 
     public static void RunItemDecay(NWObject oPC, NWObject oItem) {
+        RunItemDecay(oPC, oItem, 0.001f);
+    }
+
+    public static void RunItemDecay(NWObject oPC, NWObject oItem, float reduceAmount) {
+        if(reduceAmount <= 0) return;
         // Item decay doesn't run for any items if Invincible is in effect
         // Or if the item is unbreakable (e.g profession items)
         // Or if the item is not part of the valid list of base item types
         if (NWScript.getPlotFlag(oPC) ||
-            NWScript.getLocalInt(oItem, "UNBREAKABLE") == 1 ||
-            !GetValidDurabilityTypes().contains(NWScript.getBaseItemType(oItem)))
+                NWScript.getLocalInt(oItem, "UNBREAKABLE") == 1 ||
+                !GetValidDurabilityTypes().contains(NWScript.getBaseItemType(oItem)))
             return;
 
         float durability = GetItemDurability(oItem);
@@ -58,7 +63,7 @@ public class DurabilitySystem {
         // Reduce by 0.001 each time it's run. Player only receives notifications when it drops a full point.
         // I.E: Dropping from 29.001 to 29.
         // Note that players only see two decimal places in-game on purpose.
-        durability -= 0.001f;
+        durability -= reduceAmount;
         boolean displayMessage = durability % 1 == 0;
 
         if(displayMessage)

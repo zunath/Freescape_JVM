@@ -50,6 +50,9 @@ public class ItemEntity {
     @Column(name = "CraftTierLevel")
     private int craftTierLevel;
 
+    @Column(name = "CraftBonusWoodworking")
+    private int craftBonusWoodworking;
+
     public String getResref() {
         return resref;
     }
@@ -160,5 +163,13 @@ public class ItemEntity {
 
     public void setCraftTierLevel(int craftTierLevel) {
         this.craftTierLevel = craftTierLevel;
+    }
+
+    public int getCraftBonusWoodworking() {
+        return craftBonusWoodworking;
+    }
+
+    public void setCraftBonusWoodworking(int craftBonusWoodworking) {
+        this.craftBonusWoodworking = craftBonusWoodworking;
     }
 }

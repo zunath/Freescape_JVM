@@ -287,6 +287,7 @@ public class ItemSystem {
         itemGO.setCraftBonusArmorsmith(entity.getCraftBonusArmorsmith());
         itemGO.setCraftBonusWeaponsmith(entity.getCraftBonusWeaponsmith());
         itemGO.setCraftBonusCooking(entity.getCraftBonusCooking());
+        itemGO.setCraftBonusWoodworking(entity.getCraftBonusWoodworking());
         itemGO.setAssociatedSkillID(entity.getAssociatedSkillID());
         itemGO.setCraftTierLevel(entity.getCraftTierLevel());
 
