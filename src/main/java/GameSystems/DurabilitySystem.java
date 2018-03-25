@@ -109,7 +109,7 @@ public class DurabilitySystem {
         return NWScript.getLocalInt(item, MaxDurabilityVariable) <= 0 ? 30 : NWScript.getLocalInt(item, MaxDurabilityVariable);
     }
 
-    public static float GetItemDurability(NWObject item)
+    private static float GetItemDurability(NWObject item)
     {
         int itemType = NWScript.getBaseItemType(item);
         if(!DurabilitySystem.GetValidDurabilityTypes().contains(itemType))
@@ -133,6 +133,17 @@ public class DurabilitySystem {
         else if(value < 0) value = 0;
 
         NWScript.setLocalFloat(item, CurrentDurabilityVariable, value);
+    }
+
+    public static void SetItemMaxDurability(NWObject item, float value)
+    {
+        if(value <= 0) value = 30;
+        int itemType = NWScript.getBaseItemType(item);
+        if(!DurabilitySystem.GetValidDurabilityTypes().contains(itemType))
+            return;
+        InitializeDurability(item);
+
+        NWScript.setLocalFloat(item, MaxDurabilityVariable, value);
     }
 
     private static void InitializeDurability(NWObject item)

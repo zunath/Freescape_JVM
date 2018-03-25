@@ -3,7 +3,10 @@ package GameSystems;
 import Bioware.AddItemPropertyPolicy;
 import Bioware.XP2;
 import Data.Repository.ItemRepository;
+import Data.Repository.SkillRepository;
 import Entities.ItemEntity;
+import Entities.PCSkillEntity;
+import Entities.SkillEntity;
 import GameObject.ItemGO;
 import GameObject.PlayerGO;
 import Helper.ColorToken;
@@ -37,6 +40,8 @@ public class ItemSystem {
     {
         if(!NWScript.getIsPC(examiner)) return existingDescription;
         if(NWScript.getObjectType(examinedObject) != ObjectType.ITEM) return existingDescription;
+        PlayerGO pcGO = new PlayerGO(examiner);
+        SkillRepository skillRepo = new SkillRepository();
         ItemGO itemGO = new ItemGO(examinedObject);
         ApplyItemFeatures(examinedObject);
         String description = "";
@@ -44,6 +49,11 @@ public class ItemSystem {
         if(itemGO.getRecommendedLevel() > 0)
         {
             description += ColorToken.Orange() + "Recommended Level: " + ColorToken.End() + itemGO.getRecommendedLevel() + "\n";
+        }
+        if(itemGO.getAssociatedSkillID() > 0)
+        {
+            PCSkillEntity pcSkill = skillRepo.GetPCSkillByID(pcGO.getUUID(), itemGO.getAssociatedSkillID());
+            description += ColorToken.Orange() + "Associated Skill: " + ColorToken.End() + pcSkill.getSkill().getName() + "\n";
         }
         if(itemGO.getAC() > 0)
         {
@@ -56,6 +66,26 @@ public class ItemSystem {
         if(itemGO.getMiningBonus() > 0)
         {
             description += ColorToken.Orange() + "Mining Bonus: " + ColorToken.End() + itemGO.getMiningBonus() + "\n";
+        }
+        if(itemGO.getCraftBonusMetalworking() > 0)
+        {
+            description += ColorToken.Orange() + "Metalworking Bonus: " + ColorToken.End() + itemGO.getCraftBonusMetalworking() + "\n";
+        }
+        if(itemGO.getCraftBonusArmorsmith() > 0)
+        {
+            description += ColorToken.Orange() + "Armorsmith Bonus: " + ColorToken.End() + itemGO.getCraftBonusArmorsmith() + "\n";
+        }
+        if(itemGO.getCraftBonusWeaponsmith() > 0)
+        {
+            description += ColorToken.Orange() + "Weaponsmith Bonus: " + ColorToken.End() + itemGO.getCraftBonusWeaponsmith() + "\n";
+        }
+        if(itemGO.getCraftBonusCooking() > 0)
+        {
+            description += ColorToken.Orange() + "Cooking Bonus: " + ColorToken.End() + itemGO.getCraftBonusCooking() + "\n";
+        }
+        if(itemGO.getCraftTierLevel() > 0)
+        {
+            description += ColorToken.Orange() + "Tool Level: " + ColorToken.End() + itemGO.getCraftTierLevel() + "\n";
         }
 
         return existingDescription + "\n" + description;
@@ -253,5 +283,18 @@ public class ItemSystem {
         itemGO.setLoggingBonus(entity.getLoggingBonus());
         itemGO.setMiningBonus(entity.getMiningBonus());
         itemGO.setCastingSpeed(entity.getCastingSpeed());
+        itemGO.setCraftBonusMetalworking(entity.getCraftBonusMetalworking());
+        itemGO.setCraftBonusArmorsmith(entity.getCraftBonusArmorsmith());
+        itemGO.setCraftBonusWeaponsmith(entity.getCraftBonusWeaponsmith());
+        itemGO.setCraftBonusCooking(entity.getCraftBonusCooking());
+        itemGO.setAssociatedSkillID(entity.getAssociatedSkillID());
+        itemGO.setCraftTierLevel(entity.getCraftTierLevel());
+
+        if(entity.getDurabilityPoints() > 0)
+        {
+            DurabilitySystem.SetItemMaxDurability(item, entity.getDurabilityPoints());
+
+        }
+
     }
 }

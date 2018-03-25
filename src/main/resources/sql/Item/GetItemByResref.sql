@@ -1,9 +1,17 @@
-SELECT Resref ,
-       AC ,
-       ItemTypeID,
-       RecommendedLevel,
-       LoggingBonus,
-       MiningBonus,
-       CastingSpeed
-FROM dbo.Items
-WHERE Resref = :resref
+
+SELECT i.Resref ,
+       i.AC ,
+       i.ItemTypeID ,
+       i.RecommendedLevel ,
+       i.LoggingBonus ,
+       i.MiningBonus ,
+       i.CastingSpeed ,
+       i.CraftBonusMetalworking ,
+       i.CraftBonusWeaponsmith ,
+       i.CraftBonusArmorsmith ,
+       i.CraftBonusCooking ,
+       i.DurabilityPoints,
+       i.AssociatedSkillID,
+       i.CraftTierLevel
+FROM dbo.Items i
+WHERE i.Resref = :resref

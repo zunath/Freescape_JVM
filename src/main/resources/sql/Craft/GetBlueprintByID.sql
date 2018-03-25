@@ -1,12 +1,15 @@
 
-SELECT c.CraftBlueprintID ,
-       c.CraftCategoryID ,
-       c.Level ,
-       c.ItemName ,
-       c.ItemResref ,
-       c.Quantity ,
-       c.SkillID ,
-       c.CraftDeviceID ,
-       c.PerkID
-FROM dbo.CraftBlueprints c
-WHERE c.CraftBlueprintID = :blueprintID
+SELECT cb.CraftBlueprintID ,
+       cb.CraftCategoryID ,
+       cb.Level ,
+       cb.ItemName ,
+       cb.ItemResref ,
+       cb.Quantity ,
+       cb.SkillID ,
+       cb.CraftDeviceID ,
+       cb.PerkID ,
+       cb.RequiredPerkLevel ,
+       cb.IsActive ,
+       cb.CraftTierLevel
+FROM dbo.CraftBlueprints cb
+WHERE cb.CraftBlueprintID = :blueprintID

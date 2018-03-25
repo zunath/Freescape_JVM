@@ -44,6 +44,9 @@ public class CraftBlueprintEntity {
     @Column(name = "IsActive")
     private boolean isActive;
 
+    @Column(name = "CraftTierLevel")
+    private int craftTierLevel;
+
     public int getCraftBlueprintID() {
         return craftBlueprintID;
     }
@@ -130,5 +133,13 @@ public class CraftBlueprintEntity {
 
     public void setActive(boolean active) {
         isActive = active;
+    }
+
+    public int getCraftTierLevel() {
+        return craftTierLevel;
+    }
+
+    public void setCraftTierLevel(int craftTierLevel) {
+        this.craftTierLevel = craftTierLevel;
     }
 }

@@ -24,7 +24,7 @@ public class CraftRepository {
         {
             return context.executeSQLSingle("Craft/GetBlueprintKnownByPC", CraftBlueprintEntity.class,
                     new SqlParameter("playerID", uuid),
-                    new SqlParameter("blueprintiD", craftBlueprintID),
+                    new SqlParameter("blueprintID", craftBlueprintID),
                     new SqlParameter("deviceID", deviceID));
         }
     }
@@ -32,7 +32,7 @@ public class CraftRepository {
     public List<CraftBlueprintCategoryEntity> GetCategoriesAvailableToPCByDeviceID(String uuid, int deviceID)
     {
         try(DataContext context = new DataContext()) {
-            return context.executeSQLList("Craft/GetCraftCategoriesAvailableToPCByDeviceID", CraftBlueprintCategoryEntity.class,
+            return context.executeSQLList("Craft/GetCategoriesAvailableToPCByDeviceID", CraftBlueprintCategoryEntity.class,
                     new SqlParameter("playerID", uuid),
                     new SqlParameter("deviceID", deviceID));
         }

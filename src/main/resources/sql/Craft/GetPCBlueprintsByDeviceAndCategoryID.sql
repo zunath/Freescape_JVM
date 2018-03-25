@@ -8,9 +8,10 @@ SELECT cb2.CraftBlueprintID ,
        cb2.CraftDeviceID ,
        cb2.PerkID ,
        cb2.RequiredPerkLevel ,
-       cb2.IsActive
+       cb2.IsActive,
+       cb2.CraftTierLevel
 FROM dbo.CraftBlueprints AS cb2
-JOIN dbo.PCSkills pcs ON pcs.PlayerID = :playerID
+JOIN dbo.PCSkills pcs ON pcs.PlayerID = :playerID AND cb2.SkillID = pcs.SkillID
 LEFT JOIN dbo.PCPerks pcp ON (cb2.PerkID IS NULL OR pcp.PerkID = cb2.PerkID)
 	AND (pcp.PerkLevel >= cb2.RequiredPerkLevel)
 	AND (pcs.PlayerID = pcp.PlayerID)

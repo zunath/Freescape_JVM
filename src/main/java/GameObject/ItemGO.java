@@ -7,6 +7,8 @@ import org.nwnx.nwnx2.jvm.constants.BaseItem;
 
 import java.util.Arrays;
 
+import static org.nwnx.nwnx2.jvm.NWScript.*;
+
 public class ItemGO {
     private String tag;
     private String resref;
@@ -44,18 +46,18 @@ public class ItemGO {
 
     public void stripAllItemProperties()
     {
-        for(NWItemProperty prop : NWScript.getItemProperties(item))
+        for(NWItemProperty prop : getItemProperties(item))
         {
-            NWScript.removeItemProperty(item, prop);
+            removeItemProperty(item, prop);
         }
     }
 
     public boolean hasItemProperty(int itemPropertyID)
     {
         boolean hasItemProperty = false;
-        for(NWItemProperty ip : NWScript.getItemProperties(item))
+        for(NWItemProperty ip : getItemProperties(item))
         {
-            if(NWScript.getItemPropertyType(ip) == itemPropertyID)
+            if(getItemPropertyType(ip) == itemPropertyID)
             {
                 hasItemProperty = true;
                 break;
@@ -67,85 +69,145 @@ public class ItemGO {
 
     public void setAC(int ac)
     {
-        NWScript.setLocalInt(item, "CUSTOM_ITEM_PROPERTY_AC", ac);
+        setLocalInt(item, "CUSTOM_ITEM_PROPERTY_AC", ac);
     }
 
     public int getAC()
     {
-        return NWScript.getLocalInt(item, "CUSTOM_ITEM_PROPERTY_AC");
+        return getLocalInt(item, "CUSTOM_ITEM_PROPERTY_AC");
     }
 
     public int getCustomItemType()
     {
-        return NWScript.getLocalInt(item, "CUSTOM_ITEM_PROPERTY_TYPE");
+        return getLocalInt(item, "CUSTOM_ITEM_PROPERTY_TYPE");
     }
 
     public void setCustomItemType(int itemType)
     {
-        NWScript.setLocalInt(item, "CUSTOM_ITEM_PROPERTY_TYPE", itemType);
+        setLocalInt(item, "CUSTOM_ITEM_PROPERTY_TYPE", itemType);
     }
 
     public int getRecommendedLevel()
     {
-        return NWScript.getLocalInt(item , "CUSTOM_ITEM_PROPERTY_TYPE_RECOMMENDED_LEVEL");
+        return getLocalInt(item , "CUSTOM_ITEM_PROPERTY_TYPE_RECOMMENDED_LEVEL");
     }
 
     public void setRecommendedLevel(int recommendedSkillLevel)
     {
-        NWScript.setLocalInt(item, "CUSTOM_ITEM_PROPERTY_TYPE_RECOMMENDED_LEVEL", recommendedSkillLevel);
+        setLocalInt(item, "CUSTOM_ITEM_PROPERTY_TYPE_RECOMMENDED_LEVEL", recommendedSkillLevel);
     }
 
     public int getLoggingBonus()
     {
-        return NWScript.getLocalInt(item, "CUSTOM_ITEM_PROPERTY_LOGGING_BONUS");
+        return getLocalInt(item, "CUSTOM_ITEM_PROPERTY_LOGGING_BONUS");
     }
 
     public void setLoggingBonus(int loggingBonus)
     {
-        NWScript.setLocalInt(item, "CUSTOM_ITEM_PROPERTY_LOGGING_BONUS", loggingBonus);
+        setLocalInt(item, "CUSTOM_ITEM_PROPERTY_LOGGING_BONUS", loggingBonus);
     }
 
     public int getMiningBonus()
     {
-        return NWScript.getLocalInt(item, "CUSTOM_ITEM_PROPERTY_MINING_BONUS");
+        return getLocalInt(item, "CUSTOM_ITEM_PROPERTY_MINING_BONUS");
     }
 
     public void setMiningBonus(int miningBonus)
     {
-        NWScript.setLocalInt(item, "CUSTOM_ITEM_PROPERTY_MINING_BONUS", miningBonus);
+        setLocalInt(item, "CUSTOM_ITEM_PROPERTY_MINING_BONUS", miningBonus);
     }
 
     public int getCastingSpeed()
     {
-        return NWScript.getLocalInt(item, "CUSTOM_ITEM_PROPERTY_CASTING_SPEED");
+        return getLocalInt(item, "CUSTOM_ITEM_PROPERTY_CASTING_SPEED");
     }
 
     public void setCastingSpeed(int castingSpeed)
     {
-        NWScript.setLocalInt(item, "CUSTOM_ITEM_PROPERTY_CASTING_SPEED", castingSpeed);
+        setLocalInt(item, "CUSTOM_ITEM_PROPERTY_CASTING_SPEED", castingSpeed);
+    }
+
+    public int getCraftBonusMetalworking()
+    {
+        return getLocalInt(item, "CUSTOM_ITEM_PROPERTY_CRAFT_BONUS_METALWORKING");
+    }
+
+    public void setCraftBonusMetalworking(int craftBonus)
+    {
+        setLocalInt(item, "CUSTOM_ITEM_PROPERTY_CRAFT_BONUS_METALWORKING", craftBonus);
+    }
+
+    public int getCraftBonusArmorsmith()
+    {
+        return getLocalInt(item, "CUSTOM_ITEM_PROPERTY_CRAFT_BONUS_ARMORSMITH");
+    }
+
+    public void setCraftBonusArmorsmith(int craftBonus)
+    {
+        setLocalInt(item, "CUSTOM_ITEM_PROPERTY_CRAFT_BONUS_ARMORSMITH", craftBonus);
+    }
+
+    public int getCraftBonusWeaponsmith()
+    {
+        return getLocalInt(item, "CUSTOM_ITEM_PROPERTY_CRAFT_BONUS_WEAPONSMITH");
+    }
+
+    public void setCraftBonusWeaponsmith(int craftBonus)
+    {
+        setLocalInt(item, "CUSTOM_ITEM_PROPERTY_CRAFT_BONUS_WEAPONSMITH", craftBonus);
+    }
+
+    public int getCraftBonusCooking()
+    {
+        return getLocalInt(item, "CUSTOM_ITEM_PROPERTY_CRAFT_BONUS_COOKING");
+    }
+
+    public void setCraftBonusCooking(int craftBonus)
+    {
+        setLocalInt(item, "CUSTOM_ITEM_PROPERTY_CRAFT_BONUS_COOKING", craftBonus);
+    }
+
+    public int getAssociatedSkillID()
+    {
+        return getLocalInt(item, "CUSTOM_ITEM_PROPERTY_ASSOCIATED_SKILL_ID");
+    }
+
+    public void setAssociatedSkillID(int associatedSkillID)
+    {
+        setLocalInt(item, "CUSTOM_ITEM_PROPERTY_ASSOCIATED_SKILL_ID", associatedSkillID);
+    }
+
+    public int getCraftTierLevel()
+    {
+        return getLocalInt(item, "CUSTOM_ITEM_PROPERTY_CRAFT_TIER_LEVEL");
+    }
+
+    public void setCraftTierLevel(int craftTierLevel)
+    {
+        setLocalInt(item, "CUSTOM_ITEM_PROPERTY_CRAFT_TIER_LEVEL", craftTierLevel);
     }
 
     public void ReduceItemStack()
     {
-        int stackSize = NWScript.getItemStackSize(item);
+        int stackSize = getItemStackSize(item);
         if(stackSize > 1)
         {
-            NWScript.setItemStackSize(item, stackSize-1);
+            setItemStackSize(item, stackSize-1);
         }
         else
         {
-            NWScript.destroyObject(item, 0.0f);
+            destroyObject(item, 0.0f);
         }
     }
 
     public void ReduceItemCharges()
     {
-        NWScript.setItemCharges(item, NWScript.getItemCharges(item)-1);
+        setItemCharges(item, getItemCharges(item)-1);
     }
 
     public boolean IsBlade()
     {
-        int itemType = NWScript.getBaseItemType(item);
+        int itemType = getBaseItemType(item);
 
         Integer[] allowedWeaponTypes = {
                 BaseItem.BASTARDSWORD,
@@ -159,7 +221,7 @@ public class ItemGO {
 
     public boolean IsFinesseBlade()
     {
-        int itemType = NWScript.getBaseItemType(item);
+        int itemType = getBaseItemType(item);
 
         Integer[] allowedWeaponTypes = {
                 BaseItem.DAGGER,
@@ -176,7 +238,7 @@ public class ItemGO {
 
     public boolean IsBlunt()
     {
-        int itemType = NWScript.getBaseItemType(item);
+        int itemType = getBaseItemType(item);
 
         Integer[] allowedWeaponTypes = {
                 BaseItem.CLUB,
@@ -191,7 +253,7 @@ public class ItemGO {
 
     public boolean IsHeavyBlade()
     {
-        int itemType = NWScript.getBaseItemType(item);
+        int itemType = getBaseItemType(item);
 
         Integer[] allowedWeaponTypes = {
                 BaseItem.BATTLEAXE,
@@ -205,7 +267,7 @@ public class ItemGO {
 
     public boolean IsHeavyBlunt()
     {
-        int itemType = NWScript.getBaseItemType(item);
+        int itemType = getBaseItemType(item);
 
         Integer[] allowedWeaponTypes = {
                 BaseItem.HEAVYFLAIL,
@@ -219,7 +281,7 @@ public class ItemGO {
 
     public boolean IsPolearm()
     {
-        int itemType = NWScript.getBaseItemType(item);
+        int itemType = getBaseItemType(item);
 
         Integer[] allowedWeaponTypes = {
                 BaseItem.HALBERD,
@@ -232,7 +294,7 @@ public class ItemGO {
     }
     public boolean IsTwinBlade()
     {
-        int itemType = NWScript.getBaseItemType(item);
+        int itemType = getBaseItemType(item);
 
         Integer[] allowedWeaponTypes = {
                 BaseItem.DOUBLEAXE,
@@ -244,7 +306,7 @@ public class ItemGO {
 
     public boolean IsMartialArtsWeapon()
     {
-        int itemType = NWScript.getBaseItemType(item);
+        int itemType = getBaseItemType(item);
 
         Integer[] allowedWeaponTypes = {
                 BaseItem.GLOVES,
@@ -258,7 +320,7 @@ public class ItemGO {
 
     public boolean IsBow()
     {
-        int itemType = NWScript.getBaseItemType(item);
+        int itemType = getBaseItemType(item);
 
         Integer[] allowedWeaponTypes = {
                 BaseItem.LONGBOW,
@@ -270,7 +332,7 @@ public class ItemGO {
 
     public boolean IsCrossbow()
     {
-        int itemType = NWScript.getBaseItemType(item);
+        int itemType = getBaseItemType(item);
 
         Integer[] allowedWeaponTypes = {
                 BaseItem.HEAVYCROSSBOW,
@@ -282,7 +344,7 @@ public class ItemGO {
 
     public boolean IsThrowing()
     {
-        int itemType = NWScript.getBaseItemType(item);
+        int itemType = getBaseItemType(item);
 
         Integer[] allowedWeaponTypes = {
                 BaseItem.THROWINGAXE,

@@ -149,7 +149,7 @@ public class Crafting extends DialogBase implements IDialogHandler {
                 blueprintID = (int)response.getCustomData();
                 CraftRepository repo = new CraftRepository();
                 CraftBlueprintEntity entity = repo.GetBlueprintByID(blueprintID);
-                NWObject tempContainer = NWScript.getObjectByTag("craft_temp_storage", 0);
+                NWObject tempContainer = NWScript.getObjectByTag("craft_temp_store", 0);
                 final NWObject examineItem = NWScript.createItemOnObject(entity.getItemResref(), tempContainer, 1, "");
                 NWScript.destroyObject(examineItem, 0.1f);
 

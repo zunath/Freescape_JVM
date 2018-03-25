@@ -35,9 +35,6 @@ public class SkillEntity {
     @Column(name = "[Tertiary]")
     private int tertiary;
 
-    @Column(name = "IsCraftSkill")
-    private boolean isCraftSkill;
-
     public int getSkillID() {
         return skillID;
     }
@@ -108,13 +105,5 @@ public class SkillEntity {
 
     public void setTertiary(int tertiary) {
         this.tertiary = tertiary;
-    }
-
-    public boolean isCraftSkill() {
-        return isCraftSkill;
-    }
-
-    public void setCraftSkill(boolean craftSkill) {
-        isCraftSkill = craftSkill;
     }
 }
