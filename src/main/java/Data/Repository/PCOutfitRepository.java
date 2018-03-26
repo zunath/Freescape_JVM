@@ -11,7 +11,7 @@ public class PCOutfitRepository {
     {
         try(DataContext context = new DataContext())
         {
-            return context.executeSQLSingle("PCMigration/GetByUUID", PCOutfitEntity.class,
+            return context.executeSQLSingle("PCOutfit/GetByUUID", PCOutfitEntity.class,
                     new SqlParameter("playerID", uuid));
         }
     }
