@@ -169,7 +169,9 @@ public class CraftSystem {
                 destroyObject(item, 0.0f);
             }
 
-            createItemOnObject(blueprint.getItemResref(), oPC, blueprint.getQuantity(), "");
+            NWObject craftedItem = createItemOnObject(blueprint.getItemResref(), oPC, blueprint.getQuantity(), "");
+            setIdentified(craftedItem, true);
+
             sendMessageToPC(oPC, "You created " + blueprint.getQuantity() + "x " + blueprint.getItemName() + "!");
             xpModifier = 1.0f;
         }

@@ -239,6 +239,7 @@ public class ItemGO {
                 BaseItem.KUKRI,
                 BaseItem.RAPIER,
                 BaseItem.SCIMITAR,
+                BaseItem.SICKLE,
                 BaseItem.SHORTSWORD,
                 BaseItem.WHIP
         };
