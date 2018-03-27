@@ -33,9 +33,9 @@ public class OnHeartbeat implements IScriptEventHandler {
 
 				if(entity != null)
 				{
+					entity = HandleFoodTick(pc, entity);
 					entity = HandleRegenerationTick(pc, entity);
 					entity = HandleManaRegenerationTick(pc, entity);
-					entity = HandleFoodTick(pc, entity);
 					playerRepo.save(entity);
 				}
 			}
@@ -70,13 +70,17 @@ public class OnHeartbeat implements IScriptEventHandler {
 
 		if(entity.getRegenerationTick() <= 0)
 		{
-			if(NWScript.getCurrentHitPoints(oPC) < NWScript.getMaxHitPoints(oPC))
+			if(entity.getCurrentHunger() <= 20)
 			{
-				// Safe zones grant +5 HP regen
-				boolean isInSafeZone = NWScript.getLocalInt(NWScript.getArea(oPC), "SAFE_ZONE") == 1;
-				if(isInSafeZone)
+				NWScript.sendMessageToPC(oPC, "You are hungry and not recovering HP naturally. Eat food to start recovering again.");
+			}
+			else if(NWScript.getCurrentHitPoints(oPC) < NWScript.getMaxHitPoints(oPC))
+			{
+				// CON bonus
+				int con = NWScript.getAbilityModifier(Ability.CONSTITUTION, oPC);
+				if(con > 0)
 				{
-					amount += 5;
+					amount += con;
 				}
 
 				NWScript.applyEffectToObject(DurationType.INSTANT, NWScript.effectHeal(amount), oPC, 0.0f);
@@ -92,17 +96,21 @@ public class OnHeartbeat implements IScriptEventHandler {
 	{
 		entity.setCurrentManaTick(entity.getCurrentManaTick() - 1);
 		int rate = Constants.BaseManaRegenRate;
-		int amount = Constants.BaseManaRegenAmount + ((NWScript.getAbilityScore(oPC, Ability.CHARISMA, false) - 10) / 2);
+		int amount = Constants.BaseManaRegenAmount;
 
 		if(entity.getCurrentManaTick() <= 0)
 		{
-			if(entity.getCurrentMana() < entity.getMaxMana())
+			if(entity.getCurrentHunger() <= 20)
 			{
-				// Safe zones grant +5 mana regen
-				boolean isInSafeZone = NWScript.getLocalInt(NWScript.getArea(oPC), "SAFE_ZONE") == 1;
-				if(isInSafeZone)
+				NWScript.sendMessageToPC(oPC, "You are hungry and not recovering mana naturally. Eat food to start recovering again.");
+			}
+			else if(entity.getCurrentMana() < entity.getMaxMana())
+			{
+				// CHA bonus
+				int cha = NWScript.getAbilityModifier(Ability.CHARISMA, oPC);
+				if(cha > 0)
 				{
-					amount += 5;
+					amount += cha;
 				}
 
 				entity = AbilitySystem.RestoreMana(oPC, amount, entity);
