@@ -23,4 +23,6 @@ public class SkillID {
     public static int EvocationMagic = 19;
     public static int AlterationMagic = 20;
     public static int SummoningMagic = 21;
+    public static int Woodworking = 22;
+    public static int Survival = 23;
 }

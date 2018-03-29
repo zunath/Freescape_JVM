@@ -12,6 +12,7 @@ SELECT i.Resref ,
        i.CraftBonusCooking ,
        i.DurabilityPoints,
        i.AssociatedSkillID,
-       i.CraftTierLevel
+       i.CraftTierLevel,
+       i.CraftBonusWoodworking
 FROM dbo.Items i
 WHERE i.Resref = :resref

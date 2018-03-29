@@ -8,6 +8,7 @@ import GameObject.ItemGO;
 import GameObject.PlayerGO;
 import GameSystems.CraftSystem;
 import Helper.ColorToken;
+import Helper.ItemHelper;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.constants.InventoryDisturbType;
 
@@ -33,7 +34,7 @@ public class OnDisturbed implements IScriptEventHandler {
         {
             if(resref.equals("cft_choose_bp") || resref.equals("cft_craft_item"))
             {
-                ReturnItem(device, oItem);
+                ItemHelper.ReturnItem(device, oItem);
 
                 if(tag.equals("CHOOSE_BLUEPRINT"))
                 {
@@ -55,26 +56,26 @@ public class OnDisturbed implements IScriptEventHandler {
 
             if(blueprint == null)
             {
-                ReturnItem(oPC, oItem);
+                ItemHelper.ReturnItem(oPC, oItem);
                 sendMessageToPC(oPC, "Please select a blueprint before adding components.");
             }
             else if(itemGO.getCraftTierLevel() > 0)
             {
                 if(blueprint.getCraftTierLevel() <= 0)
                 {
-                    ReturnItem(oPC, oItem);
+                    ItemHelper.ReturnItem(oPC, oItem);
                     sendMessageToPC(oPC, "Tools are not required to make this item.");
                 }
                 else if(blueprint.getCraftTierLevel() > itemGO.getCraftTierLevel() || blueprint.getSkill().getSkillID() != itemGO.getAssociatedSkillID())
                 {
-                    ReturnItem(oPC, oItem);
+                    ItemHelper.ReturnItem(oPC, oItem);
                     sendMessageToPC(oPC, "Those tools cannot be used with this blueprint. (Required Tool Level: " + blueprint.getCraftTierLevel() + ")");
                 }
                 else
                 {
                     if(getIsObjectValid(tools))
                     {
-                        ReturnItem(oPC, oItem);
+                        ItemHelper.ReturnItem(oPC, oItem);
                         sendMessageToPC(oPC, "You may only use one set of tools at a time.");
                     }
                     else
@@ -85,12 +86,6 @@ public class OnDisturbed implements IScriptEventHandler {
             }
         }
 
-    }
-
-    private void ReturnItem(NWObject oTarget, NWObject oItem)
-    {
-        copyItem(oItem, oTarget, true);
-        destroyObject(oItem, 0.0f);
     }
 
     private void HandleCraftItem(NWObject oPC, NWObject device)
