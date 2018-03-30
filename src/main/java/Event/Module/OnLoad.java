@@ -1,11 +1,6 @@
 package Event.Module;
 
 import Common.IScriptEventHandler;
-import Data.Repository.CraftRepository;
-import Data.Repository.SkillRepository;
-import Entities.*;
-import Enumerations.SkillID;
-import GameObject.ItemGO;
 import GameSystems.AreaInstanceSystem;
 import GameSystems.DeathSystem;
 import GameSystems.ObjectProcessingSystem;
@@ -14,10 +9,7 @@ import NWNX.EventType;
 import NWNX.NWNX_Chat;
 import NWNX.NWNX_Events;
 import org.nwnx.nwnx2.jvm.NWObject;
-import org.nwnx.nwnx2.jvm.NWScript;
 import org.nwnx.nwnx2.jvm.constants.EventScript;
-
-import java.util.ArrayList;
 
 import static org.nwnx.nwnx2.jvm.NWScript.*;
 

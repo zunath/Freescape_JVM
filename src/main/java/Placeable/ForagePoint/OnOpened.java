@@ -32,7 +32,7 @@ public class OnOpened implements IScriptEventHandler {
 
 
         if(!getIsPC(oPC) || getIsDM(oPC) || getIsDMPossessed(oPC)) return;
-        PCSkillEntity pcSkill = SkillSystem.GetPCSkill(oPC, SkillID.Survival);
+        PCSkillEntity pcSkill = SkillSystem.GetPCSkill(oPC, SkillID.Forage);
         if(pcSkill == null) return;
 
         int lootTableID = getLocalInt(point, "FORAGE_POINT_LOOT_TABLE_ID");
@@ -78,14 +78,14 @@ public class OnOpened implements IScriptEventHandler {
                 }
 
                 float xp = SkillSystem.CalculateSkillAdjustedXP(50, level, rank);
-                SkillSystem.GiveSkillXP(oPC, SkillID.Survival, (int)xp);
+                SkillSystem.GiveSkillXP(oPC, SkillID.Forage, (int)xp);
             }
             else
             {
                 NWScript.floatingTextStringOnCreature(ColorToken.SkillCheck() + "Search: *failure*: (" + roll + " vs. DC: " + dc + ")" + ColorToken.End(), oPC, false);
 
                 float xp = SkillSystem.CalculateSkillAdjustedXP(10, level, rank);
-                SkillSystem.GiveSkillXP(oPC, SkillID.Survival, (int)xp);
+                SkillSystem.GiveSkillXP(oPC, SkillID.Forage, (int)xp);
             }
             dc += ThreadLocalRandom.current().nextInt(3) + 1;
         }
