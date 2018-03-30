@@ -1,13 +1,12 @@
 package Event.Module;
-import Common.Constants;
 import Common.IScriptEventHandler;
 import Data.Repository.DatabaseRepository;
 import Data.Repository.PlayerRepository;
 import Entities.PlayerEntity;
 import GameObject.PlayerGO;
+import GameSystems.AbilitySystem;
 import GameSystems.CustomEffectSystem;
 import GameSystems.FoodSystem;
-import GameSystems.AbilitySystem;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.NWScript;
 import org.nwnx.nwnx2.jvm.constants.Ability;
@@ -65,7 +64,7 @@ public class OnHeartbeat implements IScriptEventHandler {
 	private PlayerEntity HandleRegenerationTick(NWObject oPC, PlayerEntity entity)
 	{
 		entity.setRegenerationTick(entity.getRegenerationTick() - 1);
-		int rate = Constants.BaseHPRegenRate;
+		int rate = 20;
 		int amount = entity.getHpRegenerationAmount();
 
 		if(entity.getRegenerationTick() <= 0)
@@ -95,8 +94,8 @@ public class OnHeartbeat implements IScriptEventHandler {
 	private PlayerEntity HandleManaRegenerationTick(NWObject oPC, PlayerEntity entity)
 	{
 		entity.setCurrentManaTick(entity.getCurrentManaTick() - 1);
-		int rate = Constants.BaseManaRegenRate;
-		int amount = Constants.BaseManaRegenAmount;
+		int rate = 20;
+		int amount = 1;
 
 		if(entity.getCurrentManaTick() <= 0)
 		{
