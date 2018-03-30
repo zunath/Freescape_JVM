@@ -11,6 +11,8 @@ import GameSystems.SkillSystem;
 import Helper.ColorToken;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.NWScript;
+import org.nwnx.nwnx2.jvm.Scheduler;
+import org.nwnx.nwnx2.jvm.constants.AnimationLooping;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -41,18 +43,21 @@ public class OnOpened implements IScriptEventHandler {
         if(delta > 8)
         {
             sendMessageToPC(oPC, "You aren't skilled enough to forage through this.");
+            Scheduler.assign(oPC, () -> actionInteractObject(point));
             return;
         }
 
         int dc = 8 + delta;
         if(dc <= 4) dc = 4;
-        int searchAttempts = 1; // todo: perk which increases searches
+        int searchAttempts = 1 + CalculateSearchAttempts(oPC);
 
         int luck = PerkSystem.GetPCPerkLevel(oPC, PerkID.Lucky);
         if(ThreadLocalRandom.current().nextInt(100) + 1 <= luck / 2)
         {
             dc--;
         }
+
+        Scheduler.assign(oPC, () -> actionPlayAnimation(AnimationLooping.GET_LOW, 1.0f, 2.0f));
 
         for(int attempt = 1; attempt <= searchAttempts; attempt++)
         {
@@ -88,4 +93,56 @@ public class OnOpened implements IScriptEventHandler {
         setLocalInt(point, "FORAGE_POINT_HAS_BEEN_SEARCHED", 1);
         setLocalInt(point, "FORAGE_POINT_DESPAWN_TICKS", 30);
     }
+
+
+    private int CalculateSearchAttempts(NWObject oPC)
+    {
+        int perkLevel = PerkSystem.GetPCPerkLevel(oPC, PerkID.ForageExpert);
+
+        int numberOfSearches = 0;
+        int attempt1Chance = 0;
+        int attempt2Chance = 0;
+
+        switch (perkLevel)
+        {
+            case 1: attempt1Chance = 10; break;
+            case 2: attempt1Chance = 20; break;
+            case 3: attempt1Chance = 30; break;
+            case 4: attempt1Chance = 40; break;
+            case 5: attempt1Chance = 50; break;
+
+            case 6:
+                attempt1Chance = 50;
+                attempt2Chance = 10;
+                break;
+            case 7:
+                attempt1Chance = 50;
+                attempt2Chance = 20;
+                break;
+            case 8:
+                attempt1Chance = 50;
+                attempt2Chance = 30;
+                break;
+            case 9:
+                attempt1Chance = 50;
+                attempt2Chance = 40;
+                break;
+            case 10:
+                attempt1Chance = 50;
+                attempt2Chance = 50;
+                break;
+        }
+
+        if(ThreadLocalRandom.current().nextInt(100) + 1 <= attempt1Chance)
+        {
+            numberOfSearches++;
+        }
+        if(ThreadLocalRandom.current().nextInt(100) + 1 <= attempt2Chance)
+        {
+            numberOfSearches++;
+        }
+
+        return numberOfSearches;
+    }
+
 }

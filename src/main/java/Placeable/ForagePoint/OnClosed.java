@@ -3,12 +3,15 @@ package Placeable.ForagePoint;
 import Common.IScriptEventHandler;
 import org.nwnx.nwnx2.jvm.NWObject;
 
-import static org.nwnx.nwnx2.jvm.NWScript.destroyObject;
-import static org.nwnx.nwnx2.jvm.NWScript.getItemsInInventory;
+import static org.nwnx.nwnx2.jvm.NWScript.*;
 
 public class OnClosed implements IScriptEventHandler {
     @Override
     public void runScript(NWObject objSelf) {
+        NWObject oPC = getLastClosedBy();
+
+        if(!getIsPC(oPC) || getIsDM(oPC) || getIsDMPossessed(oPC)) return;
+
         NWObject[] items = getItemsInInventory(objSelf);
 
         if(items.length <= 0)

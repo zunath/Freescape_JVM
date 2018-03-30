@@ -83,4 +83,7 @@ public class PerkID {
     public static final int SmeltingMastery = 80;
     public static final int CoalManagement = 81;
     public static final int Smelting = 82;
+    public static final int ToolBlueprints = 83;
+    public static final int MetalWeaponBlueprints = 84;
+    public static final int ForageExpert = 85;
 }
