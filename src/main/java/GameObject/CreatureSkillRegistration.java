@@ -1,6 +1,7 @@
 package GameObject;
 
 import org.nwnx.nwnx2.jvm.NWObject;
+import org.nwnx.nwnx2.jvm.NWScript;
 
 import java.util.HashMap;
 

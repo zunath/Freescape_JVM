@@ -465,16 +465,14 @@ public class SkillSystem {
                 continue;
 
             PlayerGO pcGO = new PlayerGO(preg.getPC());
-            float baseXP = creatureGO.getDifficultyRating() * 250 + ThreadLocalRandom.current().nextInt(20);
-
-            if(creatureGO.getXPModifier() != 0.0f)
-            {
-                baseXP = baseXP * creatureGO.getXPModifier();
-            }
+            float cr = NWScript.getChallengeRating(creature);
+            float baseXP = cr * 400 + ThreadLocalRandom.current().nextInt(20);
+            float moduleXPAdjustment = getLocalFloat(getModule(), "SKILL_SYSTEM_MODULE_XP_MODIFIER");
+            if(moduleXPAdjustment <= 0.0f) moduleXPAdjustment = 1.0f;
+            baseXP = baseXP * moduleXPAdjustment;
 
             ArrayList<Pair<Integer, PlayerSkillPointTracker>> skillRegs = preg.GetSkillRegistrationPoints();
             int totalPoints = preg.GetTotalSkillRegistrationPoints();
-
             boolean receivesMartialArtsPenalty = CheckForMartialArtsPenalty(skillRegs);
 
             // Grant XP based on points acquired during combat.

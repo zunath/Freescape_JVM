@@ -35,23 +35,4 @@ public class CreatureGO {
         if(value < 1) value = 1;
         NWScript.setLocalInt(npc, "CREATURE_ID", value);
     }
-
-    public float getDifficultyRating() {
-        float dr = NWScript.getLocalFloat(npc, "CREATURE_DIFFICULTY_RATING");
-        if(dr < 0.1f) dr = 0.1f;
-        return dr;
-    }
-
-    public void setDifficultyRating(float value) {
-        NWScript.setLocalFloat(npc, "CREATURE_DIFFICULTY_RATING", value);
-    }
-
-    public float getXPModifier()
-    {
-        return NWScript.getLocalFloat(npc, "CREATURE_XP_BONUS_MODIFIER");
-    }
-    public void setXPModifier(float value)
-    {
-        NWScript.setLocalFloat(npc, "CREATURE_XP_BONUS_MODIFIER", value);
-    }
 }

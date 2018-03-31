@@ -69,7 +69,6 @@ public class DataAccess {
         _configuration.addAnnotatedClass(CraftBlueprintEntity.class);
         _configuration.addAnnotatedClass(CraftComponentEntity.class);
         _configuration.addAnnotatedClass(CraftDeviceEntity.class);
-        _configuration.addAnnotatedClass(CreatureEntity.class);
         _configuration.addAnnotatedClass(CustomEffectEntity.class);
         _configuration.addAnnotatedClass(DMRoleEntity.class);
         _configuration.addAnnotatedClass(DatabaseRepository.class);
@@ -120,8 +119,6 @@ public class DataAccess {
         _configuration.addAnnotatedClass(SkillCategoryEntity.class);
         _configuration.addAnnotatedClass(SkillEntity.class);
         _configuration.addAnnotatedClass(SkillXPRequirementEntity.class);
-        _configuration.addAnnotatedClass(SpawnTableCreatureEntity.class);
-        _configuration.addAnnotatedClass(SpawnTableEntity.class);
         _configuration.addAnnotatedClass(StorageContainerEntity.class);
         _configuration.addAnnotatedClass(StorageItemEntity.class);
         _configuration.addAnnotatedClass(StructureBlueprintEntity.class);

@@ -3,7 +3,7 @@ package Trigger;
 import Common.IScriptEventHandler;
 import Helper.ColorToken;
 import org.nwnx.nwnx2.jvm.NWObject;
-import org.nwnx.nwnx2.jvm.NWScript;
+import org.nwnx.nwnx2.jvm.Scheduler;
 
 import java.util.UUID;
 
@@ -25,7 +25,11 @@ public class ExplorationTrigger implements IScriptEventHandler {
         if(getLocalInt(oPC, triggerID) == 1) return;
 
         String message = getLocalString(objSelf, "DISPLAY_TEXT");
-        NWScript.sendMessageToPC(oPC, ColorToken.Cyan() + message + ColorToken.End());
+        sendMessageToPC(oPC, ColorToken.Cyan() + message + ColorToken.End());
         setLocalInt(oPC, triggerID, 1);
+
+        Scheduler.assign(oPC, () -> playSound("gui_prompt"));
+        floatingTextStringOnCreature("!", oPC, false);
+
     }
 }

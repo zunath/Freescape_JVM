@@ -191,7 +191,6 @@ public class AbilitySystem {
 
             NWScript.deleteLocalInt(pc, spellUUID);
             PlayerRepository repo = new PlayerRepository();
-            PlayerEntity pcEntity = repo.GetByPlayerID(pcGO.getUUID());
 
             if(entity.getPerkExecutionTypeID() == PerkExecutionTypeID.Spell ||
                     entity.getPerkExecutionTypeID() == PerkExecutionTypeID.CombatAbility)
@@ -204,6 +203,7 @@ public class AbilitySystem {
             }
 
             // Adjust mana only if spell cost > 0
+            PlayerEntity pcEntity = repo.GetByPlayerID(pcGO.getUUID());
             if(perk.ManaCost(pc, entity.getBaseManaCost()) > 0)
             {
                 pcEntity.setCurrentMana(pcEntity.getCurrentMana() - perk.ManaCost(pc, entity.getBaseManaCost()));

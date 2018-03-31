@@ -7,13 +7,10 @@ public class SpawnModel {
 
     private int lootTableID;
 
-    private int difficultyRating;
-
-    public SpawnModel(String resref, int lootTableID, int difficultyRating)
+    public SpawnModel(String resref, int lootTableID)
     {
         this.resref = resref;
         this.lootTableID = lootTableID;
-        this.difficultyRating = difficultyRating;
     }
 
     public String getResref() {
@@ -30,13 +27,5 @@ public class SpawnModel {
 
     public void setLootTableID(int lootTableID) {
         this.lootTableID = lootTableID;
-    }
-
-    public int getDifficultyRating() {
-        return difficultyRating;
-    }
-
-    public void setDifficultyRating(int difficultyRating) {
-        this.difficultyRating = difficultyRating;
     }
 }
