@@ -12,31 +12,38 @@ import org.nwnx.nwnx2.jvm.constants.Class;
 import org.nwnx.nwnx2.jvm.constants.DurationType;
 import org.nwnx.nwnx2.jvm.constants.Feat;
 
+import static org.nwnx.nwnx2.jvm.NWScript.*;
+import static org.nwnx.nwnx2.jvm.NWScript.getName;
+
 public class PlayerInitializationSystem {
 
     public static void OnModuleEnter()
     {
-        final NWObject oPC = NWScript.getEnteringObject();
+        final NWObject oPC = getEnteringObject();
 
-        if(!NWScript.getIsPC(oPC) || NWScript.getIsDM(oPC)) return;
+        if(!getIsPC(oPC) || getIsDM(oPC)) return;
 
         PlayerGO pcGO = new PlayerGO(oPC);
         NWObject oDatabase = pcGO.GetDatabaseItem();
 
-        boolean missingStringID = NWScript.getLocalString(oDatabase, Constants.PCIDNumberVariable).equals("");
+        boolean missingStringID = getLocalString(oDatabase, Constants.PCIDNumberVariable).equals("");
 
         if(oDatabase == NWObject.INVALID || missingStringID)
         {
             pcGO.destroyAllInventoryItems(true);
 
-            NWScript.createItemOnObject(Constants.PCDatabaseTag, oPC, 1, "");
-            NWScript.createItemOnObject("open_rest_menu", oPC, 1, "");
+            createItemOnObject(Constants.PCDatabaseTag, oPC, 1, "");
+            createItemOnObject("open_rest_menu", oPC, 1, "");
 
-            Scheduler.assign(oPC, () -> NWScript.takeGoldFromCreature(NWScript.getGold(oPC), oPC, true));
+            Scheduler.assign(oPC, () -> takeGoldFromCreature(getGold(oPC), oPC, true));
 
-            NWObject darts = NWScript.createItemOnObject("nw_wthdt001", oPC, 50, ""); // 50x Dart
-            NWScript.setName(darts, "Starting Darts");
-            NWScript.setItemCursedFlag(darts, true);
+            NWObject knife = createItemOnObject("survival_knife", oPC, 1, "");
+            setName(knife, getName(oPC, false) + "'s Survival Knife");
+            setItemCursedFlag(knife, true);
+
+            NWObject darts = createItemOnObject("nw_wthdt001", oPC, 50, ""); // 50x Dart
+            setName(darts, "Starting Darts");
+            setItemCursedFlag(darts, true);
 
             int numberOfFeats = NWNX_Creature.GetFeatCount(oPC);
             for(int currentFeat = numberOfFeats; currentFeat >= 0; currentFeat--)
@@ -57,11 +64,11 @@ public class PlayerInitializationSystem {
             {
                 NWNX_Creature.SetSkillRank(oPC, iCurSkill-1, 0);
             }
-            NWScript.setFortitudeSavingThrow(oPC, 0);
-            NWScript.setReflexSavingThrow(oPC,  0);
-            NWScript.setWillSavingThrow(oPC, 0);
+            setFortitudeSavingThrow(oPC, 0);
+            setReflexSavingThrow(oPC,  0);
+            setWillSavingThrow(oPC, 0);
 
-            int classID = NWScript.getClassByPosition(1, oPC);
+            int classID = getClassByPosition(1, oPC);
 
             for(int index = 0; index <= 255; index++)
             {
@@ -73,7 +80,7 @@ public class PlayerInitializationSystem {
             repo.save(entity);
 
             SkillSystem.ApplyStatChanges(oPC, null);
-            Scheduler.delay(oPC, 1000, () -> NWScript.applyEffectToObject(DurationType.INSTANT, NWScript.effectHeal(999), oPC, 0.0f));
+            Scheduler.delay(oPC, 1000, () -> applyEffectToObject(DurationType.INSTANT, effectHeal(999), oPC, 0.0f));
         }
     }
 
@@ -81,7 +88,7 @@ public class PlayerInitializationSystem {
     {
         PlayerGO pcGO = new PlayerGO(oPC);
         NWObject oDatabase = pcGO.GetDatabaseItem();
-        boolean missingStringID = NWScript.getLocalString(oDatabase, Constants.PCIDNumberVariable).equals("");
-        return !missingStringID && NWScript.getIsObjectValid(oDatabase);
+        boolean missingStringID = getLocalString(oDatabase, Constants.PCIDNumberVariable).equals("");
+        return !missingStringID && getIsObjectValid(oDatabase);
     }
 }

@@ -47,7 +47,7 @@ public class OnOpened implements IScriptEventHandler {
             return;
         }
 
-        int dc = 8 + delta;
+        int dc = 6 + delta;
         if(dc <= 4) dc = 4;
         int searchAttempts = 1 + CalculateSearchAttempts(oPC);
 
@@ -61,7 +61,7 @@ public class OnOpened implements IScriptEventHandler {
 
         for(int attempt = 1; attempt <= searchAttempts; attempt++)
         {
-            int roll = ThreadLocalRandom.current().nextInt(20);
+            int roll = ThreadLocalRandom.current().nextInt(20) + 1;
             if(roll >= dc)
             {
                 NWScript.floatingTextStringOnCreature(ColorToken.SkillCheck() + "Search: *success*: (" + roll + " vs. DC: " + dc + ")" + ColorToken.End(), oPC, false);
