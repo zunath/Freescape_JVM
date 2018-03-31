@@ -42,7 +42,7 @@ public class FireBlast implements IPerk {
 
     @Override
     public void OnImpact(NWObject oPC, NWObject oTarget) {
-        int level = PerkSystem.GetPCPerkLevel(oPC, PerkID.CrushingEarth);
+        int level = PerkSystem.GetPCPerkLevel(oPC, PerkID.FireBlast);
         int damage;
         int ticks = 0;
 
@@ -84,7 +84,12 @@ public class FireBlast implements IPerk {
         damage = (int)((float)damage * damageMultiplier);
 
         applyEffectToObject(DurationType.INSTANT, effectVisualEffect(Vfx.COM_HIT_FIRE, false), oTarget, 0.0f);
-        CustomEffectSystem.ApplyCustomEffect(oPC, oTarget, CustomEffectType.Burning, ticks, level);
+
+        if(ticks > 0)
+        {
+            CustomEffectSystem.ApplyCustomEffect(oPC, oTarget, CustomEffectType.Burning, ticks, level);
+        }
+
         applyEffectToObject(DurationType.INSTANT, effectDamage(damage, DamageType.FIRE, DamagePower.NORMAL), oTarget, 0.0f);
         SkillSystem.RegisterPCToNPCForSkill(oPC, oTarget, SkillID.EvocationMagic);
     }

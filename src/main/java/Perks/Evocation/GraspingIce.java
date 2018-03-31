@@ -40,7 +40,7 @@ public class GraspingIce implements IPerk {
 
     @Override
     public void OnImpact(NWObject oPC, NWObject oTarget) {
-        int level = PerkSystem.GetPCPerkLevel(oPC, PerkID.CrushingEarth);
+        int level = PerkSystem.GetPCPerkLevel(oPC, PerkID.GraspingIce);
         int damage;
         float slowLength = 0.0f;
 

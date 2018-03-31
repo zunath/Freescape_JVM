@@ -24,6 +24,7 @@ public class OnActivateItem implements IScriptEventHandler {
 		NWObject oItem = NWScript.getItemActivated();
 
 		String className = NWScript.getLocalString(oItem, "JAVA_SCRIPT");
+		if(className.equals("")) className = NWScript.getLocalString(oItem, "ACTIVATE_JAVA_SCRIPT");
 		if(className.equals("")) return;
 
 		Scheduler.assign(oPC, () -> NWScript.clearAllActions(false));
