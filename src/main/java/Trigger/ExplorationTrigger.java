@@ -28,8 +28,6 @@ public class ExplorationTrigger implements IScriptEventHandler {
         sendMessageToPC(oPC, ColorToken.Cyan() + message + ColorToken.End());
         setLocalInt(oPC, triggerID, 1);
 
-        Scheduler.assign(oPC, () -> playSound("gui_prompt"));
-        floatingTextStringOnCreature("!", oPC, false);
-
+        Scheduler.assignNow(oPC, () -> playSound("gui_prompt"));
     }
 }
