@@ -1,10 +1,7 @@
 package Conversation;
 
 import Dialog.*;
-import Entities.PCTerritoryFlagEntity;
-import Entities.PCTerritoryFlagPermissionEntity;
-import Entities.PlayerEntity;
-import Entities.TerritoryFlagPermissionEntity;
+import Entities.*;
 import GameObject.PlayerGO;
 import Helper.ColorToken;
 import Conversation.ViewModels.TerritoryFlagMenuModel;
@@ -23,7 +20,7 @@ public class TerritoryFlag extends DialogBase implements IDialogHandler {
     public PlayerDialog SetUp(NWObject oPC) {
         PlayerDialog dialog = new PlayerDialog("MainPage");
         DialogPage mainPage = new DialogPage(
-                ColorToken.Green() + "Territory Management Menu" + ColorToken.End() + "\n\nPlease select an option.",
+                "<SET LATER>",
                 "Manage Permissions",
                 "Transfer Territory Ownership",
                 ColorToken.Red() + "Raze Territory" + ColorToken.End()
@@ -95,6 +92,18 @@ public class TerritoryFlag extends DialogBase implements IDialogHandler {
         TerritoryFlagMenuModel model = new TerritoryFlagMenuModel();
         model.setFlagID(flagID);
         SetDialogCustomData(model);
+
+        StructureRepository structureRepo = new StructureRepository();
+        PCTerritoryFlagEntity flag = structureRepo.GetPCTerritoryFlagByID(flagID);
+        int vanityCount = structureRepo.GetNumberOfStructuresInTerritory(flagID, true, false);
+        int specialCount = structureRepo.GetNumberOfStructuresInTerritory(flagID, false, true);
+
+        String header = ColorToken.Green() + "Territory Management Menu" + ColorToken.End() + "\n\n"
+                + ColorToken.Green() + "Vanity Slots: " + ColorToken.End() + vanityCount + " / " + flag.getBlueprint().getVanityCount() + "\n"
+                + ColorToken.Green() + "Special Slots: " + ColorToken.End() + specialCount + " / " + flag.getBlueprint().getSpecialCount() + "\n"
+                + "Please select an option.";
+        SetPageHeader("MainPage", header);
+
     }
 
     @Override

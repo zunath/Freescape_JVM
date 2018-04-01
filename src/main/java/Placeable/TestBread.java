@@ -55,7 +55,7 @@ public class TestBread implements IScriptEventHandler {
             bp.setIsTerritoryFlag(false);
             bp.setIsUseable(false);
             bp.setItemStorageCount(0);
-            bp.setMaxStructuresCount(0);
+            bp.setVanityCount(0);
             bp.setMaxBuildDistance(0.0f);
             bp.setResearchSlots(0);
             bp.setRpPerSecond(0);

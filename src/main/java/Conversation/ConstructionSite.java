@@ -18,6 +18,7 @@ import org.nwnx.nwnx2.jvm.NWScript;
 import org.nwnx.nwnx2.jvm.Scheduler;
 import org.nwnx.nwnx2.jvm.constants.ObjectType;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("unused")
@@ -210,15 +211,30 @@ public class ConstructionSite extends DialogBase implements IDialogHandler {
             ConstructionSiteEntity entity = repo.GetConstructionSiteByID(model.getConstructionSiteID());
 
             header = ColorToken.Green() + "Blueprint: " + ColorToken.End() + entity.getBlueprint().getName() + "\n";
+            if(entity.getBlueprint().isVanity())
+            {
+                header += ColorToken.Green() + "Type: " + ColorToken.End() + "Vanity\n";
+            }
+            if(entity.getBlueprint().isSpecial())
+            {
+                header += ColorToken.Green() + "Type: " + ColorToken.End() + "Special\n";
+            }
+
             header += ColorToken.Green() + "Level: " + ColorToken.End() + entity.getBlueprint().getLevel() + "\n\n";
+
+
 
             if(entity.getBlueprint().getMaxBuildDistance() > 0.0f)
             {
                 header += ColorToken.Green() + "Build Distance: " + ColorToken.End() + entity.getBlueprint().getMaxBuildDistance() + " meters" + "\n";
             }
-            if(entity.getBlueprint().getMaxStructuresCount() > 0)
+            if(entity.getBlueprint().getVanityCount() > 0)
             {
-                header += ColorToken.Green() + "Max # of Structures: " + ColorToken.End() + entity.getBlueprint().getMaxStructuresCount() + "\n";
+                header += ColorToken.Green() + "Max # of Vanity Structures: " + ColorToken.End() + entity.getBlueprint().getVanityCount() + "\n";
+            }
+            if(entity.getBlueprint().getSpecialCount() > 0)
+            {
+                header += ColorToken.Green() + "Max # of Special Structures: " + ColorToken.End() + entity.getBlueprint().getSpecialCount() + "\n";
             }
             if(entity.getBlueprint().getItemStorageCount() > 0)
             {
@@ -304,9 +320,13 @@ public class ConstructionSite extends DialogBase implements IDialogHandler {
         {
             header += ColorToken.Green() + "Build Distance: " + ColorToken.End() + entity.getMaxBuildDistance() + " meters" + "\n";
         }
-        if(entity.getMaxStructuresCount() > 0)
+        if(entity.getVanityCount() > 0)
         {
-            header += ColorToken.Green() + "Max # of Structures: " + ColorToken.End() + entity.getMaxStructuresCount() + "\n";
+            header += ColorToken.Green() + "Max # of Vanity Structures: " + ColorToken.End() + entity.getVanityCount() + "\n";
+        }
+        if(entity.getSpecialCount() > 0)
+        {
+            header += ColorToken.Green() + "Max # of Special Structures: " + ColorToken.End() + entity.getSpecialCount() + "\n";
         }
         if(entity.getItemStorageCount() > 0)
         {
@@ -339,7 +359,19 @@ public class ConstructionSite extends DialogBase implements IDialogHandler {
         DialogPage page = GetPageByName("BlueprintCategoryPage");
         page.getResponses().clear();
 
-        List<StructureCategoryEntity> categories = repo.GetStructureCategoriesByType(pcGO.getUUID(), model.isTerritoryFlag());
+        PCTerritoryFlagEntity flag = repo.GetPCTerritoryFlagByID(model.getFlagID());
+        int vanityCount = repo.GetNumberOfStructuresInTerritory(model.getFlagID(), true, false);
+        int specialCount = repo.GetNumberOfStructuresInTerritory(model.getFlagID(), false, true);
+
+        ArrayList<StructureCategoryEntity> categories = new ArrayList<>(repo.GetStructureCategoriesByType(pcGO.getUUID(), model.isTerritoryFlag(), false, false));
+        if(flag != null && vanityCount < flag.getBlueprint().getVanityCount())
+        {
+            categories.addAll(repo.GetStructureCategoriesByType(pcGO.getUUID(), model.isTerritoryFlag(), true, false));
+        }
+        if(flag != null && specialCount < flag.getBlueprint().getSpecialCount())
+        {
+            categories.addAll(repo.GetStructureCategoriesByType(pcGO.getUUID(), model.isTerritoryFlag(), false, true));
+        }
 
         for(StructureCategoryEntity category : categories)
         {
@@ -361,18 +393,29 @@ public class ConstructionSite extends DialogBase implements IDialogHandler {
         if(pcSkill == null) return;
         int rank = pcSkill.getRank();
 
+        PCTerritoryFlagEntity flag = repo.GetPCTerritoryFlagByID(model.getFlagID());
+        int vanityCount = repo.GetNumberOfStructuresInTerritory(model.getFlagID(), true, false);
+        int specialCount = repo.GetNumberOfStructuresInTerritory(model.getFlagID(), false, true);
 
-        List<StructureBlueprintEntity> entities = repo.GetStructuresByCategoryAndPlayerRank(pcGO.getUUID(), model.getCategoryID(), rank);
-        for(StructureBlueprintEntity entity : entities)
+        ArrayList<StructureBlueprintEntity> blueprints = new ArrayList<>(repo.GetStructuresByCategoryAndPlayerRank(pcGO.getUUID(), model.getCategoryID(), rank, false, false)); // Territory markers
+        if(flag != null && vanityCount < flag.getBlueprint().getVanityCount())
+        {
+            blueprints.addAll(repo.GetStructuresByCategoryAndPlayerRank(pcGO.getUUID(), model.getCategoryID(), rank, true, false)); // Vanity
+        }
+        if(flag != null && specialCount < flag.getBlueprint().getSpecialCount())
+        {
+            blueprints.addAll(repo.GetStructuresByCategoryAndPlayerRank(pcGO.getUUID(), model.getCategoryID(), rank, false, true)); // Special
+        }
+
+        for(StructureBlueprintEntity entity : blueprints)
         {
             String entityName = entity.getName() + " (Lvl. " + entity.getLevel() + ")";
             if(model.isTerritoryFlag())
             {
                 if(StructureSystem.WillBlueprintOverlapWithExistingFlags(location, entity.getStructureBlueprintID()))
                 {
-                   entityName = ColorToken.Red() + entityName + " [OVERLAPS]" + ColorToken.End();
+                    entityName = ColorToken.Red() + entityName + " [OVERLAPS]" + ColorToken.End();
                 }
-
             }
             page.addResponse(entityName, entity.isActive(), entity.getStructureBlueprintID());
         }

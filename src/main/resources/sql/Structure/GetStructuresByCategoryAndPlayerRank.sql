@@ -8,15 +8,20 @@ SELECT sb.StructureBlueprintID ,
        sb.IsTerritoryFlag ,
        sb.IsUseable ,
        sb.ItemStorageCount ,
-       sb.MaxStructuresCount ,
+       sb.VanityCount ,
+       sb.SpecialCount,
        sb.MaxBuildDistance ,
        sb.Level ,
        sb.PerkID ,
        sb.RequiredPerkLevel ,
-       sb.GivesSkillXP
+       sb.GivesSkillXP,
+       sb.IsVanity,
+       sb.IsSpecial
 FROM dbo.StructureBlueprints sb
 OUTER APPLY dbo.fn_GetPlayerEffectivePerkLevel(:playerID, sb.PerkID, :rank + 2) pcp
 WHERE sb.IsActive = 1
 	AND sb.StructureCategoryID = :structureCategoryID
 	AND (sb.Level <= :rank + 2)
 	AND ISNULL(pcp.Level, 0) >= sb.RequiredPerkLevel
+	AND sb.IsVanity = :isVanity
+	AND sb.IsSpecial = :isSpecial

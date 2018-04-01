@@ -8,11 +8,14 @@ SELECT sb.StructureBlueprintID ,
        sb.IsTerritoryFlag ,
        sb.IsUseable ,
        sb.ItemStorageCount ,
-       sb.MaxStructuresCount ,
+       sb.VanityCount ,
+       sb.SpecialCount,
        sb.MaxBuildDistance ,
        sb.Level ,
        sb.PerkID ,
        sb.RequiredPerkLevel ,
-       sb.GivesSkillXP
+       sb.GivesSkillXP,
+       sb.IsVanity,
+       sb.IsSpecial
 FROM dbo.StructureBlueprints sb
 WHERE sb.StructureBlueprintID = :structureBlueprintID

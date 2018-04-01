@@ -179,8 +179,10 @@ public class StructureSystem {
             return 1;
         }
 
-        if(repo.GetNumberOfStructuresInTerritory(pcTerritoryFlagID) >=
-                entity.getBlueprint().getMaxStructuresCount())
+        int vanityCount = repo.GetNumberOfStructuresInTerritory(pcTerritoryFlagID, true, false);
+        int specialCount = repo.GetNumberOfStructuresInTerritory(pcTerritoryFlagID, false, true);
+        if(vanityCount >= entity.getBlueprint().getVanityCount() &&
+                specialCount >= entity.getBlueprint().getSpecialCount())
         {
             return 2;
         }
@@ -612,8 +614,10 @@ public class StructureSystem {
         //              Site must be razed otherwise player would go over the cap.
         if(constructionSiteID <= 0)
         {
-            int structureCount = repo.GetNumberOfStructuresInTerritory(flagID);
-            if(structureCount >= flagEntity.getBlueprint().getMaxStructuresCount())
+            int vanityCount = repo.GetNumberOfStructuresInTerritory(flagID, true, false);
+            int specialCount = repo.GetNumberOfStructuresInTerritory(flagID, false, true);
+            if(vanityCount >= flagEntity.getBlueprint().getVanityCount() &&
+                    specialCount >= flagEntity.getBlueprint().getSpecialCount())
             {
                 return false;
             }

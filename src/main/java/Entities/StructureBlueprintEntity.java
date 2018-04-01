@@ -38,8 +38,8 @@ public class StructureBlueprintEntity {
     @Column(name = "ItemStorageCount")
     private int itemStorageCount;
 
-    @Column(name = "MaxStructuresCount")
-    private int maxStructuresCount;
+    @Column(name = "VanityCount")
+    private int vanityCount;
 
     @Column(name = "MaxBuildDistance")
     private double maxBuildDistance;
@@ -55,7 +55,16 @@ public class StructureBlueprintEntity {
     private int requiredPerkLevel;
 
     @Column(name = "GivesSkillXP")
-    private boolean GivesSkillXP;
+    private boolean givesSkillXP;
+
+    @Column(name = "SpecialCount")
+    private int specialCount;
+
+    @Column(name = "IsVanity")
+    private boolean isVanity;
+
+    @Column(name = "IsSpecial")
+    private boolean isSpecial;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "blueprint", fetch = FetchType.EAGER, orphanRemoval = true)
     @Fetch(value = FetchMode.SUBSELECT)
@@ -117,12 +126,12 @@ public class StructureBlueprintEntity {
         this.structureCategoryID = structureCategoryID;
     }
 
-    public int getMaxStructuresCount() {
-        return maxStructuresCount;
+    public int getVanityCount() {
+        return vanityCount;
     }
 
-    public void setMaxStructuresCount(int maxStructuresCount) {
-        this.maxStructuresCount = maxStructuresCount;
+    public void setVanityCount(int vanityCount) {
+        this.vanityCount = vanityCount;
     }
 
     public double getMaxBuildDistance() {
@@ -194,10 +203,30 @@ public class StructureBlueprintEntity {
     }
 
     public boolean givesSkillXP() {
-        return GivesSkillXP;
+        return givesSkillXP;
     }
 
-    public void setGivesSkillXP(boolean givesSkillXP) {
-        GivesSkillXP = givesSkillXP;
+    public int getSpecialCount() {
+        return specialCount;
+    }
+
+    public void setSpecialCount(int specialCount) {
+        this.specialCount = specialCount;
+    }
+
+    public boolean isVanity() {
+        return isVanity;
+    }
+
+    public void setVanity(boolean vanity) {
+        isVanity = vanity;
+    }
+
+    public boolean isSpecial() {
+        return isSpecial;
+    }
+
+    public void setSpecial(boolean special) {
+        isSpecial = special;
     }
 }

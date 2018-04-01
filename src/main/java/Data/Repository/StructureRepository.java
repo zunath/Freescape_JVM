@@ -60,24 +60,28 @@ public class StructureRepository {
         }
     }
 
-    public List<StructureCategoryEntity> GetStructureCategoriesByType(String uuid, boolean isTerritoryFlagCategory)
+    public List<StructureCategoryEntity> GetStructureCategoriesByType(String uuid, boolean isTerritoryFlagCategory, boolean isVanity, boolean isSpecial)
     {
         try(DataContext context = new DataContext())
         {
             return context.executeSQLList("Structure/GetStructureCategoriesByType", StructureCategoryEntity.class,
                     new SqlParameter("isTerritoryFlagCategory", isTerritoryFlagCategory),
-                    new SqlParameter("playerID", uuid));
+                    new SqlParameter("playerID", uuid),
+                    new SqlParameter("isVanity", isVanity),
+                    new SqlParameter("isSpecial", isSpecial));
         }
     }
 
-    public List<StructureBlueprintEntity> GetStructuresByCategoryAndPlayerRank(String uuid, int structureCategoryID, int rank)
+    public List<StructureBlueprintEntity> GetStructuresByCategoryAndPlayerRank(String uuid, int structureCategoryID, int rank, boolean isVanity, boolean isSpecial)
     {
         try(DataContext context = new DataContext())
         {
             return context.executeSQLList("Structure/GetStructuresByCategoryAndPlayerRank", StructureBlueprintEntity.class,
                     new SqlParameter("structureCategoryID", structureCategoryID),
                     new SqlParameter("rank", rank),
-                    new SqlParameter("playerID", uuid));
+                    new SqlParameter("playerID", uuid),
+                    new SqlParameter("isVanity", isVanity),
+                    new SqlParameter("isSpecial", isSpecial));
         }
     }
 
@@ -128,12 +132,14 @@ public class StructureRepository {
         }
     }
 
-    public int GetNumberOfStructuresInTerritory(int flagID)
+    public int GetNumberOfStructuresInTerritory(int flagID, boolean isVanity, boolean isSpecial)
     {
         try(DataContext context = new DataContext())
         {
             return context.executeSQLSingle("Structure/GetNumberOfStructuresInTerritory",
-                    new SqlParameter("flagID", flagID));
+                    new SqlParameter("flagID", flagID),
+                    new SqlParameter("isVanity", isVanity),
+                    new SqlParameter("isSpecial", isSpecial));
         }
     }
 
