@@ -7,6 +7,7 @@ import GameObject.PlayerGO;
 import GameSystems.AbilitySystem;
 import GameSystems.CustomEffectSystem;
 import GameSystems.FoodSystem;
+import GameSystems.ItemSystem;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.NWScript;
 import org.nwnx.nwnx2.jvm.constants.Ability;
@@ -43,6 +44,7 @@ public class OnHeartbeat implements IScriptEventHandler {
 		SaveCharacters();
         CustomEffectSystem.OnModuleHeartbeat();
 
+		ItemSystem.OnModuleHeartbeat();
 		DatabaseRepository databaseRepo = new DatabaseRepository();
 		databaseRepo.KeepAlive();
 	}

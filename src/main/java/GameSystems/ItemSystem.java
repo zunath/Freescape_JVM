@@ -6,7 +6,6 @@ import Data.Repository.ItemRepository;
 import Data.Repository.SkillRepository;
 import Entities.ItemEntity;
 import Entities.PCSkillEntity;
-import Entities.SkillEntity;
 import GameObject.ItemGO;
 import GameObject.PlayerGO;
 import Helper.ColorToken;
@@ -14,32 +13,57 @@ import Helper.ScriptHelper;
 import Item.IActionItem;
 import NWNX.NWNX_Player;
 import org.nwnx.nwnx2.jvm.*;
-import org.nwnx.nwnx2.jvm.constants.BaseItem;
-import org.nwnx.nwnx2.jvm.constants.IpConstOnhitCastspell;
-import org.nwnx.nwnx2.jvm.constants.ItemProperty;
-import org.nwnx.nwnx2.jvm.constants.ObjectType;
+import org.nwnx.nwnx2.jvm.constants.*;
 
+import java.lang.Object;
 import java.util.Arrays;
+
+import static org.nwnx.nwnx2.jvm.NWScript.*;
 
 public class ItemSystem {
 
     private static ItemEntity GetItemEntity(NWObject item)
     {
-        String resref = NWScript.getResRef(item);
+        String resref = getResRef(item);
         ItemRepository repo = new ItemRepository();
         return repo.GetItemByResref(resref);
     }
 
     public static void OnItemAcquired()
     {
-        NWObject item = NWScript.getModuleItemAcquired();
+        NWObject item = getModuleItemAcquired();
         ApplyItemFeatures(item);
     }
 
+    public static void OnModuleHeartbeat()
+    {
+        NWObject[] pcs = getPCs();
+        for(NWObject pc: pcs)
+        {
+            NWObject offHand = getItemInSlot(InventorySlot.LEFTHAND, pc);
+            int type = getBaseItemType(offHand);
+
+            if(type == BaseItem.TORCH)
+            {
+                int charges = getItemCharges(offHand) - 1;
+                if(charges <= 0)
+                {
+                    destroyObject(offHand, 0.0f);
+                    sendMessageToPC(pc, "Your torch has burned out.");
+                }
+                else
+                {
+                    setItemCharges(offHand, charges);
+                }
+            }
+        }
+    }
+
+
     public static String OnModuleExamine(String existingDescription, NWObject examiner, NWObject examinedObject)
     {
-        if(!NWScript.getIsPC(examiner)) return existingDescription;
-        if(NWScript.getObjectType(examinedObject) != ObjectType.ITEM) return existingDescription;
+        if(!getIsPC(examiner)) return existingDescription;
+        if(getObjectType(examinedObject) != ObjectType.ITEM) return existingDescription;
         PlayerGO pcGO = new PlayerGO(examiner);
         SkillRepository skillRepo = new SkillRepository();
         ItemGO itemGO = new ItemGO(examinedObject);
@@ -93,13 +117,13 @@ public class ItemSystem {
 
     public static void OnModuleActivatedItem()
     {
-        NWObject user = NWScript.getItemActivator();
-        if(!NWScript.getIsPC(user) || NWScript.getIsDM(user) || NWScript.getIsDMPossessed(user)) return;
+        NWObject user = getItemActivator();
+        if(!getIsPC(user) || getIsDM(user) || getIsDMPossessed(user)) return;
 
         PlayerGO pcGO = new PlayerGO(user);
-        NWObject target = NWScript.getItemActivatedTarget();
-        NWObject item = NWScript.getItemActivated();
-        String actionScript = NWScript.getLocalString(item, "JAVA_ACTION_SCRIPT");
+        NWObject target = getItemActivatedTarget();
+        NWObject item = getItemActivated();
+        String actionScript = getLocalString(item, "JAVA_ACTION_SCRIPT");
         if(actionScript.equals("")) return;
 
         IActionItem actionItem = (IActionItem) ScriptHelper.GetClassByName("Item." + actionScript);
@@ -107,23 +131,23 @@ public class ItemSystem {
 
         if(pcGO.isBusy())
         {
-            NWScript.sendMessageToPC(user, "You are busy.");
+            sendMessageToPC(user, "You are busy.");
             return;
         }
 
         String invalidTargetMessage = actionItem.IsValidTarget(user, item, target);
         if(invalidTargetMessage != null && !invalidTargetMessage.equals(""))
         {
-            NWScript.sendMessageToPC(user, invalidTargetMessage);
+            sendMessageToPC(user, invalidTargetMessage);
             return;
         }
 
         if(actionItem.MaxDistance() > 0.0f)
         {
-            if(NWScript.getDistanceBetween(user, target) > actionItem.MaxDistance() ||
-                    !NWScript.getResRef(NWScript.getArea(user)).equals(NWScript.getResRef(NWScript.getArea(target))))
+            if(getDistanceBetween(user, target) > actionItem.MaxDistance() ||
+                    !getResRef(getArea(user)).equals(getResRef(getArea(target))))
             {
-                NWScript.sendMessageToPC(user, "Your target is too far away.");
+                sendMessageToPC(user, "Your target is too far away.");
                 return;
             }
         }
@@ -132,14 +156,14 @@ public class ItemSystem {
         float delay = actionItem.Seconds(user, item, target, customData);
         int animationID = actionItem.AnimationID();
         boolean faceTarget = actionItem.FaceTarget();
-        NWVector userPosition = NWScript.getPosition(user);
+        NWVector userPosition = getPosition(user);
 
         Scheduler.assign(user, () -> {
             pcGO.setIsBusy(true);
             if(faceTarget)
-                NWScript.setFacingPoint(NWScript.getPosition(target));
+                setFacingPoint(getPosition(target));
             if(animationID > 0)
-                NWScript.actionPlayAnimation(animationID, 1.0f, delay);
+                actionPlayAnimation(animationID, 1.0f, delay);
         });
 
         NWNX_Player.StartGuiTimingBar(user, delay, "");
@@ -151,33 +175,33 @@ public class ItemSystem {
         PlayerGO pcGO = new PlayerGO(user);
         pcGO.setIsBusy(false);
 
-        NWVector userPosition = NWScript.getPosition(user);
+        NWVector userPosition = getPosition(user);
         if(!userPosition.equals(userStartPosition))
         {
-            NWScript.sendMessageToPC(user, "You move and interrupt your action.");
+            sendMessageToPC(user, "You move and interrupt your action.");
             return;
         }
 
         if(actionItem.MaxDistance() > 0.0f)
         {
-            if(NWScript.getDistanceBetween(user, target) > actionItem.MaxDistance() ||
-                    !NWScript.getResRef(NWScript.getArea(user)).equals(NWScript.getResRef(NWScript.getArea(target))))
+            if(getDistanceBetween(user, target) > actionItem.MaxDistance() ||
+                    !getResRef(getArea(user)).equals(getResRef(getArea(target))))
             {
-                NWScript.sendMessageToPC(user, "Your target is too far away.");
+                sendMessageToPC(user, "Your target is too far away.");
                 return;
             }
         }
 
-        if(!NWScript.getIsObjectValid(target))
+        if(!getIsObjectValid(target))
         {
-            NWScript.sendMessageToPC(user, "Unable to locate target.");
+            sendMessageToPC(user, "Unable to locate target.");
             return;
         }
 
         String invalidTargetMessage = actionItem.IsValidTarget(user, item, target);
         if(invalidTargetMessage != null && !invalidTargetMessage.equals(""))
         {
-            NWScript.sendMessageToPC(user, invalidTargetMessage);
+            sendMessageToPC(user, invalidTargetMessage);
             return;
         }
 
@@ -186,8 +210,8 @@ public class ItemSystem {
         ItemGO itemGO = new ItemGO(item);
         if(actionItem.ReducesItemCharge(user, item, target, customData))
         {
-            if(NWScript.getItemCharges(item) > 0) itemGO.ReduceItemCharges();
-            else NWScript.destroyObject(item, 0.0f);
+            if(getItemCharges(item) > 0) itemGO.ReduceItemCharges();
+            else destroyObject(item, 0.0f);
         }
     }
 
@@ -249,16 +273,16 @@ public class ItemSystem {
                 BaseItem.WHIP
         };
 
-        NWObject oItem = NWScript.getPCItemLastEquipped();
-        Integer baseItemType = NWScript.getBaseItemType(oItem);
+        NWObject oItem = getPCItemLastEquipped();
+        Integer baseItemType = getBaseItemType(oItem);
 
         if(!Arrays.asList(validItemTypes).contains(baseItemType)) return;
 
-        for(NWItemProperty ip : NWScript.getItemProperties(oItem))
+        for(NWItemProperty ip : getItemProperties(oItem))
         {
-            if(NWScript.getItemPropertyType(ip) == ItemProperty.ONHITCASTSPELL)
+            if(getItemPropertyType(ip) == ItemProperty.ONHITCASTSPELL)
             {
-                if(NWScript.getItemPropertySubType(ip) == IpConstOnhitCastspell.ONHIT_UNIQUEPOWER)
+                if(getItemPropertySubType(ip) == IpConstOnhitCastspell.ONHIT_UNIQUEPOWER)
                 {
                     return;
                 }
@@ -266,8 +290,20 @@ public class ItemSystem {
         }
 
         // No item property found. Add it to the item.
-        XP2.IPSafeAddItemProperty(oItem, NWScript.itemPropertyOnHitCastSpell(IpConstOnhitCastspell.ONHIT_UNIQUEPOWER, 40), 0.0f, AddItemPropertyPolicy.ReplaceExisting, false, false);
+        XP2.IPSafeAddItemProperty(oItem, itemPropertyOnHitCastSpell(IpConstOnhitCastspell.ONHIT_UNIQUEPOWER, 40), 0.0f, AddItemPropertyPolicy.ReplaceExisting, false, false);
 
+        if(baseItemType == BaseItem.TORCH)
+        {
+            int charges = getItemCharges(oItem) - 1;
+            if(charges <= 0)
+            {
+                destroyObject(oItem, 0.0f);
+            }
+            else
+            {
+                setItemCharges(oItem, charges);
+            }
+        }
     }
 
     private static void ApplyItemFeatures(NWObject item)

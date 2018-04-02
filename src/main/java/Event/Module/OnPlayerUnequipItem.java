@@ -1,5 +1,6 @@
 package Event.Module;
 import Common.IScriptEventHandler;
+import GameSystems.ItemSystem;
 import GameSystems.PerkSystem;
 import GameSystems.SkillSystem;
 import org.nwnx.nwnx2.jvm.*;
