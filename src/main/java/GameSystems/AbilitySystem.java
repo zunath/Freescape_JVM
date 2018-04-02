@@ -202,6 +202,7 @@ public class AbilitySystem {
                 HandleQueueWeaponSkill(pc, entity, perk);
             }
 
+
             // Adjust mana only if spell cost > 0
             PlayerEntity pcEntity = repo.GetByPlayerID(pcGO.getUUID());
             if(perk.ManaCost(pc, entity.getBaseManaCost()) > 0)
@@ -211,6 +212,7 @@ public class AbilitySystem {
                 NWScript.sendMessageToPC(pc, ColorToken.Custom(32,223,219) + "Mana: " + pcEntity.getCurrentMana() + " / " + pcEntity.getMaxMana());
             }
 
+            FoodSystem.DecreaseHungerLevel(pc, 1);
             // Mark cooldown on category
             ApplyCooldown(pc, cooldown, perk);
 

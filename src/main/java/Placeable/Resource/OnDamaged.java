@@ -8,6 +8,7 @@ import Enumerations.SkillID;
 import GameObject.ItemGO;
 import GameObject.PlayerGO;
 import GameSystems.DurabilitySystem;
+import GameSystems.FoodSystem;
 import GameSystems.PerkSystem;
 import GameSystems.SkillSystem;
 import org.nwnx.nwnx2.jvm.NWLocation;
@@ -157,6 +158,7 @@ public class OnDamaged implements IScriptEventHandler {
             NWScript.destroyObject(objSelf, 0.1f);
         }
 
+        FoodSystem.DecreaseHungerLevel(oPC, 1);
     }
     private static float CalculateXPDeltaModifier(int difficultyRating, int skillRank)
     {

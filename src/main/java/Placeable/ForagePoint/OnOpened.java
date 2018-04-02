@@ -4,6 +4,7 @@ import Common.IScriptEventHandler;
 import Entities.PCSkillEntity;
 import Enumerations.PerkID;
 import Enumerations.SkillID;
+import GameSystems.FoodSystem;
 import GameSystems.LootSystem;
 import GameSystems.Models.ItemModel;
 import GameSystems.PerkSystem;
@@ -89,6 +90,8 @@ public class OnOpened implements IScriptEventHandler {
             }
             dc += ThreadLocalRandom.current().nextInt(3) + 1;
         }
+
+        FoodSystem.DecreaseHungerLevel(oPC, 1);
 
         setLocalInt(point, "FORAGE_POINT_HAS_BEEN_SEARCHED", 1);
         setLocalInt(point, "FORAGE_POINT_DESPAWN_TICKS", 30);

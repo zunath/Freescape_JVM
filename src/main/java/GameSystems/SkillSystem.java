@@ -402,6 +402,8 @@ public class SkillSystem {
             itemGO = new ItemGO(oShield);
             reg.AddSkillRegistrationPoint(oPC, SkillID.Shields, itemGO.getRecommendedLevel());
         }
+
+        FoodSystem.DecreaseHungerLevel(oPC, 1);
     }
 
     public static void RegisterPCToNPCForSkill(NWObject pc, NWObject npc, int skillID)

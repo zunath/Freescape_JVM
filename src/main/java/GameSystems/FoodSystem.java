@@ -114,6 +114,38 @@ public class FoodSystem {
                 CustomEffectSystem.ApplyCustomEffect(oPC, oPC, CustomEffectType.FoodDisease, ticks, 0);
             }
         }
+    }
 
+    private static PlayerEntity RunHungerDeathCheck(PlayerEntity entity, NWObject pc)
+    {
+        if(entity.getCurrentHunger() <= 0)
+        {
+            applyEffectToObject(DurationType.INSTANT, effectDeath(false, true), pc, 0.0f);
+            entity.setCurrentHunger(20);
+            floatingTextStringOnCreature("You starved to death!", pc, false);
+        }
+
+        return entity;
+    }
+
+    public static PlayerEntity DecreaseHungerLevel(PlayerEntity entity, NWObject oPC, int amount)
+    {
+        amount = Math.abs(amount);
+        entity.setCurrentHunger(entity.getCurrentHunger() - amount);
+        RunHungerDeathCheck(entity, oPC);
+
+        return entity;
+    }
+
+    public static void DecreaseHungerLevel(NWObject oPC, int amount)
+    {
+        amount = Math.abs(amount);
+        PlayerGO pcGO = new PlayerGO(oPC);
+        PlayerRepository playerRepo = new PlayerRepository();
+        PlayerEntity entity = playerRepo.GetByPlayerID(pcGO.getUUID());
+        entity.setCurrentHunger(entity.getCurrentHunger() - amount);
+        RunHungerDeathCheck(entity, oPC);
+
+        playerRepo.save(entity);
     }
 }

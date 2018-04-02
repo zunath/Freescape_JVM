@@ -206,6 +206,7 @@ public class CraftSystem {
             DurabilitySystem.RunItemDecay(oPC, tools, reduceDurability);
         }
 
+        FoodSystem.DecreaseHungerLevel(oPC, 2);
     }
 
     private static String CalculateDifficulty(int pcLevel, int blueprintLevel)

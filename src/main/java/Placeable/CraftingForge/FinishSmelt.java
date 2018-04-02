@@ -5,6 +5,7 @@ import Entities.PCSkillEntity;
 import Enumerations.PerkID;
 import Enumerations.SkillID;
 import GameObject.PlayerGO;
+import GameSystems.FoodSystem;
 import GameSystems.PerkSystem;
 import GameSystems.SkillSystem;
 import org.nwnx.nwnx2.jvm.NWObject;
@@ -53,5 +54,7 @@ public class FinishSmelt implements IScriptEventHandler {
 
         int xp = (int)SkillSystem.CalculateSkillAdjustedXP(100, level, pcSkill.getRank());
         SkillSystem.GiveSkillXP(pc, SkillID.Metalworking, xp);
+
+        FoodSystem.DecreaseHungerLevel(pc, 1);
     }
 }

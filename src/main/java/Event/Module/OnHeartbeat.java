@@ -82,6 +82,8 @@ public class OnHeartbeat implements IScriptEventHandler {
 					amount += con;
 				}
 
+				entity = FoodSystem.DecreaseHungerLevel(entity, oPC, 5);
+
 				NWScript.applyEffectToObject(DurationType.INSTANT, NWScript.effectHeal(amount), oPC, 0.0f);
 			}
 
