@@ -88,4 +88,5 @@ public class PerkID {
     public static final int ForageExpert = 85;
     public static final int WoodWeaponBlueprints = 86;
     public static final int ArmorBlueprints = 87;
+    public static final int ComponentBlueprints = 88;
 }
