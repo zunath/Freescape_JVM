@@ -29,63 +29,68 @@ public class FoodSystem {
 
         if(hungerTick <= 0 && entity.getCurrentHunger() >= 0)
         {
-            int penalty = 0;
             hungerTick = 300 + ThreadLocalRandom.current().nextInt(300); // 5 minutes + random amount of time (up to +5 minutes)
             entity.setCurrentHunger(entity.getCurrentHunger() - 1);
+            entity = ApplyHungerPenalties(entity, pc);
+        }
+        entity.setCurrentHungerTick(hungerTick);
+        return entity;
+    }
 
-            if(entity.getCurrentHunger() >= 40 && entity.getCurrentHunger() <= 50)
-            {
-                floatingTextStringOnCreature( "You are starving! You should eat soon.", pc, false);
-            }
-            else if(entity.getCurrentHunger() >= 30 && entity.getCurrentHunger() < 40)
-            {
-                penalty = 1;
-                floatingTextStringOnCreature( "You are starving! You are suffering from starvation penalties.", pc, false);
-            }
-            else if(entity.getCurrentHunger() >= 20 && entity.getCurrentHunger() < 30)
-            {
-                penalty = 2;
-                floatingTextStringOnCreature( "You are starving! You are suffering from starvation penalties.", pc, false);
-            }
-            else if(entity.getCurrentHunger() >= 10 && entity.getCurrentHunger() < 20)
-            {
-                penalty = 3;
-                floatingTextStringOnCreature( "You are starving! You are suffering from starvation penalties.", pc, false);
-            }
-            else if(entity.getCurrentHunger() < 10)
-            {
-                penalty = 4;
-                floatingTextStringOnCreature(ColorToken.Red() + "You are starving! You are about to starve to death!" + ColorToken.End(), pc, false);
-            }
+    private static PlayerEntity ApplyHungerPenalties(PlayerEntity entity, NWObject pc)
+    {
+        int penalty = 0;
 
-            NWEffect[] effects = getEffects(pc);
-            for(NWEffect effect: effects)
-            {
-                if(getEffectTag(effect).equals("EFFECT_HUNGER_PENALTIES"))
-                {
-                    removeEffect(pc, effect);
-                }
-            }
+        if(entity.getCurrentHunger() >= 40 && entity.getCurrentHunger() <= 50)
+        {
+            floatingTextStringOnCreature( "You are starving! You should eat soon.", pc, false);
+        }
+        else if(entity.getCurrentHunger() >= 30 && entity.getCurrentHunger() < 40)
+        {
+            penalty = 1;
+            floatingTextStringOnCreature( "You are starving! You are suffering from starvation penalties.", pc, false);
+        }
+        else if(entity.getCurrentHunger() >= 20 && entity.getCurrentHunger() < 30)
+        {
+            penalty = 2;
+            floatingTextStringOnCreature( "You are starving! You are suffering from starvation penalties.", pc, false);
+        }
+        else if(entity.getCurrentHunger() >= 10 && entity.getCurrentHunger() < 20)
+        {
+            penalty = 3;
+            floatingTextStringOnCreature( "You are starving! You are suffering from starvation penalties.", pc, false);
+        }
+        else if(entity.getCurrentHunger() < 10)
+        {
+            penalty = 4;
+            floatingTextStringOnCreature(ColorToken.Red() + "You are starving! You are about to starve to death!" + ColorToken.End(), pc, false);
+        }
 
-            if(penalty > 0)
+        NWEffect[] effects = getEffects(pc);
+        for(NWEffect effect: effects)
+        {
+            if(getEffectTag(effect).equals("EFFECT_HUNGER_PENALTIES"))
             {
-                NWEffect effect = effectAbilityDecrease(Ability.STRENGTH, penalty);
-                effect = effectLinkEffects(effect, effectAbilityDecrease(Ability.DEXTERITY, penalty));
-                effect = effectLinkEffects(effect, effectAbilityDecrease(Ability.CONSTITUTION, penalty));
-
-                effect = NWScript.tagEffect(effect, "EFFECT_HUNGER_PENALTIES");
-                applyEffectToObject(DurationType.PERMANENT, effect, pc, 0.0f);
-            }
-
-            if(entity.getCurrentHunger() <= 0)
-            {
-                applyEffectToObject(DurationType.INSTANT, effectDeath(false, true), pc, 0.0f);
-                entity.setCurrentHunger(20);
-                floatingTextStringOnCreature("You starved to death!", pc, false);
+                removeEffect(pc, effect);
             }
         }
 
-        entity.setCurrentHungerTick(hungerTick);
+        if(penalty > 0)
+        {
+            NWEffect effect = effectAbilityDecrease(Ability.STRENGTH, penalty);
+            effect = effectLinkEffects(effect, effectAbilityDecrease(Ability.DEXTERITY, penalty));
+            effect = effectLinkEffects(effect, effectAbilityDecrease(Ability.CONSTITUTION, penalty));
+
+            effect = NWScript.tagEffect(effect, "EFFECT_HUNGER_PENALTIES");
+            applyEffectToObject(DurationType.PERMANENT, effect, pc, 0.0f);
+        }
+
+        if(entity.getCurrentHunger() <= 0)
+        {
+            applyEffectToObject(DurationType.INSTANT, effectDeath(false, true), pc, 0.0f);
+            entity.setCurrentHunger(20);
+            floatingTextStringOnCreature("You starved to death!", pc, false);
+        }
 
         return entity;
     }
@@ -116,23 +121,11 @@ public class FoodSystem {
         }
     }
 
-    private static PlayerEntity RunHungerDeathCheck(PlayerEntity entity, NWObject pc)
-    {
-        if(entity.getCurrentHunger() <= 0)
-        {
-            applyEffectToObject(DurationType.INSTANT, effectDeath(false, true), pc, 0.0f);
-            entity.setCurrentHunger(20);
-            floatingTextStringOnCreature("You starved to death!", pc, false);
-        }
-
-        return entity;
-    }
-
     public static PlayerEntity DecreaseHungerLevel(PlayerEntity entity, NWObject oPC, int amount)
     {
         amount = Math.abs(amount);
         entity.setCurrentHunger(entity.getCurrentHunger() - amount);
-        RunHungerDeathCheck(entity, oPC);
+        entity = ApplyHungerPenalties(entity, oPC);
 
         return entity;
     }
@@ -144,7 +137,7 @@ public class FoodSystem {
         PlayerRepository playerRepo = new PlayerRepository();
         PlayerEntity entity = playerRepo.GetByPlayerID(pcGO.getUUID());
         entity.setCurrentHunger(entity.getCurrentHunger() - amount);
-        RunHungerDeathCheck(entity, oPC);
+        entity = ApplyHungerPenalties(entity, oPC);
 
         playerRepo.save(entity);
     }

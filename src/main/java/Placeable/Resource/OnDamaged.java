@@ -159,11 +159,6 @@ public class OnDamaged implements IScriptEventHandler {
 
             destroyObject(objSelf, 0.0f);
         }
-
-        if(ThreadLocalRandom.current().nextInt(100) + 1 <= 5)
-        {
-            FoodSystem.DecreaseHungerLevel(oPC, 1);
-        }
     }
     private static float CalculateXPDeltaModifier(int difficultyRating, int skillRank)
     {
