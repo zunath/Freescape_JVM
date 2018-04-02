@@ -19,26 +19,28 @@ import org.nwnx.nwnx2.jvm.constants.ObjectType;
 
 import java.util.concurrent.ThreadLocalRandom;
 
+import static org.nwnx.nwnx2.jvm.NWScript.*;
+
 public class OnDamaged implements IScriptEventHandler {
     @Override
     public void runScript(NWObject objSelf) {
-        NWObject oPC = NWScript.getLastDamager(objSelf);
-        if(NWScript.getLocalInt(oPC, "NOT_USING_CORRECT_WEAPON") == 1)
+        NWObject oPC = getLastDamager(objSelf);
+        if(getLocalInt(oPC, "NOT_USING_CORRECT_WEAPON") == 1)
         {
-            NWScript.deleteLocalInt(oPC, "NOT_USING_CORRECT_WEAPON");
+            deleteLocalInt(oPC, "NOT_USING_CORRECT_WEAPON");
             return;
         }
 
         PlayerGO pcGO = new PlayerGO(oPC);
         SkillRepository skillRepo = new SkillRepository();
-        NWObject oWeapon = NWScript.getLastWeaponUsed(oPC);
+        NWObject oWeapon = getLastWeaponUsed(oPC);
         ItemGO weaponGO = new ItemGO(oWeapon);
-        NWLocation location = NWScript.getLocation(oPC);
-        String resourceItemResref = NWScript.getLocalString(objSelf, "RESOURCE_RESREF");
-        int activityID = NWScript.getLocalInt(objSelf, "RESOURCE_ACTIVITY");
-        String resourceName = NWScript.getLocalString(objSelf, "RESOURCE_NAME");
-        int resourceCount = NWScript.getLocalInt(objSelf, "RESOURCE_COUNT");
-        int difficultyRating = NWScript.getLocalInt(objSelf, "RESOURCE_DIFFICULTY_RATING");
+        NWLocation location = getLocation(oPC);
+        String resourceItemResref = getLocalString(objSelf, "RESOURCE_RESREF");
+        int activityID = getLocalInt(objSelf, "RESOURCE_ACTIVITY");
+        String resourceName = getLocalString(objSelf, "RESOURCE_NAME");
+        int resourceCount = getLocalInt(objSelf, "RESOURCE_COUNT");
+        int difficultyRating = getLocalInt(objSelf, "RESOURCE_DIFFICULTY_RATING");
         int weaponChanceBonus;
         int skillID;
         int perkChanceBonus;
@@ -92,14 +94,14 @@ public class OnDamaged implements IScriptEventHandler {
         {
             if(ThreadLocalRandom.current().nextInt(100) + 1 <= hasteChance)
             {
-                NWScript.applyEffectToObject(DurationType.TEMPORARY, NWScript.effectHaste(), oPC, 8.0f);
+                applyEffectToObject(DurationType.TEMPORARY, effectHaste(), oPC, 8.0f);
             }
 
             // Give an item if the player hasn't gotten anything after 6-8 attempts.
-            int attemptFailureCount = NWScript.getLocalInt(oPC, "RESOURCE_ATTEMPT_FAILURE_COUNT") + 1;
-            NWObject resource = NWScript.getLocalObject(oPC, "RESOURCE_ATTEMPT_FAILURE_OBJECT");
+            int attemptFailureCount = getLocalInt(oPC, "RESOURCE_ATTEMPT_FAILURE_COUNT") + 1;
+            NWObject resource = getLocalObject(oPC, "RESOURCE_ATTEMPT_FAILURE_OBJECT");
 
-            if(!NWScript.getIsObjectValid(resource) || !resource.equals(objSelf))
+            if(!getIsObjectValid(resource) || !resource.equals(objSelf))
             {
                 resource = objSelf;
                 attemptFailureCount = 1;
@@ -116,26 +118,26 @@ public class OnDamaged implements IScriptEventHandler {
                 attemptFailureCount = 0;
             }
 
-            NWScript.setLocalInt(oPC, "RESOURCE_ATTEMPT_FAILURE_COUNT", attemptFailureCount);
-            NWScript.setLocalObject(oPC, "RESOURCE_ATTEMPT_FAILURE_OBJECT", resource);
+            setLocalInt(oPC, "RESOURCE_ATTEMPT_FAILURE_COUNT", attemptFailureCount);
+            setLocalObject(oPC, "RESOURCE_ATTEMPT_FAILURE_OBJECT", resource);
         }
 
         if(chance <= 0)
         {
-            NWScript.floatingTextStringOnCreature("You do not have enough skill to harvest this resource...", oPC, false);
+            floatingTextStringOnCreature("You do not have enough skill to harvest this resource...", oPC, false);
         }
         else if(ThreadLocalRandom.current().nextInt(100) <= chance || givePityItem)
         {
-            NWScript.createObject(ObjectType.ITEM, resourceItemResref, location, false, "");
+            createObject(ObjectType.ITEM, resourceItemResref, location, false, "");
 
-            NWScript.floatingTextStringOnCreature("You break off some " + resourceName + ".", oPC, false);
-            NWScript.setLocalInt(objSelf, "RESOURCE_COUNT", --resourceCount);
-            NWScript.applyEffectToObject(DurationType.INSTANT, NWScript.effectHeal(10000), objSelf, 0.0f);
+            floatingTextStringOnCreature("You break off some " + resourceName + ".", oPC, false);
+            setLocalInt(objSelf, "RESOURCE_COUNT", --resourceCount);
+            applyEffectToObject(DurationType.INSTANT, effectHeal(10000), objSelf, 0.0f);
 
             if(ThreadLocalRandom.current().nextInt(100) + 1 <= secondResourceChance)
             {
-                NWScript.floatingTextStringOnCreature("You break off a second piece.", oPC, false);
-                NWScript.createObject(ObjectType.ITEM, resourceItemResref, location, false, "");
+                floatingTextStringOnCreature("You break off a second piece.", oPC, false);
+                createObject(ObjectType.ITEM, resourceItemResref, location, false, "");
             }
 
             float deltaModifier = CalculateXPDeltaModifier(difficultyRating, skill.getRank());
@@ -143,22 +145,25 @@ public class OnDamaged implements IScriptEventHandler {
             int xp = (int)SkillSystem.CalculateSkillAdjustedXP(baseXP, weaponGO.getRecommendedLevel(), skill.getRank());
             SkillSystem.GiveSkillXP(oPC, skillID, xp);
 
-            NWScript.deleteLocalInt(oPC, "RESOURCE_ATTEMPT_FAILURE_COUNT");
-            NWScript.deleteLocalInt(oPC, "RESOURCE_ATTEMPT_FAILURE_OBJECT");
+            deleteLocalInt(oPC, "RESOURCE_ATTEMPT_FAILURE_COUNT");
+            deleteLocalInt(oPC, "RESOURCE_ATTEMPT_FAILURE_OBJECT");
         }
 
         if(resourceCount <= 0)
         {
-            NWObject prop = NWScript.getLocalObject(objSelf, "RESOURCE_PROP");
-            if(NWScript.getIsObjectValid(prop))
+            NWObject prop = getLocalObject(objSelf, "RESOURCE_PROP_OBJ");
+            if(getIsObjectValid(prop))
             {
-                NWScript.destroyObject(prop, 0.0f);
+                destroyObject(prop, 0.0f);
             }
 
-            NWScript.destroyObject(objSelf, 0.1f);
+            destroyObject(objSelf, 0.0f);
         }
 
-        FoodSystem.DecreaseHungerLevel(oPC, 1);
+        if(ThreadLocalRandom.current().nextInt(100) + 1 <= 5)
+        {
+            FoodSystem.DecreaseHungerLevel(oPC, 1);
+        }
     }
     private static float CalculateXPDeltaModifier(int difficultyRating, int skillRank)
     {

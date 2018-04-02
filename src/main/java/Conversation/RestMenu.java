@@ -17,6 +17,8 @@ import org.nwnx.nwnx2.jvm.NWScript;
 import org.nwnx.nwnx2.jvm.Scheduler;
 import org.nwnx.nwnx2.jvm.constants.ObjectType;
 
+import static org.nwnx.nwnx2.jvm.NWScript.*;
+
 @SuppressWarnings("UnusedDeclaration")
 public class RestMenu extends DialogBase implements IDialogHandler {
     @Override
@@ -32,7 +34,8 @@ public class RestMenu extends DialogBase implements IDialogHandler {
                 "Emote Menu",
                 "View Key Items",
                 "Modify Clothes",
-                "Character Management");
+                "Character Management",
+                "Open Trash Can (Destroy Items)");
 
         dialog.addPage("MainPage", mainPage);
 
@@ -59,8 +62,8 @@ public class RestMenu extends DialogBase implements IDialogHandler {
                 switch (responseID) {
                     // Open Overflow Inventory
                     case 1:
-                        final NWObject storage = NWScript.createObject(ObjectType.PLACEABLE, "overflow_storage", NWScript.getLocation(oPC), false, "");
-                        Scheduler.assign(oPC, () -> NWScript.actionInteractObject(storage));
+                        final NWObject storage = createObject(ObjectType.PLACEABLE, "overflow_storage", getLocation(oPC), false, "");
+                        Scheduler.assign(oPC, () -> actionInteractObject(storage));
                         break;
                     // View Skills
                     case 2:
@@ -72,22 +75,22 @@ public class RestMenu extends DialogBase implements IDialogHandler {
                         break;
                     // Dice Bag
                     case 4:
-                        NWScript.setLocalObject(oPC, "dmfi_univ_target", oPC);
-                        NWScript.setLocalLocation(oPC, "dmfi_univ_location", NWScript.getLocation(oPC));
-                        NWScript.setLocalString(oPC, "dmfi_univ_conv", "pc_dicebag");
+                        setLocalObject(oPC, "dmfi_univ_target", oPC);
+                        setLocalLocation(oPC, "dmfi_univ_location", getLocation(oPC));
+                        setLocalString(oPC, "dmfi_univ_conv", "pc_dicebag");
                         Scheduler.assign(oPC, () -> {
-                            NWScript.clearAllActions(false);
-                            NWScript.actionStartConversation(oPC, "dmfi_universal", true, false);
+                            clearAllActions(false);
+                            actionStartConversation(oPC, "dmfi_universal", true, false);
                         });
                         break;
                     // Emote Menu
                     case 5:
-                        NWScript.setLocalObject(oPC, "dmfi_univ_target", oPC);
-                        NWScript.setLocalLocation(oPC, "dmfi_univ_location", NWScript.getLocation(oPC));
-                        NWScript.setLocalString(oPC, "dmfi_univ_conv", "pc_emote");
+                        setLocalObject(oPC, "dmfi_univ_target", oPC);
+                        setLocalLocation(oPC, "dmfi_univ_location", getLocation(oPC));
+                        setLocalString(oPC, "dmfi_univ_conv", "pc_emote");
                         Scheduler.assign(oPC, () -> {
-                            NWScript.clearAllActions(false);
-                            NWScript.actionStartConversation(oPC, "dmfi_universal", true, false);
+                            clearAllActions(false);
+                            actionStartConversation(oPC, "dmfi_universal", true, false);
                         });
                         break;
                     // Key Item Categories Page
@@ -96,11 +99,18 @@ public class RestMenu extends DialogBase implements IDialogHandler {
                         break;
                     // Modify Clothes
                     case 7:
-                        Scheduler.assign(oPC, () -> NWScript.actionStartConversation(oPC, "x0_skill_ctrap", true, false));
+                        Scheduler.assign(oPC, () -> actionStartConversation(oPC, "x0_skill_ctrap", true, false));
                         break;
                     // Character Management
                     case 8:
                         SwitchConversation("CharacterManagement");
+                        break;
+                    // Open Trash Can (Destroy Items)
+                    case 9:
+                        EndConversation();
+                        NWObject trashCan = createObject(ObjectType.PLACEABLE, "reo_trash_can", getLocation(oPC), false, "");
+                        Scheduler.assign(oPC, () -> actionInteractObject(trashCan));
+                        setUseableFlag(trashCan, false);
                         break;
                 }
                 break;
@@ -121,7 +131,7 @@ public class RestMenu extends DialogBase implements IDialogHandler {
         PlayerEntity playerEntity = playerRepo.GetByPlayerID(pcGO.getUUID());
         Integer totalSkillCount = skillRepo.GetPCTotalSkillCount(pcGO.getUUID());
 
-        String header = ColorToken.Green() + "Name: " + ColorToken.End() + NWScript.getName(oPC, false) + "\n\n";
+        String header = ColorToken.Green() + "Name: " + ColorToken.End() + getName(oPC, false) + "\n\n";
         header += ColorToken.Green() + "Skill Points: " + ColorToken.End() + totalSkillCount + " / " + SkillSystem.SkillCap + "\n";
         header += ColorToken.Green() + "Unallocated SP: " + ColorToken.End() + playerEntity.getUnallocatedSP() + "\n";
         header += ColorToken.Green() + "Hunger:   " + ColorToken.End() + MenuHelper.BuildBar(playerEntity.getCurrentHunger(), playerEntity.getMaxHunger(), 100) + "\n";
