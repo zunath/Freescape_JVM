@@ -23,14 +23,25 @@ public class OnOpened implements IScriptEventHandler {
     @Override
     public void runScript(NWObject point) {
 
+        final int chanceToFullyHarvest = 50;
+        boolean alwaysDestroys = getLocalInt(point, "FORAGE_POINT_ALWAYS_DESTROYS") == 1;
+
+
         NWObject oPC = getLastOpenedBy();
-        boolean hasBeenSearched = getLocalInt(point, "FORAGE_POINT_HAS_BEEN_SEARCHED") == 1;
+        boolean hasBeenSearched = getLocalInt(point, "FORAGE_POINT_FULLY_HARVESTED") == 1;
         if(hasBeenSearched)
         {
-            sendMessageToPC(oPC, "Someone has already searched this...");
+            sendMessageToPC(oPC, "There's nothing left to harvest here...");
             return;
         }
 
+        // Not fully harvested but the timer hasn't counted down yet.
+        int refillTick = getLocalInt(point, "FORAGE_POINT_REFILL_TICKS");
+        if(refillTick > 0)
+        {
+            sendMessageToPC(oPC, "You couldn't find anything new here. Check back later...");
+            return;
+        }
 
         if(!getIsPC(oPC) || getIsDM(oPC) || getIsDMPossessed(oPC)) return;
         PCSkillEntity pcSkill = SkillSystem.GetPCSkill(oPC, SkillID.Forage);
@@ -93,7 +104,18 @@ public class OnOpened implements IScriptEventHandler {
 
         FoodSystem.DecreaseHungerLevel(oPC, 1);
 
-        setLocalInt(point, "FORAGE_POINT_HAS_BEEN_SEARCHED", 1);
+        // Chance to destroy the forage point.
+        if(alwaysDestroys || ThreadLocalRandom.current().nextInt(100) + 1 <= chanceToFullyHarvest)
+        {
+            setLocalInt(point, "FORAGE_POINT_FULLY_HARVESTED", 1);
+            sendMessageToPC(oPC, "This resource has been fully harvested...");
+        }
+        // Otherwise the forage point will be refilled in 10-20 minutes.
+        else
+        {
+            setLocalInt(point, "FORAGE_POINT_REFILL_TICKS", 100 + ThreadLocalRandom.current().nextInt(100));
+        }
+
         setLocalInt(point, "FORAGE_POINT_DESPAWN_TICKS", 30);
     }
 
