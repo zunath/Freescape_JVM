@@ -1,6 +1,7 @@
 package Placeable.ForagePoint;
 
 import Common.IScriptEventHandler;
+import GameSystems.FarmingSystem;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.constants.ObjectType;
 
@@ -22,6 +23,7 @@ public class OnClosed implements IScriptEventHandler {
             }
 
             destroyObject(point, 0.0f);
+            FarmingSystem.RemoveGrowingPlant(point);
         }
     }
 }

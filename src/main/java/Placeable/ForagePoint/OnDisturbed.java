@@ -1,6 +1,7 @@
 package Placeable.ForagePoint;
 
 import Common.IScriptEventHandler;
+import GameSystems.FarmingSystem;
 import Helper.ItemHelper;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.constants.InventoryDisturbType;
@@ -31,6 +32,7 @@ public class OnDisturbed implements IScriptEventHandler {
                 }
 
                 destroyObject(point, 0.0f);
+                FarmingSystem.RemoveGrowingPlant(point);
             }
         }
     }

@@ -1,10 +1,7 @@
 package Event.Module;
 
 import Common.IScriptEventHandler;
-import GameSystems.AreaInstanceSystem;
-import GameSystems.DeathSystem;
-import GameSystems.ObjectProcessingSystem;
-import GameSystems.StructureSystem;
+import GameSystems.*;
 import NWNX.EventType;
 import NWNX.NWNX_Chat;
 import NWNX.NWNX_Events;
@@ -27,6 +24,7 @@ public class OnLoad implements IScriptEventHandler {
 		StructureSystem.OnModuleLoad();
 		AreaInstanceSystem.OnModuleLoad();
 		ObjectProcessingSystem.OnModuleLoad();
+		FarmingSystem.OnModuleLoad();
 	}
 
 	private void AddAreaEventHandlers()

@@ -73,6 +73,7 @@ public class DataAccess {
         _configuration.addAnnotatedClass(DMRoleEntity.class);
         _configuration.addAnnotatedClass(DatabaseRepository.class);
         _configuration.addAnnotatedClass(FameRegionEntity.class);
+        _configuration.addAnnotatedClass(GrowingPlantEntity.class);
         _configuration.addAnnotatedClass(ItemEntity.class);
         _configuration.addAnnotatedClass(ItemTypeEntity.class);
         _configuration.addAnnotatedClass(KeyItemCategoryEntity.class);
@@ -106,6 +107,7 @@ public class DataAccess {
         _configuration.addAnnotatedClass(PerkExecutionTypeID.class);
         _configuration.addAnnotatedClass(PerkLevelEntity.class);
         _configuration.addAnnotatedClass(PerkLevelSkillRequirementEntity.class);
+        _configuration.addAnnotatedClass(PlantEntity.class);
         _configuration.addAnnotatedClass(PlayerEntity.class);
         _configuration.addAnnotatedClass(QuestEntity.class);
         _configuration.addAnnotatedClass(QuestKillTargetListEntity.class);
