@@ -4,6 +4,7 @@ import Entities.PlayerEntity;
 import GameObject.PlayerGO;
 import Common.IScriptEventHandler;
 import Data.Repository.PlayerRepository;
+import GameSystems.DeathSystem;
 import GameSystems.KeyItemSystem;
 import GameSystems.MigrationSystem;
 import org.nwnx.nwnx2.jvm.*;
@@ -85,6 +86,11 @@ public class OnEnter implements IScriptEventHandler {
             entity.setLocationOrientation(NWScript.getFacing(oPC));
 
             repo.save(entity);
+
+            if(entity.getRespawnAreaTag().equals(""))
+            {
+                DeathSystem.BindSoul(oPC, false);
+            }
         }
     }
 

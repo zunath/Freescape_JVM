@@ -169,7 +169,7 @@ public class DeathSystem {
         }
     }
 
-    public static void BindSoul(NWObject oPC)
+    public static void BindSoul(NWObject oPC, boolean showMessage)
     {
         if(!NWScript.getIsPC(oPC) || NWScript.getIsDM(oPC)) return;
 
@@ -189,7 +189,10 @@ public class DeathSystem {
 
         repo.save(entity);
 
-        NWScript.floatingTextStringOnCreature("Your soul has been bound to this location.", oPC, false);
+        if(showMessage)
+        {
+            NWScript.floatingTextStringOnCreature("Your soul has been bound to this location.", oPC, false);
+        }
     }
 
     public static void RespawnPlayer(NWObject oPC)
