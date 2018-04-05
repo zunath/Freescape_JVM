@@ -1,7 +1,6 @@
 package Entities;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 import java.util.Date;
 
 @Entity
@@ -40,6 +39,15 @@ public class GrowingPlantEntity {
 
     @Column(name = "DateCreated")
     private Date dateCreated;
+
+    @Column(name = "TotalTicks")
+    private int totalTicks;
+
+    @Column(name = "WaterStatus")
+    private int waterStatus;
+
+    @Column(name = "LongevityBonus")
+    private int longevityBonus;
 
     public int getGrowingPlantID() {
         return growingPlantID;
@@ -119,5 +127,29 @@ public class GrowingPlantEntity {
 
     public void setDateCreated(Date dateCreated) {
         this.dateCreated = dateCreated;
+    }
+
+    public int getTotalTicks() {
+        return totalTicks;
+    }
+
+    public void setTotalTicks(int totalTicks) {
+        this.totalTicks = totalTicks;
+    }
+
+    public int getWaterStatus() {
+        return waterStatus;
+    }
+
+    public void setWaterStatus(int waterStatus) {
+        this.waterStatus = waterStatus;
+    }
+
+    public int getLongevityBonus() {
+        return longevityBonus;
+    }
+
+    public void setLongevityBonus(int longevityBonus) {
+        this.longevityBonus = longevityBonus;
     }
 }

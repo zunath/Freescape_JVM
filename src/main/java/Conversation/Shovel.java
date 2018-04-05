@@ -4,6 +4,8 @@ import Dialog.DialogBase;
 import Dialog.DialogPage;
 import Dialog.IDialogHandler;
 import Dialog.PlayerDialog;
+import Enumerations.SkillID;
+import GameSystems.SkillSystem;
 import org.nwnx.nwnx2.jvm.NWLocation;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.constants.ObjectType;
@@ -59,6 +61,7 @@ public class Shovel extends DialogBase implements IDialogHandler {
 
         createObject(ObjectType.PLACEABLE, "farm_small_hole", targetLocation, false, "");
         floatingTextStringOnCreature("You dig a hole.", GetPC(), false);
+        SkillSystem.GiveSkillXP(GetPC(), SkillID.Farming, 50);
         EndConversation();
     }
 

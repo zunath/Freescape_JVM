@@ -19,6 +19,12 @@ public class PlantEntity  {
     @Column(name = "Resref")
     private String resref;
 
+    @Column(name = "WaterTicks")
+    private int waterTicks;
+
+    @Column(name = "Level")
+    private int level;
+
     public int getPlantID() {
         return plantID;
     }
@@ -49,5 +55,21 @@ public class PlantEntity  {
 
     public void setResref(String resref) {
         this.resref = resref;
+    }
+
+    public int getWaterTicks() {
+        return waterTicks;
+    }
+
+    public void setWaterTicks(int waterTicks) {
+        this.waterTicks = waterTicks;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
     }
 }

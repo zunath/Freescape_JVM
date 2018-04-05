@@ -1,6 +1,8 @@
 package Placeable.ForagePoint;
 
 import Common.IScriptEventHandler;
+import Data.Repository.FarmingRepository;
+import Entities.GrowingPlantEntity;
 import Entities.PCSkillEntity;
 import Enumerations.PerkID;
 import Enumerations.SkillID;
@@ -54,7 +56,7 @@ public class OnOpened implements IScriptEventHandler {
 
         if(delta > 8)
         {
-            sendMessageToPC(oPC, "You aren't skilled enough to forage through this.");
+            sendMessageToPC(oPC, "You aren't skilled enough to forage through this. (Required Level: " + (level-8) + ")");
             Scheduler.assign(oPC, () -> actionInteractObject(point));
             return;
         }
@@ -110,6 +112,16 @@ public class OnOpened implements IScriptEventHandler {
 
         // Chance to destroy the forage point.
         int chanceToFullyHarvest = baseChanceToFullyHarvest - (PerkSystem.GetPCPerkLevel(oPC, PerkID.CarefulForager) * 5);
+        int growingPlantID = getLocalInt(point, "GROWING_PLANT_ID");
+        if(growingPlantID > 0)
+        {
+            FarmingRepository farmRepo = new FarmingRepository();
+            GrowingPlantEntity growingPlant = farmRepo.GetGrowingPlantByID(growingPlantID);
+            chanceToFullyHarvest = chanceToFullyHarvest - (growingPlant.getLongevityBonus());
+        }
+
+        if(chanceToFullyHarvest <= 5) chanceToFullyHarvest = 5;
+
         if(alwaysDestroys || ThreadLocalRandom.current().nextInt(100) + 1 <= chanceToFullyHarvest)
         {
             setLocalInt(point, "FORAGE_POINT_FULLY_HARVESTED", 1);

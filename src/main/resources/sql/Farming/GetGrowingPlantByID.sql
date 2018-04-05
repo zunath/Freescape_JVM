@@ -9,6 +9,8 @@ SELECT gp.GrowingPlantID ,
        gp.LocationZ ,
        gp.LocationOrientation ,
        gp.DateCreated ,
-       gp.IsActive
+       gp.IsActive,
+       gp.TotalTicks,
+       gp.WaterStatus
 FROM dbo.GrowingPlants gp
 WHERE gp.GrowingPlantID = :growingPlantID

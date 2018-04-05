@@ -17,6 +17,19 @@ public class OnHeartbeat implements IScriptEventHandler {
         FarmingRepository farmRepo = new FarmingRepository();
         GrowingPlantEntity growingPlant = farmRepo.GetGrowingPlantByID(growingPlantID);
         growingPlant.setRemainingTicks(growingPlant.getRemainingTicks()-1);
+        growingPlant.setTotalTicks(growingPlant.getTotalTicks() + 1);
+
+        int waterTicks = growingPlant.getPlant().getWaterTicks();
+        if(waterTicks > 0 && growingPlant.getTotalTicks() % waterTicks == 0)
+        {
+            int maxWaterStatus = growingPlant.getPlant().getBaseTicks() / growingPlant.getPlant().getWaterTicks();
+
+            if(growingPlant.getWaterStatus() < maxWaterStatus)
+            {
+                growingPlant.setWaterStatus(growingPlant.getWaterStatus() + 1);
+                growingPlant.setRemainingTicks(growingPlant.getRemainingTicks() * growingPlant.getWaterStatus());
+            }
+        }
 
         if(growingPlant.getRemainingTicks() <= 0)
         {

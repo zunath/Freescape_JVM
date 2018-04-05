@@ -24,6 +24,6 @@ public class SkillID {
     public static int AlterationMagic = 20;
     public static int SummoningMagic = 21;
     public static int Woodworking = 22;
-    public static int Survival = 23;
+    public static int Farming = 23;
     public static int Forage = 24;
 }
