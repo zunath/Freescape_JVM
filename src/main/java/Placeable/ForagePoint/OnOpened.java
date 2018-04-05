@@ -23,7 +23,7 @@ public class OnOpened implements IScriptEventHandler {
     @Override
     public void runScript(NWObject point) {
 
-        final int chanceToFullyHarvest = 50;
+        final int baseChanceToFullyHarvest = 50;
         boolean alwaysDestroys = getLocalInt(point, "FORAGE_POINT_ALWAYS_DESTROYS") == 1;
 
 
@@ -107,7 +107,9 @@ public class OnOpened implements IScriptEventHandler {
             FoodSystem.DecreaseHungerLevel(oPC, 1);
         }
 
+
         // Chance to destroy the forage point.
+        int chanceToFullyHarvest = baseChanceToFullyHarvest - (PerkSystem.GetPCPerkLevel(oPC, PerkID.CarefulForager) * 5);
         if(alwaysDestroys || ThreadLocalRandom.current().nextInt(100) + 1 <= chanceToFullyHarvest)
         {
             setLocalInt(point, "FORAGE_POINT_FULLY_HARVESTED", 1);

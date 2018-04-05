@@ -90,4 +90,5 @@ public class PerkID {
     public static final int ArmorBlueprints = 87;
     public static final int ComponentBlueprints = 88;
     public static final int SeedSearcher = 89;
+    public static final int CarefulForager = 90;
 }
