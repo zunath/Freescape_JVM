@@ -40,6 +40,14 @@ public class PlayerInitializationSystem {
             NWObject knife = createItemOnObject("survival_knife", oPC, 1, "");
             setName(knife, getName(oPC, false) + "'s Survival Knife");
             setItemCursedFlag(knife, true);
+            DurabilitySystem.SetItemMaxDurability(knife, 5);
+            DurabilitySystem.SetItemDurability(knife, 5);
+
+            NWObject hammer = createItemOnObject("basic_hammer", oPC, 1, "");
+            setName(hammer, getName(oPC, false) + "'s Hammer");
+            setItemCursedFlag(hammer, true);
+            DurabilitySystem.SetItemMaxDurability(hammer, 5);
+            DurabilitySystem.SetItemDurability(hammer, 5);
 
             NWObject darts = createItemOnObject("nw_wthdt001", oPC, 50, ""); // 50x Dart
             setName(darts, "Starting Darts");
