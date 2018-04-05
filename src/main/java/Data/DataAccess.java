@@ -8,9 +8,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
-import org.ini4j.Ini;
-
-import java.io.File;
 
 public class DataAccess {
     private static String _host;
@@ -24,11 +21,10 @@ public class DataAccess {
     {
         try
         {
-            Ini ini = new Ini(new File("/nwn/home/jvm/database.ini"));
-            _host = ini.get("JavaDB", "server");
-            _username = ini.get("JavaDB", "user");
-            _password = ini.get("JavaDB", "pass");
-            _schema = ini.get("JavaDB", "db");
+            _host = System.getenv("SQL_SERVER_IP_ADDRESS");
+            _username = System.getenv("SQL_SERVER_USERNAME");
+            _password = System.getenv("SQL_SERVER_PASSWORD");
+            _schema = System.getenv("SQL_SERVER_DATABASE");
         }
         catch (Exception ex)
         {
