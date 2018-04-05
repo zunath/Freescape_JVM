@@ -1,16 +1,16 @@
 package Conversation;
 
+import Conversation.ViewModels.ConstructionSiteMenuModel;
+import Data.Repository.StructureRepository;
 import Dialog.*;
 import Entities.*;
 import Enumerations.SkillID;
 import Enumerations.StructurePermission;
 import GameObject.PlayerGO;
-import GameSystems.SkillSystem;
-import Helper.ColorToken;
-import Conversation.ViewModels.ConstructionSiteMenuModel;
-import Data.Repository.StructureRepository;
 import GameSystems.PlayerAuthorizationSystem;
+import GameSystems.SkillSystem;
 import GameSystems.StructureSystem;
+import Helper.ColorToken;
 import Helper.ItemHelper;
 import org.nwnx.nwnx2.jvm.NWLocation;
 import org.nwnx.nwnx2.jvm.NWObject;
@@ -19,7 +19,6 @@ import org.nwnx.nwnx2.jvm.Scheduler;
 import org.nwnx.nwnx2.jvm.constants.ObjectType;
 
 import java.util.ArrayList;
-import java.util.List;
 
 @SuppressWarnings("unused")
 public class ConstructionSite extends DialogBase implements IDialogHandler {
@@ -28,7 +27,7 @@ public class ConstructionSite extends DialogBase implements IDialogHandler {
         PlayerDialog dialog = new PlayerDialog("MainPage");
         DialogPage mainPage = new DialogPage("<SET LATER>");
         DialogPage blueprintCategoryPage = new DialogPage(
-                "Please select a blueprint category."
+                "Please select a blueprint category. New blueprints will unlock after purchasing the prerequisite Perk. Perks can be purchased in your rest menu (press R)."
         );
 
         DialogPage blueprintDetailsPage = new DialogPage(
