@@ -219,8 +219,9 @@ public class ConstructionSite extends DialogBase implements IDialogHandler {
                 header += ColorToken.Green() + "Type: " + ColorToken.End() + "Special\n";
             }
 
-            header += ColorToken.Green() + "Level: " + ColorToken.End() + entity.getBlueprint().getLevel() + "\n\n";
+            header += ColorToken.Green() + "Level: " + ColorToken.End() + entity.getBlueprint().getLevel() + "\n";
 
+            header += ColorToken.Green() + "Required Tool Level: " + ColorToken.End() + entity.getBlueprint().getCraftTierLevel() + "\n\n";
 
 
             if(entity.getBlueprint().getMaxBuildDistance() > 0.0f)

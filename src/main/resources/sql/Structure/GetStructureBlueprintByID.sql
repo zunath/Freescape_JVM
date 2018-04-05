@@ -16,6 +16,7 @@ SELECT sb.StructureBlueprintID ,
        sb.RequiredPerkLevel ,
        sb.GivesSkillXP,
        sb.IsVanity,
-       sb.IsSpecial
+       sb.IsSpecial,
+       sb.CraftTierLevel
 FROM dbo.StructureBlueprints sb
 WHERE sb.StructureBlueprintID = :structureBlueprintID

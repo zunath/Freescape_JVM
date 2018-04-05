@@ -41,6 +41,7 @@ public class OnAttacked implements IScriptEventHandler {
 
         NWObject weapon = NWScript.getLastWeaponUsed(oPC);
         int weaponType = NWScript.getBaseItemType(weapon);
+        ItemGO weaponGO = new ItemGO(weapon);
 
         if(weaponType != BaseItem.LIGHTHAMMER)
         {
@@ -62,8 +63,18 @@ public class OnAttacked implements IScriptEventHandler {
             return;
         }
 
+
         StructureRepository repo = new StructureRepository();
         ConstructionSiteEntity entity = repo.GetConstructionSiteByID(constructionSiteID);
+
+
+        if(weaponGO.getCraftTierLevel() < entity.getBlueprint().getCraftTierLevel())
+        {
+            NWScript.floatingTextStringOnCreature("Your hammer cannot be used with this blueprint. (Required Tool Level: " + entity.getBlueprint().getCraftTierLevel() + ")", oPC, false);
+            Scheduler.assign(oPC, () -> NWScript.clearAllActions(false));
+            return;
+        }
+
         int rank = SkillSystem.GetPCSkill(oPC, SkillID.Construction).getRank();
         int mangleChance = CalculateMangleChance(oPC, entity.getBlueprint().getLevel(), rank);
         boolean isMangle = ThreadLocalRandom.current().nextInt(100)+1 <= mangleChance;

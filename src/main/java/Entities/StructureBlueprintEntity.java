@@ -70,6 +70,9 @@ public class StructureBlueprintEntity {
     @Fetch(value = FetchMode.SUBSELECT)
     private List<StructureComponentEntity> components;
 
+    @Column(name = "CraftTierLevel")
+    private int craftTierLevel;
+
     public int getStructureBlueprintID() {
         return structureBlueprintID;
     }
@@ -228,5 +231,13 @@ public class StructureBlueprintEntity {
 
     public void setSpecial(boolean special) {
         isSpecial = special;
+    }
+
+    public int getCraftTierLevel() {
+        return craftTierLevel;
+    }
+
+    public void setCraftTierLevel(int craftTierLevel) {
+        this.craftTierLevel = craftTierLevel;
     }
 }
