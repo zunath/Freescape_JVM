@@ -102,7 +102,10 @@ public class OnOpened implements IScriptEventHandler {
             dc += ThreadLocalRandom.current().nextInt(3) + 1;
         }
 
-        FoodSystem.DecreaseHungerLevel(oPC, 1);
+        if(ThreadLocalRandom.current().nextInt(100) + 1 <= 3)
+        {
+            FoodSystem.DecreaseHungerLevel(oPC, 1);
+        }
 
         // Chance to destroy the forage point.
         if(alwaysDestroys || ThreadLocalRandom.current().nextInt(100) + 1 <= chanceToFullyHarvest)

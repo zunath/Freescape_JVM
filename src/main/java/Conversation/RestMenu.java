@@ -136,7 +136,6 @@ public class RestMenu extends DialogBase implements IDialogHandler {
         header += ColorToken.Green() + "Unallocated SP: " + ColorToken.End() + playerEntity.getUnallocatedSP() + "\n";
         header += ColorToken.Green() + "Hunger:   " + ColorToken.End() + MenuHelper.BuildBar(playerEntity.getCurrentHunger(), playerEntity.getMaxHunger(), 100) + "\n";
         header += ColorToken.Green() + "Mana:      " + ColorToken.End() + MenuHelper.BuildBar(playerEntity.getCurrentMana(), playerEntity.getMaxMana(), 100, ColorToken.Custom(32, 223, 219)) + "\n";
-        header += ColorToken.Green() + "Revival Stones: " + ColorToken.End() + playerEntity.getRevivalStoneCount() + "\n";
 
         return header;
     }

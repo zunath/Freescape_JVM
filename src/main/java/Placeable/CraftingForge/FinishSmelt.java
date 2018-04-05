@@ -55,6 +55,9 @@ public class FinishSmelt implements IScriptEventHandler {
         int xp = (int)SkillSystem.CalculateSkillAdjustedXP(100, level, pcSkill.getRank());
         SkillSystem.GiveSkillXP(pc, SkillID.Metalworking, xp);
 
-        FoodSystem.DecreaseHungerLevel(pc, 1);
+        if(ThreadLocalRandom.current().nextInt(100) + 1 <= 3)
+        {
+            FoodSystem.DecreaseHungerLevel(pc, 1);
+        }
     }
 }

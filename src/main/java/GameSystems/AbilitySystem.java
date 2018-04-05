@@ -27,6 +27,7 @@ import org.nwnx.nwnx2.jvm.constants.*;
 
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class AbilitySystem {
 
@@ -212,7 +213,10 @@ public class AbilitySystem {
                 NWScript.sendMessageToPC(pc, ColorToken.Custom(32,223,219) + "Mana: " + pcEntity.getCurrentMana() + " / " + pcEntity.getMaxMana());
             }
 
-            FoodSystem.DecreaseHungerLevel(pc, 1);
+            if(ThreadLocalRandom.current().nextInt(100) + 1 <= 3)
+            {
+                FoodSystem.DecreaseHungerLevel(pc, 1);
+            }
             // Mark cooldown on category
             ApplyCooldown(pc, cooldown, perk);
 
