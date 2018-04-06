@@ -41,4 +41,8 @@ docker run --rm -it ^
 -e NWNX_JVM_INIT_LISTENER="Common/StartUp" ^
 -e NWNX_JVM_CLASSPATH="/nwn/home/jvm/org.nwnx.nwnx2.jvm.jar:/nwn/home/jvm/Freescape.jar" ^
 -e NWNX_JVM_JVM_ARGUMENTS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8000" ^
+-e SQL_SERVER_IP_ADDRESS=127.0.0.1 ^
+-e SQL_SERVER_USERNAME=yourUsername ^
+-e SQL_SERVER_PASSWORD=yourPassword ^
+-e SQL_SERVER_DATABASE=czs-db ^
 nwnxee/nwserver:8164.java
