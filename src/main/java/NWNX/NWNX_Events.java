@@ -7,6 +7,7 @@ import org.nwnx.nwnx2.jvm.NWScript;
 import static NWNX.NWNX_Core.*;
 
 public class NWNX_Events {
+
     // Scripts can subscribe to events.
     // Some events are dispatched via the NWNX plugin (see NWNX_EVENTS_EVENT_* constants).
     // Others can be signalled via script code (see NWNX_Events_SignalEvent).
@@ -38,7 +39,7 @@ public class NWNX_Events {
 
     // Retrieves the event data for the currently executing script.
     // THIS SHOULD ONLY BE CALLED FROM WITHIN AN EVENT HANDLER.
-    private static String GetEventDataString(String tag)
+    public static String GetEventDataString(String tag)
     {
         NWNX_PushArgumentString("NWNX_Events", "GET_EVENT_DATA", tag);
         NWNX_CallFunction("NWNX_Events", "GET_EVENT_DATA");
