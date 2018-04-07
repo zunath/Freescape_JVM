@@ -6,6 +6,7 @@ import Entities.*;
 import Enumerations.StructurePermission;
 import GameObject.PlayerGO;
 import Helper.ColorToken;
+import Helper.ItemHelper;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.nwnx.nwnx2.jvm.*;
@@ -662,6 +663,46 @@ public class StructureSystem {
         {
             return false;
         }
+    }
+
+    public static String BuildMenuHeader(int blueprintID)
+    {
+        StructureRepository repo = new StructureRepository();
+        StructureBlueprintEntity entity = repo.GetStructureBlueprintByID(blueprintID);
+        String header = ColorToken.Green() + "Blueprint Name: " + ColorToken.End() + entity.getName() + "\n";
+        header += ColorToken.Green() + "Level: " + ColorToken.End() + entity.getLevel() + "\n\n";
+
+        if(entity.getMaxBuildDistance() > 0.0f)
+        {
+            header += ColorToken.Green() + "Build Distance: " + ColorToken.End() + entity.getMaxBuildDistance() + " meters" + "\n";
+        }
+        if(entity.getVanityCount() > 0)
+        {
+            header += ColorToken.Green() + "Max # of Vanity Structures: " + ColorToken.End() + entity.getVanityCount() + "\n";
+        }
+        if(entity.getSpecialCount() > 0)
+        {
+            header += ColorToken.Green() + "Max # of Special Structures: " + ColorToken.End() + entity.getSpecialCount() + "\n";
+        }
+        if(entity.getItemStorageCount() > 0)
+        {
+            header += ColorToken.Green() + "Item Storage: " + ColorToken.End() + entity.getItemStorageCount() + " items" + "\n";
+        }
+
+        if(!entity.getDescription().equals(""))
+        {
+            header += ColorToken.Green() + "Description: " + ColorToken.End() + entity.getDescription() + "\n\n";
+        }
+        header += (ColorToken.Green() + "Resources Required: " + ColorToken.End() + "\n") + "\n";
+
+
+        for(StructureComponentEntity comp: entity.getComponents())
+        {
+            //noinspection StringConcatenationInLoop
+            header += comp.getQuantity() > 0 ? comp.getQuantity() + "x " + ItemHelper.GetNameByResref(comp.getResref()) + "\n" : "";
+        }
+
+        return header;
     }
 
 }

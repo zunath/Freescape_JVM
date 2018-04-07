@@ -60,6 +60,15 @@ public class StructureRepository {
         }
     }
 
+    public List<StructureCategoryEntity> GetStructureCategories(String uuid)
+    {
+        try(DataContext context = new DataContext())
+        {
+            return context.executeSQLList("Structure/GetStructureCategories", StructureCategoryEntity.class,
+                    new SqlParameter("playerID", uuid));
+        }
+    }
+
     public List<StructureCategoryEntity> GetStructureCategoriesByType(String uuid, boolean isTerritoryFlagCategory, boolean isVanity, boolean isSpecial)
     {
         try(DataContext context = new DataContext())
@@ -72,16 +81,25 @@ public class StructureRepository {
         }
     }
 
-    public List<StructureBlueprintEntity> GetStructuresByCategoryAndPlayerRank(String uuid, int structureCategoryID, int rank, boolean isVanity, boolean isSpecial)
+    public List<StructureBlueprintEntity> GetStructuresByCategoryAndType(String uuid, int structureCategoryID, boolean isVanity, boolean isSpecial)
     {
         try(DataContext context = new DataContext())
         {
-            return context.executeSQLList("Structure/GetStructuresByCategoryAndPlayerRank", StructureBlueprintEntity.class,
+            return context.executeSQLList("Structure/GetStructuresByCategoryAndType", StructureBlueprintEntity.class,
                     new SqlParameter("structureCategoryID", structureCategoryID),
-                    new SqlParameter("rank", rank),
                     new SqlParameter("playerID", uuid),
                     new SqlParameter("isVanity", isVanity),
                     new SqlParameter("isSpecial", isSpecial));
+        }
+    }
+
+    public List<StructureBlueprintEntity> GetStructuresForPCByCategory(String uuid, int structureCategoryID)
+    {
+        try(DataContext context = new DataContext())
+        {
+            return context.executeSQLList("Structure/GetStructuresForPCByCategory", StructureBlueprintEntity.class,
+                    new SqlParameter("structureCategoryID", structureCategoryID),
+                    new SqlParameter("playerID", uuid));
         }
     }
 

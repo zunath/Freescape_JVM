@@ -30,6 +30,7 @@ public class RestMenu extends DialogBase implements IDialogHandler {
                 ColorToken.Green() + "Open Overflow Inventory" + ColorToken.End(),
                 "View Skills",
                 "View Perks",
+                "View Blueprints",
                 "Dice Bag",
                 "Emote Menu",
                 "View Key Items",
@@ -73,8 +74,12 @@ public class RestMenu extends DialogBase implements IDialogHandler {
                     case 3:
                         SwitchConversation("ViewPerks");
                         break;
-                    // Dice Bag
+                    // View Blueprints
                     case 4:
+                        SwitchConversation("ViewBlueprints");
+                        break;
+                    // Dice Bag
+                    case 5:
                         setLocalObject(oPC, "dmfi_univ_target", oPC);
                         setLocalLocation(oPC, "dmfi_univ_location", getLocation(oPC));
                         setLocalString(oPC, "dmfi_univ_conv", "pc_dicebag");
@@ -84,7 +89,7 @@ public class RestMenu extends DialogBase implements IDialogHandler {
                         });
                         break;
                     // Emote Menu
-                    case 5:
+                    case 6:
                         setLocalObject(oPC, "dmfi_univ_target", oPC);
                         setLocalLocation(oPC, "dmfi_univ_location", getLocation(oPC));
                         setLocalString(oPC, "dmfi_univ_conv", "pc_emote");
@@ -94,19 +99,19 @@ public class RestMenu extends DialogBase implements IDialogHandler {
                         });
                         break;
                     // Key Item Categories Page
-                    case 6:
+                    case 7:
                         SwitchConversation("KeyItems");
                         break;
                     // Modify Clothes
-                    case 7:
+                    case 8:
                         Scheduler.assign(oPC, () -> actionStartConversation(oPC, "x0_skill_ctrap", true, false));
                         break;
                     // Character Management
-                    case 8:
+                    case 9:
                         SwitchConversation("CharacterManagement");
                         break;
                     // Open Trash Can (Destroy Items)
-                    case 9:
+                    case 10:
                         EndConversation();
                         NWObject trashCan = createObject(ObjectType.PLACEABLE, "reo_trash_can", getLocation(oPC), false, "");
                         Scheduler.assignNow(oPC, () -> actionInteractObject(trashCan));

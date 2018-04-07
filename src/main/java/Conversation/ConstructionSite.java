@@ -311,44 +311,8 @@ public class ConstructionSite extends DialogBase implements IDialogHandler {
     private void BuildBlueprintDetailsHeader()
     {
         ConstructionSiteMenuModel model = GetModel();
-        StructureRepository repo = new StructureRepository();
-        StructureBlueprintEntity entity = repo.GetStructureBlueprintByID(model.getBlueprintID());
-        String header = ColorToken.Green() + "Blueprint Name: " + ColorToken.End() + entity.getName() + "\n";
-        header += ColorToken.Green() + "Level: " + ColorToken.End() + entity.getLevel() + "\n\n";
-
-        if(entity.getMaxBuildDistance() > 0.0f)
-        {
-            header += ColorToken.Green() + "Build Distance: " + ColorToken.End() + entity.getMaxBuildDistance() + " meters" + "\n";
-        }
-        if(entity.getVanityCount() > 0)
-        {
-            header += ColorToken.Green() + "Max # of Vanity Structures: " + ColorToken.End() + entity.getVanityCount() + "\n";
-        }
-        if(entity.getSpecialCount() > 0)
-        {
-            header += ColorToken.Green() + "Max # of Special Structures: " + ColorToken.End() + entity.getSpecialCount() + "\n";
-        }
-        if(entity.getItemStorageCount() > 0)
-        {
-            header += ColorToken.Green() + "Item Storage: " + ColorToken.End() + entity.getItemStorageCount() + " items" + "\n";
-        }
-
-        if(!entity.getDescription().equals(""))
-        {
-            header += ColorToken.Green() + "Description: " + ColorToken.End() + entity.getDescription() + "\n\n";
-        }
-        header += (ColorToken.Green() + "Resources Required: " + ColorToken.End() + "\n") + "\n";
-
-
-        for(StructureComponentEntity comp: entity.getComponents())
-        {
-            //noinspection StringConcatenationInLoop
-            header += comp.getQuantity() > 0 ? comp.getQuantity() + "x " + ItemHelper.GetNameByResref(comp.getResref()) + "\n" : "";
-        }
-
-
+        String header = StructureSystem.BuildMenuHeader(model.getBlueprintID());
         SetPageHeader("BlueprintDetailsPage", header);
-
     }
 
     private void LoadCategoryPageResponses()
@@ -397,14 +361,14 @@ public class ConstructionSite extends DialogBase implements IDialogHandler {
         int vanityCount = repo.GetNumberOfStructuresInTerritory(model.getFlagID(), true, false);
         int specialCount = repo.GetNumberOfStructuresInTerritory(model.getFlagID(), false, true);
 
-        ArrayList<StructureBlueprintEntity> blueprints = new ArrayList<>(repo.GetStructuresByCategoryAndPlayerRank(pcGO.getUUID(), model.getCategoryID(), rank, false, false)); // Territory markers
+        ArrayList<StructureBlueprintEntity> blueprints = new ArrayList<>(repo.GetStructuresByCategoryAndType(pcGO.getUUID(), model.getCategoryID(), false, false)); // Territory markers
         if(flag != null && vanityCount < flag.getBlueprint().getVanityCount())
         {
-            blueprints.addAll(repo.GetStructuresByCategoryAndPlayerRank(pcGO.getUUID(), model.getCategoryID(), rank, true, false)); // Vanity
+            blueprints.addAll(repo.GetStructuresByCategoryAndType(pcGO.getUUID(), model.getCategoryID(), true, false)); // Vanity
         }
         if(flag != null && specialCount < flag.getBlueprint().getSpecialCount())
         {
-            blueprints.addAll(repo.GetStructuresByCategoryAndPlayerRank(pcGO.getUUID(), model.getCategoryID(), rank, false, true)); // Special
+            blueprints.addAll(repo.GetStructuresByCategoryAndType(pcGO.getUUID(), model.getCategoryID(), false, true)); // Special
         }
 
         for(StructureBlueprintEntity entity : blueprints)

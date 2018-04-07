@@ -1,4 +1,6 @@
 
+DECLARE @rank AS INT = (SELECT Rank FROM dbo.PCSkills WHERE PlayerID = :playerID AND SkillID = 15) + 2
+
 SELECT sb.StructureBlueprintID ,
        sb.StructureCategoryID ,
        sb.Name ,
@@ -19,10 +21,8 @@ SELECT sb.StructureBlueprintID ,
        sb.IsSpecial,
        sb.CraftTierLevel
 FROM dbo.StructureBlueprints sb
-OUTER APPLY dbo.fn_GetPlayerEffectivePerkLevel(:playerID, sb.PerkID, :rank + 2) pcp
+OUTER APPLY dbo.fn_GetPlayerEffectivePerkLevel(:playerID, sb.PerkID, @rank) pcp
 WHERE sb.IsActive = 1
 	AND sb.StructureCategoryID = :structureCategoryID
-	AND (sb.Level <= :rank + 2)
+	AND (sb.Level <= @rank)
 	AND ISNULL(pcp.Level, 0) >= sb.RequiredPerkLevel
-	AND sb.IsVanity = :isVanity
-	AND sb.IsSpecial = :isSpecial

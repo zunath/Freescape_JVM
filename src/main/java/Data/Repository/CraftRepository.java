@@ -38,6 +38,14 @@ public class CraftRepository {
         }
     }
 
+    public List<CraftBlueprintCategoryEntity> GetCategoriesAvailableToPC(String uuid)
+    {
+        try(DataContext context = new DataContext()) {
+            return context.executeSQLList("Craft/GetCategoriesAvailableToPC", CraftBlueprintCategoryEntity.class,
+                    new SqlParameter("playerID", uuid));
+        }
+    }
+
     public List<CraftBlueprintEntity> GetPCBlueprintsByDeviceAndCategoryID(String uuid, int deviceID, int categoryID)
     {
         try(DataContext context = new DataContext())
@@ -45,6 +53,16 @@ public class CraftRepository {
             return context.executeSQLList("Craft/GetPCBlueprintsByDeviceAndCategoryID", CraftBlueprintEntity.class,
                     new SqlParameter("playerID", uuid),
                     new SqlParameter("deviceID", deviceID),
+                    new SqlParameter("categoryID", categoryID));
+        }
+    }
+
+    public List<CraftBlueprintEntity> GetPCBlueprintsByCategoryID(String uuid, int categoryID)
+    {
+        try(DataContext context = new DataContext())
+        {
+            return context.executeSQLList("Craft/GetPCBlueprintsByCategoryID", CraftBlueprintEntity.class,
+                    new SqlParameter("playerID", uuid),
                     new SqlParameter("categoryID", categoryID));
         }
     }

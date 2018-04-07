@@ -58,7 +58,7 @@
     <file url="file://$PROJECT_DIR$/src/main/resources/sql/Structure/GetPermissionsByPlayerID.sql" />
     <file url="file://$PROJECT_DIR$/src/main/resources/sql/Structure/GetStructureBlueprintByID.sql" />
     <file url="file://$PROJECT_DIR$/src/main/resources/sql/Structure/GetStructureCategoriesByType.sql" />
-    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Structure/GetStructuresByCategoryAndPlayerRank.sql" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/Structure/GetStructuresByCategoryAndType.sql" />
     <file url="file://$PROJECT_DIR$/src/main/resources/sql/Structure/GetTerritoryPermissionByID.sql" />
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="false" project-jdk-name="1.8" project-jdk-type="JavaSDK">
