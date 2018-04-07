@@ -23,14 +23,14 @@ public class OnDeath implements IScriptEventHandler {
 
         if(!resourceSeedResref.equals(""))
         {
-            createObject(ObjectType.ITEM, resourceItemResref, location, false, "");
+            createObject(ObjectType.ITEM, resourceSeedResref, location, false, "");
 
             int perkLevel = PerkSystem.GetPCPerkLevel(oPC, PerkID.SeedSearcher);
             if(perkLevel <= 0) return;
 
             if(ThreadLocalRandom.current().nextInt(100) + 1 <= perkLevel * 10)
             {
-                createObject(ObjectType.ITEM, resourceItemResref, location, false, "");
+                createObject(ObjectType.ITEM, resourceSeedResref, location, false, "");
             }
         }
     }
