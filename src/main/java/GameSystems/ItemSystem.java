@@ -31,6 +31,10 @@ public class ItemSystem {
 
     public static void OnItemAcquired()
     {
+        NWObject oPC = getModuleItemAcquiredBy();
+
+        if(!getIsPC(oPC)) return;
+
         NWObject item = getModuleItemAcquired();
         ApplyItemFeatures(item);
     }
@@ -309,8 +313,8 @@ public class ItemSystem {
     private static void ApplyItemFeatures(NWObject item)
     {
         ItemEntity entity = GetItemEntity(item);
-        if(entity == null) return;
 
+        if(entity == null) return;
         ItemGO itemGO = new ItemGO(item);
 
         itemGO.setAC(entity.getAc());
@@ -330,8 +334,6 @@ public class ItemSystem {
         if(entity.getDurabilityPoints() > 0)
         {
             DurabilitySystem.SetItemMaxDurability(item, entity.getDurabilityPoints());
-
         }
-
     }
 }

@@ -4,7 +4,7 @@ import Common.Constants;
 import Data.Repository.PlayerRepository;
 import Entities.PlayerEntity;
 import GameObject.PlayerGO;
-import NWNX.NWNX_Creature;
+import NWNX.*;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.NWScript;
 import org.nwnx.nwnx2.jvm.Scheduler;
@@ -89,6 +89,8 @@ public class PlayerInitializationSystem {
 
             SkillSystem.ApplyStatChanges(oPC, null);
             Scheduler.delay(oPC, 1000, () -> applyEffectToObject(DurationType.INSTANT, effectHeal(999), oPC, 0.0f));
+
+            InitializeHotBar(oPC);
         }
     }
 
@@ -98,5 +100,33 @@ public class PlayerInitializationSystem {
         NWObject oDatabase = pcGO.GetDatabaseItem();
         boolean missingStringID = getLocalString(oDatabase, Constants.PCIDNumberVariable).equals("");
         return !missingStringID && getIsObjectValid(oDatabase);
+    }
+
+    private static void InitializeHotBar(NWObject oPC)
+    {
+        QuickBarSlot slot = NWNX_Player_QuickBarSlot.UseItem(getItemPossessedBy(oPC, "open_rest_menu"), 0);
+        NWNX_Player.SetQuickBarSlot(oPC, 0, slot);
+
+        slot = NWNX_Player_QuickBarSlot.UseItem(getItemPossessedBy(oPC, "database"), 0);
+        NWNX_Player.SetQuickBarSlot(oPC, 1, slot);
+
+        slot = NWNX_Player_QuickBarSlot.EquipItem(getItemPossessedBy(oPC, "survival_knife"), NWObject.INVALID);
+        NWNX_Player.SetQuickBarSlot(oPC, 2, slot);
+
+        slot = NWNX_Player_QuickBarSlot.EquipItem(getItemPossessedBy(oPC, "basic_hammer"), NWObject.INVALID);
+        NWNX_Player.SetQuickBarSlot(oPC, 3, slot);
+
+        slot = NWNX_Player_QuickBarSlot.EquipItem(getItemPossessedBy(oPC, "nw_wthdt001"), NWObject.INVALID);
+        NWNX_Player.SetQuickBarSlot(oPC, 4, slot);
+
+
+        QuickBarSlot empty = NWNX_Player_QuickBarSlot.Empty(QuickBarSlotType.EMPTY);
+        NWNX_Player.SetQuickBarSlot(oPC, 5, empty);
+        NWNX_Player.SetQuickBarSlot(oPC, 6, empty);
+        NWNX_Player.SetQuickBarSlot(oPC, 7, empty);
+        NWNX_Player.SetQuickBarSlot(oPC, 8, empty);
+        NWNX_Player.SetQuickBarSlot(oPC, 9, empty);
+        NWNX_Player.SetQuickBarSlot(oPC, 10, empty);
+        NWNX_Player.SetQuickBarSlot(oPC, 11, empty);
     }
 }
