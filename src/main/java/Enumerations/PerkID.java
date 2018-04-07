@@ -93,4 +93,6 @@ public class PerkID {
     public static final int CarefulForager = 90;
     public static final int FarmingEfficiency = 91;
     public static final int ExpertFarmer = 92;
+    public static final int OreBagger = 93;
+    public static final int WoodBagger = 94;
 }

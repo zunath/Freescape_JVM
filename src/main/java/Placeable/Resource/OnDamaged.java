@@ -48,6 +48,7 @@ public class OnDamaged implements IScriptEventHandler {
         int durabilityChanceReduction = 0;
         int hasteChance;
         int lucky = PerkSystem.GetPCPerkLevel(oPC, PerkID.Lucky);
+        boolean hasBaggerPerk;
 
         if(activityID == 1) // 1 = Logging
         {
@@ -62,6 +63,7 @@ public class OnDamaged implements IScriptEventHandler {
             perkChanceBonus = PerkSystem.GetPCPerkLevel(oPC, PerkID.Lumberjack) * 5 + lucky;
             secondResourceChance = PerkSystem.GetPCPerkLevel(oPC, PerkID.PrecisionLogging) * 10;
             hasteChance = PerkSystem.GetPCPerkLevel(oPC, PerkID.SpeedyLogger) * 10 + lucky;
+            hasBaggerPerk = PerkSystem.GetPCPerkLevel(oPC, PerkID.WoodBagger) > 0;
         }
         else if(activityID == 2) // Mining
         {
@@ -75,6 +77,7 @@ public class OnDamaged implements IScriptEventHandler {
             perkChanceBonus = PerkSystem.GetPCPerkLevel(oPC, PerkID.Miner) * 5 + lucky;
             secondResourceChance = PerkSystem.GetPCPerkLevel(oPC, PerkID.PrecisionMining) * 10;
             hasteChance = PerkSystem.GetPCPerkLevel(oPC, PerkID.SpeedyMiner) * 10 + lucky;
+            hasBaggerPerk = PerkSystem.GetPCPerkLevel(oPC, PerkID.OreBagger) > 0;
         }
         else return;
         PCSkillEntity skill = skillRepo.GetPCSkillByID(pcGO.getUUID(), skillID);
@@ -128,7 +131,15 @@ public class OnDamaged implements IScriptEventHandler {
         }
         else if(ThreadLocalRandom.current().nextInt(100) <= chance || givePityItem)
         {
-            createObject(ObjectType.ITEM, resourceItemResref, location, false, "");
+            if(hasBaggerPerk)
+            {
+                createItemOnObject(resourceItemResref, oPC, 1, "");
+            }
+            else
+            {
+                createObject(ObjectType.ITEM, resourceItemResref, location, false, "");
+            }
+
 
             floatingTextStringOnCreature("You break off some " + resourceName + ".", oPC, false);
             setLocalInt(objSelf, "RESOURCE_COUNT", --resourceCount);
@@ -137,7 +148,15 @@ public class OnDamaged implements IScriptEventHandler {
             if(ThreadLocalRandom.current().nextInt(100) + 1 <= secondResourceChance)
             {
                 floatingTextStringOnCreature("You break off a second piece.", oPC, false);
-                createObject(ObjectType.ITEM, resourceItemResref, location, false, "");
+
+                if(hasBaggerPerk)
+                {
+                    createItemOnObject(resourceItemResref, oPC, 1, "");
+                }
+                else
+                {
+                    createObject(ObjectType.ITEM, resourceItemResref, location, false, "");
+                }
             }
 
             float deltaModifier = CalculateXPDeltaModifier(difficultyRating, skill.getRank());
