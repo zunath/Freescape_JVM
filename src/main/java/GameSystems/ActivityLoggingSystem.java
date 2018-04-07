@@ -82,25 +82,25 @@ public class ActivityLoggingSystem {
     {
         switch (nwnxChatChannelID)
         {
-            case ChatChannel.NWNX_CHAT_CHANNEL_PLAYER_TALK:
-            case ChatChannel.NWNX_CHAT_CHANNEL_DM_TALK:
+            case ChatChannel.PLAYER_TALK:
+            case ChatChannel.DM_TALK:
                 return 3;
-            case ChatChannel.NWNX_CHAT_CHANNEL_PLAYER_SHOUT:
-            case ChatChannel.NWNX_CHAT_CHANNEL_DM_SHOUT:
+            case ChatChannel.PLAYER_SHOUT:
+            case ChatChannel.DM_SHOUT:
                 return 1;
-            case ChatChannel.NWNX_CHAT_CHANNEL_PLAYER_WHISPER:
-            case ChatChannel.NWNX_CHAT_CHANNEL_DM_WHISPER:
+            case ChatChannel.PLAYER_WHISPER:
+            case ChatChannel.DM_WHISPER:
                 return 2;
-            case ChatChannel.NWNX_CHAT_CHANNEL_PLAYER_TELL:
-            case ChatChannel.NWNX_CHAT_CHANNEL_DM_TELL:
+            case ChatChannel.PLAYER_TELL:
+            case ChatChannel.DM_TELL:
                 return 6;
-            case ChatChannel.NWNX_CHAT_CHANNEL_SERVER_MSG:
+            case ChatChannel.SERVER_MSG:
                 return 7;
-            case ChatChannel.NWNX_CHAT_CHANNEL_PLAYER_PARTY:
-            case ChatChannel.NWNX_CHAT_CHANNEL_DM_PARTY:
+            case ChatChannel.PLAYER_PARTY:
+            case ChatChannel.DM_PARTY:
                 return 4;
-            case ChatChannel.NWNX_CHAT_CHANNEL_PLAYER_DM:
-            case ChatChannel.NWNX_CHAT_CHANNEL_DM_DM:
+            case ChatChannel.PLAYER_DM:
+            case ChatChannel.DM_DM:
             default:
                 return 5;
         }

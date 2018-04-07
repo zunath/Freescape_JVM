@@ -11,6 +11,7 @@ SELECT gp.GrowingPlantID ,
        gp.DateCreated ,
        gp.IsActive,
        gp.TotalTicks,
-       gp.WaterStatus
+       gp.WaterStatus,
+       gp.LongevityBonus
 FROM dbo.GrowingPlants gp
 WHERE gp.GrowingPlantID = :growingPlantID
