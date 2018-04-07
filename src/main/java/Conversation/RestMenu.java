@@ -109,8 +109,8 @@ public class RestMenu extends DialogBase implements IDialogHandler {
                     case 9:
                         EndConversation();
                         NWObject trashCan = createObject(ObjectType.PLACEABLE, "reo_trash_can", getLocation(oPC), false, "");
-                        Scheduler.assign(oPC, () -> actionInteractObject(trashCan));
-                        setUseableFlag(trashCan, false);
+                        Scheduler.assignNow(oPC, () -> actionInteractObject(trashCan));
+                        Scheduler.delay(trashCan, 200, () ->setUseableFlag(trashCan, false));
                         break;
                 }
                 break;
