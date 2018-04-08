@@ -12,6 +12,7 @@ import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.NWScript;
 import org.nwnx.nwnx2.jvm.constants.Ability;
 import org.nwnx.nwnx2.jvm.constants.DurationType;
+import org.nwnx.nwnx2.jvm.constants.EffectType;
 import org.nwnx.nwnx2.jvm.constants.Vfx;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -76,6 +77,16 @@ public class Purify implements IPerk {
 
         NWEffect vfx = effectVisualEffect(Vfx.IMP_HEALING_S, false);
         applyEffectToObject(DurationType.INSTANT, vfx, oTarget, 0.0f);
+
+
+        for(NWEffect effect: getEffects(oTarget))
+        {
+            int effectType = getEffectType(effect);
+            if(effectType == EffectType.POISON || effectType == EffectType.DISEASE)
+            {
+                removeEffect(oTarget, effect);
+            }
+        }
 
         SkillSystem.RegisterPCToAllCombatTargetsForSkill(oPC, SkillID.AlterationMagic);
     }
