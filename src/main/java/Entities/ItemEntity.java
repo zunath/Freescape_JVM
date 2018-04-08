@@ -53,6 +53,9 @@ public class ItemEntity {
     @Column(name = "CraftBonusWoodworking")
     private int craftBonusWoodworking;
 
+    @Column(name = "Weight")
+    private int weight;
+
     public String getResref() {
         return resref;
     }
@@ -171,5 +174,13 @@ public class ItemEntity {
 
     public void setCraftBonusWoodworking(int craftBonusWoodworking) {
         this.craftBonusWoodworking = craftBonusWoodworking;
+    }
+
+    public int getWeight() {
+        return weight;
+    }
+
+    public void setWeight(int weight) {
+        this.weight = weight;
     }
 }

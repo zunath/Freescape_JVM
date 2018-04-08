@@ -11,6 +11,7 @@ import GameObject.PlayerGO;
 import Helper.ColorToken;
 import Helper.ScriptHelper;
 import Item.IActionItem;
+import NWNX.NWNX_Item;
 import NWNX.NWNX_Player;
 import org.nwnx.nwnx2.jvm.*;
 import org.nwnx.nwnx2.jvm.constants.*;
@@ -330,6 +331,11 @@ public class ItemSystem {
         itemGO.setCraftBonusWoodworking(entity.getCraftBonusWoodworking());
         itemGO.setAssociatedSkillID(entity.getAssociatedSkillID());
         itemGO.setCraftTierLevel(entity.getCraftTierLevel());
+
+        if(entity.getWeight() > 0)
+        {
+            NWNX_Item.SetWeight(item, entity.getWeight());
+        }
 
         if(entity.getDurabilityPoints() > 0)
         {
