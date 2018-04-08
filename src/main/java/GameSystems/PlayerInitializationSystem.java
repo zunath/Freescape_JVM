@@ -53,6 +53,10 @@ public class PlayerInitializationSystem {
             setName(darts, "Starting Darts");
             setItemCursedFlag(darts, true);
 
+            NWObject book = createItemOnObject("player_guide", oPC, 1, "");
+            setName(book, getName(oPC, false) + "'s Player Guide");
+            setItemCursedFlag(book, true);
+
             int numberOfFeats = NWNX_Creature.GetFeatCount(oPC);
             for(int currentFeat = numberOfFeats; currentFeat >= 0; currentFeat--)
             {
