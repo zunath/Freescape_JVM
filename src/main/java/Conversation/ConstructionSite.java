@@ -20,6 +20,8 @@ import org.nwnx.nwnx2.jvm.constants.ObjectType;
 
 import java.util.ArrayList;
 
+import static org.nwnx.nwnx2.jvm.NWScript.*;
+
 @SuppressWarnings("unused")
 public class ConstructionSite extends DialogBase implements IDialogHandler {
     @Override
@@ -144,11 +146,11 @@ public class ConstructionSite extends DialogBase implements IDialogHandler {
     private void InitializeConstructionSite()
     {
         NWObject site = GetDialogTarget();
-        NWObject existingFlag = StructureSystem.GetTerritoryFlagOwnerOfLocation(NWScript.getLocation(GetDialogTarget()));
+        NWObject existingFlag = StructureSystem.GetTerritoryFlagOwnerOfLocation(getLocation(GetDialogTarget()));
         StructureRepository repo = new StructureRepository();
         ConstructionSiteMenuModel model = new ConstructionSiteMenuModel();
 
-        float distance = NWScript.getDistanceBetween(existingFlag, GetDialogTarget());
+        float distance = getDistanceBetween(existingFlag, GetDialogTarget());
         if(existingFlag.equals(NWObject.INVALID))
         {
             model.setIsTerritoryFlag(true);
@@ -250,6 +252,7 @@ public class ConstructionSite extends DialogBase implements IDialogHandler {
             }
 
             page.addResponse("Quick Build", PlayerAuthorizationSystem.IsPCRegisteredAsDM(GetPC()));
+            page.addResponse("Build", true);
             page.addResponse("Preview", true);
             page.addResponse("Rotate", StructureSystem.PlayerHasPermission(oPC, StructurePermission.CanRotateStructures, model.getFlagID()));
             page.addResponse("Move", StructureSystem.PlayerHasPermission(oPC, StructurePermission.CanMoveStructures, model.getFlagID()));
@@ -274,7 +277,7 @@ public class ConstructionSite extends DialogBase implements IDialogHandler {
                     break;
                 case 2: // Move
                     StructureSystem.SetIsPCMovingStructure(GetPC(), GetDialogTarget(), true);
-                    NWScript.floatingTextStringOnCreature("Please use your build tool to select a new location for this structure.", GetPC(), false);
+                    floatingTextStringOnCreature("Please use your build tool to select a new location for this structure.", GetPC(), false);
                     EndConversation();
                     break;
                 case 3: // Raze
@@ -289,18 +292,22 @@ public class ConstructionSite extends DialogBase implements IDialogHandler {
                 case 1: // Quick Build
                     ChangePage("QuickBuildPage");
                     break;
-                case 2: // Preview
+                case 2: // Build
+                    final NWObject target = GetDialogTarget();
+                    Scheduler.assign(GetPC(), () -> actionAttack(target, false));
+                    break;
+                case 3: // Preview
                     DoConstructionSitePreview();
                     break;
-                case 3: // Rotate
+                case 4: // Rotate
                     ChangePage("RotatePage");
                     break;
-                case 4: // Move
+                case 5: // Move
                     StructureSystem.SetIsPCMovingStructure(GetPC(), GetDialogTarget(), true);
-                    NWScript.floatingTextStringOnCreature("Please use your build tool to select a new location for this structure.", GetPC(), false);
+                    floatingTextStringOnCreature("Please use your build tool to select a new location for this structure.", GetPC(), false);
                     EndConversation();
                     break;
-                case 5: // Raze
+                case 6: // Raze
                     ChangePage("RazePage");
                     break;
             }
@@ -352,7 +359,7 @@ public class ConstructionSite extends DialogBase implements IDialogHandler {
         StructureRepository repo = new StructureRepository();
         DialogPage page = GetPageByName("BlueprintListPage");
         page.getResponses().clear();
-        NWLocation location = NWScript.getLocation(GetDialogTarget());
+        NWLocation location = getLocation(GetDialogTarget());
         PCSkillEntity pcSkill = SkillSystem.GetPCSkill(GetPC(), SkillID.Construction);
         if(pcSkill == null) return;
         int rank = pcSkill.getRank();
@@ -509,10 +516,10 @@ public class ConstructionSite extends DialogBase implements IDialogHandler {
         model.setIsPreviewing(true);
         StructureRepository repo = new StructureRepository();
         StructureBlueprintEntity entity = repo.GetStructureBlueprintByID(blueprintID);
-        final NWObject preview = NWScript.createObject(ObjectType.PLACEABLE, entity.getResref(), NWScript.getLocation(GetDialogTarget()), false, "");
-        NWScript.setUseableFlag(preview, false);
-        NWScript.setPlotFlag(preview, true);
-        NWScript.destroyObject(preview, 6.0f);
+        final NWObject preview = createObject(ObjectType.PLACEABLE, entity.getResref(), getLocation(GetDialogTarget()), false, "");
+        setUseableFlag(preview, false);
+        setPlotFlag(preview, true);
+        destroyObject(preview, 6.0f);
 
         Scheduler.delay(preview, 6000, () -> model.setIsPreviewing(false));
 
@@ -525,10 +532,10 @@ public class ConstructionSite extends DialogBase implements IDialogHandler {
         StructureRepository repo = new StructureRepository();
         ConstructionSiteEntity entity = repo.GetConstructionSiteByID(model.getConstructionSiteID());
         StructureBlueprintEntity blueprint = entity.getBlueprint();
-        final NWObject preview = NWScript.createObject(ObjectType.PLACEABLE, blueprint.getResref(), NWScript.getLocation(GetDialogTarget()), false, "");
-        NWScript.setUseableFlag(preview, false);
-        NWScript.setPlotFlag(preview, true);
-        NWScript.destroyObject(preview, 6.0f);
+        final NWObject preview = createObject(ObjectType.PLACEABLE, blueprint.getResref(), getLocation(GetDialogTarget()), false, "");
+        setUseableFlag(preview, false);
+        setPlotFlag(preview, true);
+        destroyObject(preview, 6.0f);
 
         Scheduler.delay(preview, 6000, () -> model.setIsPreviewing(false));
     }
@@ -540,7 +547,7 @@ public class ConstructionSite extends DialogBase implements IDialogHandler {
 
         if(!StructureSystem.PlayerHasPermission(oPC, StructurePermission.CanRazeStructures, model.getFlagID()))
         {
-            NWScript.floatingTextStringOnCreature("You do not have permission to raze structures.", oPC, false);
+            floatingTextStringOnCreature("You do not have permission to raze structures.", oPC, false);
             BuildMainPage();
             ChangePage("MainPage");
             return;
@@ -564,21 +571,21 @@ public class ConstructionSite extends DialogBase implements IDialogHandler {
 
         if(!StructureSystem.PlayerHasPermission(oPC, StructurePermission.CanBuildStructures, model.getFlagID()))
         {
-            NWScript.floatingTextStringOnCreature("You do not have permission to build structures.", oPC, false);
+            floatingTextStringOnCreature("You do not have permission to build structures.", oPC, false);
             BuildMainPage();
             ChangePage("MainPage");
             return;
         }
 
         if(model.isTerritoryFlag() &&
-                StructureSystem.WillBlueprintOverlapWithExistingFlags(NWScript.getLocation(GetDialogTarget()), model.getBlueprintID()))
+                StructureSystem.WillBlueprintOverlapWithExistingFlags(getLocation(GetDialogTarget()), model.getBlueprintID()))
         {
-            NWScript.floatingTextStringOnCreature("Unable to select blueprint. Area of influence would overlap with another territory.", GetPC(), false);
+            floatingTextStringOnCreature("Unable to select blueprint. Area of influence would overlap with another territory.", GetPC(), false);
         }
         else
         {
             StructureSystem.SelectBlueprint(GetPC(), GetDialogTarget(), model.getBlueprintID());
-            NWScript.floatingTextStringOnCreature("Blueprint set. Equip a hammer and 'bash' the construction site to build.", GetPC(), false);
+            floatingTextStringOnCreature("Blueprint set. Equip a hammer and 'bash' the construction site to build.", GetPC(), false);
             EndConversation();
         }
     }
@@ -591,7 +598,7 @@ public class ConstructionSite extends DialogBase implements IDialogHandler {
 
         if(!StructureSystem.PlayerHasPermission(oPC, StructurePermission.CanRotateStructures, model.getFlagID()))
         {
-            NWScript.floatingTextStringOnCreature("You do not have permission to rotate structures.", oPC, false);
+            floatingTextStringOnCreature("You do not have permission to rotate structures.", oPC, false);
             BuildMainPage();
             ChangePage("MainPage");
             return;
@@ -612,7 +619,7 @@ public class ConstructionSite extends DialogBase implements IDialogHandler {
 
         repo.Save(entity);
 
-        Scheduler.assign(GetDialogTarget(), () -> NWScript.setFacing((float) entity.getLocationOrientation()));
+        Scheduler.assign(GetDialogTarget(), () -> setFacing((float) entity.getLocationOrientation()));
 
     }
 
