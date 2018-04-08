@@ -15,6 +15,8 @@ import org.nwnx.nwnx2.jvm.constants.ObjectType;
 import java.util.List;
 import java.util.Objects;
 
+import static org.nwnx.nwnx2.jvm.NWScript.*;
+
 public class DeathSystem {
     // Resref and tag of the player corpse placeable
     private static final String CorpsePlaceableResref = "pc_corpse";
@@ -30,13 +32,13 @@ public class DeathSystem {
 
         for(PCCorpseEntity entity : entities)
         {
-            NWObject area = NWScript.getObjectByTag(entity.getAreaTag(), 0);
+            NWObject area = getObjectByTag(entity.getAreaTag(), 0);
             NWVector position = new NWVector(entity.getPositionX(), entity.getPositionY(), entity.getPositionZ());
-            NWLocation location = NWScript.location(area, position, entity.getOrientation());
-            NWObject corpse = NWScript.createObject(ObjectType.PLACEABLE, CorpsePlaceableResref, location, false, "");
-            NWScript.setName(corpse, entity.getName());
-            NWScript.setDescription(corpse, entity.getName(), true);
-            NWScript.setLocalInt(corpse, "CORPSE_ID", entity.getPcCorpseID());
+            NWLocation location = location(area, position, entity.getOrientation());
+            NWObject corpse = createObject(ObjectType.PLACEABLE, CorpsePlaceableResref, location, false, "");
+            setName(corpse, entity.getName());
+            setDescription(corpse, entity.getName(), true);
+            setLocalInt(corpse, "CORPSE_ID", entity.getPcCorpseID());
 
             for(PCCorpseItemEntity item : entity.getCorpseItems())
             {
@@ -47,55 +49,55 @@ public class DeathSystem {
 
     public static void OnPlayerDeath()
     {
-        final NWObject oPC = NWScript.getLastPlayerDied();
-        String corpseName = NWScript.getName(oPC, false) + "'s Corpse";
-        NWObject oHostileActor = NWScript.getLastHostileActor(oPC);
-        NWLocation location = NWScript.getLocation(oPC);
+        final NWObject oPC = getLastPlayerDied();
+        String corpseName = getName(oPC, false) + "'s Corpse";
+        NWObject oHostileActor = getLastHostileActor(oPC);
+        NWLocation location = getLocation(oPC);
         boolean hasItems = false;
 
-        for(NWObject oMember : NWScript.getFactionMembers(oHostileActor, false))
+        for(NWObject oMember : getFactionMembers(oHostileActor, false))
         {
-            NWScript.clearPersonalReputation(oPC, oMember);
+            clearPersonalReputation(oPC, oMember);
         }
 
-        NWScript.popUpDeathGUIPanel(oPC, true, true, 0, RespawnMessage);
+        popUpDeathGUIPanel(oPC, true, true, 0, RespawnMessage);
 
-        NWObject corpse = NWScript.createObject(ObjectType.PLACEABLE, CorpsePlaceableResref, location, false, "");
+        NWObject corpse = createObject(ObjectType.PLACEABLE, CorpsePlaceableResref, location, false, "");
         PCCorpseEntity entity = new PCCorpseEntity();
-        entity.setAreaTag(NWScript.getTag(location.getArea()));
+        entity.setAreaTag(getTag(location.getArea()));
         entity.setName(corpseName);
         entity.setOrientation(location.getFacing());
         entity.setPositionX(location.getX());
         entity.setPositionY(location.getY());
         entity.setPositionZ(location.getZ());
 
-        if(NWScript.getGold(oPC) > 0)
+        if(getGold(oPC) > 0)
         {
-            Scheduler.assign(corpse, () -> NWScript.takeGoldFromCreature(NWScript.getGold(oPC), oPC, false));
+            Scheduler.assign(corpse, () -> takeGoldFromCreature(getGold(oPC), oPC, false));
 
             hasItems = true;
         }
 
-        for(NWObject item : NWScript.getItemsInInventory(oPC))
+        for(NWObject item : getItemsInInventory(oPC))
         {
-            if(!NWScript.getItemCursedFlag(item))
+            if(!getItemCursedFlag(item))
             {
-                NWScript.copyItem(item, corpse, true);
-                NWScript.destroyObject(item, 0.0f);
+                copyItem(item, corpse, true);
+                destroyObject(item, 0.0f);
                 hasItems = true;
             }
         }
 
         if(!hasItems)
         {
-            NWScript.destroyObject(corpse, 0.0f);
+            destroyObject(corpse, 0.0f);
             return;
         }
 
-        NWScript.setName(corpse, corpseName);
-        NWScript.setDescription(corpse, corpseName, true);
+        setName(corpse, corpseName);
+        setDescription(corpse, corpseName, true);
 
-        for(NWObject corpseItem : NWScript.getItemsInInventory(corpse))
+        for(NWObject corpseItem : getItemsInInventory(corpse))
         {
             PCCorpseItemEntity corpseItemEntity = new PCCorpseItemEntity();
             byte[] data = SCORCO.saveObject(corpseItem);
@@ -106,36 +108,34 @@ public class DeathSystem {
 
         PCCorpseRepository repo = new PCCorpseRepository();
         repo.Save(entity);
-        NWScript.setLocalInt(corpse, "CORPSE_ID", entity.getPcCorpseID());
+        setLocalInt(corpse, "CORPSE_ID", entity.getPcCorpseID());
     }
 
     public static void OnPlayerRespawn()
     {
-        NWObject oPC = NWScript.getLastRespawnButtonPresser();
+        NWObject oPC = getLastRespawnButtonPresser();
 
-        NWScript.applyEffectToObject(DurationType.INSTANT, NWScript.effectResurrection(), oPC, 0.0f);
-        NWScript.applyEffectToObject(DurationType.INSTANT, NWScript.effectHeal(1), oPC, 0.0f);
+        int amount = getMaxHitPoints(oPC) / 2;
+        applyEffectToObject(DurationType.INSTANT, effectResurrection(), oPC, 0.0f);
+        applyEffectToObject(DurationType.INSTANT, effectHeal(amount), oPC, 0.0f);
 
-        Scheduler.assign(oPC, () -> {
-            NWLocation lLocation = NWScript.getLocation(NWScript.getWaypointByTag("DEATH_WP"));
-            NWScript.actionJumpToLocation(lLocation);
-        });
+        TeleportPlayerToBindPoint(oPC);
     }
 
     public static void OnCorpseDisturb(NWObject corpse)
     {
-        NWObject oPC = NWScript.getLastDisturbed();
+        NWObject oPC = getLastDisturbed();
 
-        if(!NWScript.getIsPC(oPC)) return;
+        if(!getIsPC(oPC)) return;
 
-        int corpseID = NWScript.getLocalInt(corpse, "CORPSE_ID");
-        NWObject oItem = NWScript.getInventoryDisturbItem();
-        int disturbType = NWScript.getInventoryDisturbType();
+        int corpseID = getLocalInt(corpse, "CORPSE_ID");
+        NWObject oItem = getInventoryDisturbItem();
+        int disturbType = getInventoryDisturbType();
 
         if(disturbType == InventoryDisturbType.ADDED)
         {
-            NWScript.actionGiveItem(oItem, oPC);
-            NWScript.floatingTextStringOnCreature("You cannot put items into corpses.", oPC, false);
+            actionGiveItem(oItem, oPC);
+            floatingTextStringOnCreature("You cannot put items into corpses.", oPC, false);
         }
         else
         {
@@ -143,7 +143,7 @@ public class DeathSystem {
             PCCorpseEntity entity = repo.GetByID(corpseID);
 
             entity.getCorpseItems().clear();
-            for(NWObject corpseItem : NWScript.getItemsInInventory(corpse))
+            for(NWObject corpseItem : getItemsInInventory(corpse))
             {
                 PCCorpseItemEntity corpseItemEntity = new PCCorpseItemEntity();
                 byte[] data = SCORCO.saveObject(corpseItem);
@@ -158,28 +158,28 @@ public class DeathSystem {
 
     public static void OnCorpseClose(NWObject corpse)
     {
-        NWObject[] items = NWScript.getItemsInInventory(corpse);
+        NWObject[] items = getItemsInInventory(corpse);
         if(items.length <= 0)
         {
-            int corpseID = NWScript.getLocalInt(corpse, "CORPSE_ID");
+            int corpseID = getLocalInt(corpse, "CORPSE_ID");
             PCCorpseRepository repo = new PCCorpseRepository();
             PCCorpseEntity entity = repo.GetByID(corpseID);
             repo.Delete(entity);
-            NWScript.destroyObject(corpse, 0.0f);
+            destroyObject(corpse, 0.0f);
         }
     }
 
     public static void BindSoul(NWObject oPC, boolean showMessage)
     {
-        if(!NWScript.getIsPC(oPC) || NWScript.getIsDM(oPC)) return;
+        if(!getIsPC(oPC) || getIsDM(oPC)) return;
 
         PlayerRepository repo = new PlayerRepository();
         PlayerGO pcGO = new PlayerGO(oPC);
         PlayerEntity entity = repo.GetByPlayerID(pcGO.getUUID());
-        NWObject area = NWScript.getArea(oPC);
-        String areaTag = NWScript.getTag(area);
-        float facing = NWScript.getFacing(oPC);
-        NWVector position = NWScript.getPosition(oPC);
+        NWObject area = getArea(oPC);
+        String areaTag = getTag(area);
+        float facing = getFacing(oPC);
+        NWVector position = getPosition(oPC);
 
         entity.setRespawnAreaTag(areaTag);
         entity.setRespawnLocationOrientation(facing);
@@ -191,30 +191,10 @@ public class DeathSystem {
 
         if(showMessage)
         {
-            NWScript.floatingTextStringOnCreature("Your soul has been bound to this location.", oPC, false);
+            floatingTextStringOnCreature("Your soul has been bound to this location.", oPC, false);
         }
     }
 
-    public static void RespawnPlayer(NWObject oPC)
-    {
-        PlayerRepository repo = new PlayerRepository();
-        PlayerGO pcGO = new PlayerGO(oPC);
-        final PlayerEntity entity = repo.GetByPlayerID(pcGO.getUUID());
-
-        if(entity.getRevivalStoneCount() <= 0)
-        {
-            NWScript.floatingTextStringOnCreature(ColorToken.Red() + "You do not have enough revival stones to respawn." + ColorToken.End(), oPC, false);
-            return;
-        }
-
-        entity.setRevivalStoneCount(entity.getRevivalStoneCount() - 1);
-
-        if(entity.getCurrentHunger() < 50)
-            entity.setCurrentHunger(50);
-
-        TeleportPlayerToBindPoint(oPC, entity);
-        repo.save(entity);
-    }
 
     public static void TeleportPlayerToBindPoint(NWObject pc)
     {
@@ -226,19 +206,22 @@ public class DeathSystem {
 
     private static void TeleportPlayerToBindPoint(NWObject pc, PlayerEntity entity)
     {
+        if(entity.getCurrentHunger() < 50)
+            entity.setCurrentHunger(50);
+
         if(Objects.equals(entity.getRespawnAreaTag(), ""))
         {
-            NWObject defaultRespawn = NWScript.getWaypointByTag("DEFAULT_RESPAWN_POINT");
-            final NWLocation location = NWScript.getLocation(defaultRespawn);
+            NWObject defaultRespawn = getWaypointByTag("DEFAULT_RESPAWN_POINT");
+            final NWLocation location = getLocation(defaultRespawn);
 
-            Scheduler.assign(pc, () -> NWScript.actionJumpToLocation(location));
+            Scheduler.assign(pc, () -> actionJumpToLocation(location));
         }
         else {
             Scheduler.assign(pc, () -> {
-                NWObject area = NWScript.getObjectByTag(entity.getRespawnAreaTag(), 0);
-                NWVector position = NWScript.vector(entity.getRespawnLocationX(), entity.getRespawnLocationY(), entity.getRespawnLocationZ());
-                NWLocation location = NWScript.location(area, position, entity.getRespawnLocationOrientation());
-                NWScript.actionJumpToLocation(location);
+                NWObject area = getObjectByTag(entity.getRespawnAreaTag(), 0);
+                NWVector position = vector(entity.getRespawnLocationX(), entity.getRespawnLocationY(), entity.getRespawnLocationZ());
+                NWLocation location = location(area, position, entity.getRespawnLocationOrientation());
+                actionJumpToLocation(location);
             });
         }
     }
