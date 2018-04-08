@@ -23,4 +23,5 @@ WHERE p.PerkID IN (
 	WHERE (plsr.SkillID IS NULL OR plsr.SkillID = pcsk.SkillID)
 		AND (plsr.RequiredRank IS NULL OR plsr.RequiredRank <= pcsk.Rank)
 		AND p.PerkCategoryID = :categoryID
+		AND p.IsActive = 1
 )
