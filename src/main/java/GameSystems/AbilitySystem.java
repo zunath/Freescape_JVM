@@ -29,6 +29,8 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static org.nwnx.nwnx2.jvm.NWScript.*;
+
 public class AbilitySystem {
 
     private static int SPELL_STATUS_STARTED = 1;
@@ -36,10 +38,10 @@ public class AbilitySystem {
 
     public static void OnModuleItemActivated()
     {
-        NWObject pc = NWScript.getItemActivator();
-        NWObject item = NWScript.getItemActivated();
-        NWObject target =  NWScript.getItemActivatedTarget();
-        int perkID = NWScript.getLocalInt(item, "ACTIVATION_PERK_ID");
+        NWObject pc = getItemActivator();
+        NWObject item = getItemActivated();
+        NWObject target =  getItemActivatedTarget();
+        int perkID = getLocalInt(item, "ACTIVATION_PERK_ID");
         if(perkID <= 0) return;
 
         PlayerRepository playerRepo = new PlayerRepository();
@@ -56,7 +58,7 @@ public class AbilitySystem {
 
         if(PerkSystem.GetPCPerkLevel(pc, perk.getPerkID()) <= 0)
         {
-            NWScript.sendMessageToPC(pc, "You do not meet the prerequisites to use this ability.");
+            sendMessageToPC(pc, "You do not meet the prerequisites to use this ability.");
             return;
         }
 
@@ -65,16 +67,16 @@ public class AbilitySystem {
             if(!PVPSanctuarySystem.IsPVPAttackAllowed(pc, target)) return;
         }
 
-        if(!Objects.equals(NWScript.getResRef(NWScript.getArea(pc)), NWScript.getResRef(NWScript.getArea(target))) ||
-                NWScript.lineOfSightObject(pc, target) == 0)
+        if(!Objects.equals(getResRef(getArea(pc)), getResRef(getArea(target))) ||
+                lineOfSightObject(pc, target) == 0)
         {
-            NWScript.sendMessageToPC(pc, "You cannot see your target.");
+            sendMessageToPC(pc, "You cannot see your target.");
             return;
         }
 
         if(!perkAction.CanCastSpell(pc, target))
         {
-            NWScript.sendMessageToPC(pc,
+            sendMessageToPC(pc,
                     perkAction.CannotCastSpellMessage() == null ?
                             "That ability cannot be used at this time." :
                             perkAction.CannotCastSpellMessage());
@@ -84,13 +86,13 @@ public class AbilitySystem {
         int manaCost = perkAction.ManaCost(pc, perkAction.ManaCost(pc, perk.getBaseManaCost()));
         if(playerEntity.getCurrentMana() < manaCost)
         {
-            NWScript.sendMessageToPC(pc, "You do not have enough mana. (Required: " + manaCost + ". You have: " + playerEntity.getCurrentMana() + ")");
+            sendMessageToPC(pc, "You do not have enough mana. (Required: " + manaCost + ". You have: " + playerEntity.getCurrentMana() + ")");
             return;
         }
 
-        if(pcGO.isBusy() || NWScript.getCurrentHitPoints(pc) <= 0)
+        if(pcGO.isBusy() || getCurrentHitPoints(pc) <= 0)
         {
-            NWScript.sendMessageToPC(pc, "You are too busy to activate that ability.");
+            sendMessageToPC(pc, "You are too busy to activate that ability.");
             return;
         }
 
@@ -102,7 +104,7 @@ public class AbilitySystem {
         if(unlockDateTime.isAfter(now))
         {
             String timeToWait = TimeHelper.GetTimeToWaitLongIntervals(now, unlockDateTime, false);
-            NWScript.sendMessageToPC(pc, "That ability can be used again in " + timeToWait + ".");
+            sendMessageToPC(pc, "That ability can be used again in " + timeToWait + ".");
             return;
         }
 
@@ -159,38 +161,39 @@ public class AbilitySystem {
             castingTime = 0.5f;
 
         // Heavy armor increases casting time by 2x the base casting time
-        NWObject armor = NWScript.getItemInSlot(InventorySlot.CHEST, pc);
+        NWObject armor = getItemInSlot(InventorySlot.CHEST, pc);
         ItemGO armorGO = new ItemGO(armor);
         if(armorGO.getCustomItemType() == CustomItemType.HeavyArmor)
         {
             castingTime = baseCastingTime * 2;
         }
 
-        if(NWScript.getActionMode(pc, ActionMode.STEALTH))
-            NWScript.setActionMode(pc, ActionMode.STEALTH, false);
+        if(getActionMode(pc, ActionMode.STEALTH))
+            setActionMode(pc, ActionMode.STEALTH, false);
 
-        NWScript.clearAllActions(false);
+        clearAllActions(false);
         Position.TurnToFaceObject(target, pc);
-        NWScript.applyEffectToObject(DurationType.TEMPORARY,
-                NWScript.effectVisualEffect(VfxDur.ELEMENTAL_SHIELD, false),
+        applyEffectToObject(DurationType.TEMPORARY,
+                effectVisualEffect(VfxDur.ELEMENTAL_SHIELD, false),
                 pc,
                 castingTime + 0.2f);
-        NWScript.actionPlayAnimation(Animation.LOOPING_CONJURE1, 1.0f, castingTime - 0.1f);
+        actionPlayAnimation(Animation.LOOPING_CONJURE1, 1.0f, castingTime - 0.1f);
 
         pcGO.setIsBusy(true);
-        CheckForSpellInterruption(pc, spellUUID, NWScript.getPosition(pc));
-        NWScript.setLocalInt(pc, spellUUID, SPELL_STATUS_STARTED);
+        CheckForSpellInterruption(pc, spellUUID, getPosition(pc));
+        setLocalInt(pc, spellUUID, SPELL_STATUS_STARTED);
 
         NWNX_Player.StartGuiTimingBar(pc, (int)castingTime, "");
         Scheduler.delay(pc, (int)(1050 * castingTime), () -> {
-            if(NWScript.getLocalInt(pc, spellUUID) == SPELL_STATUS_INTERRUPTED)
+            if(getLocalInt(pc, spellUUID) == SPELL_STATUS_INTERRUPTED || // Moved during casting
+                    getCurrentHitPoints(pc) < 0 || getIsDead(pc)) // Or is dead/dying
             {
-                NWScript.deleteLocalInt(pc, spellUUID);
-                NWScript.sendMessageToPC(pc, "Your spell has been interrupted.");
+                deleteLocalInt(pc, spellUUID);
+                sendMessageToPC(pc, "Your spell has been interrupted.");
                 return;
             }
 
-            NWScript.deleteLocalInt(pc, spellUUID);
+            deleteLocalInt(pc, spellUUID);
             PlayerRepository repo = new PlayerRepository();
 
             if(entity.getPerkExecutionTypeID() == PerkExecutionTypeID.Spell ||
@@ -210,7 +213,7 @@ public class AbilitySystem {
             {
                 pcEntity.setCurrentMana(pcEntity.getCurrentMana() - perk.ManaCost(pc, entity.getBaseManaCost()));
                 repo.save(pcEntity);
-                NWScript.sendMessageToPC(pc, ColorToken.Custom(32,223,219) + "Mana: " + pcEntity.getCurrentMana() + " / " + pcEntity.getMaxMana());
+                sendMessageToPC(pc, ColorToken.Custom(32,223,219) + "Mana: " + pcEntity.getCurrentMana() + " / " + pcEntity.getMaxMana());
             }
 
             if(ThreadLocalRandom.current().nextInt(100) + 1 <= 3)
@@ -240,14 +243,14 @@ public class AbilitySystem {
 
     private static void CheckForSpellInterruption(final NWObject pc, final String spellUUID, final NWVector position)
     {
-        NWVector currentPosition = NWScript.getPosition(pc);
+        NWVector currentPosition = getPosition(pc);
 
         if(!currentPosition.equals(position))
         {
             PlayerGO pcGO = new PlayerGO(pc);
             NWNX_Player.StopGuiTimingBar(pc, "", -1);
             pcGO.setIsBusy(false);
-            NWScript.setLocalInt(pc, spellUUID, SPELL_STATUS_INTERRUPTED);
+            setLocalInt(pc, spellUUID, SPELL_STATUS_INTERRUPTED);
             return;
         }
 
@@ -257,20 +260,20 @@ public class AbilitySystem {
     private static void HandleQueueWeaponSkill(final NWObject pc, final PerkEntity entity, IPerk ability)
     {
         final String queueUUID = UUID.randomUUID().toString();
-        NWScript.setLocalInt(pc, "ACTIVE_WEAPON_SKILL", entity.getPerkID());
-        NWScript.setLocalString(pc, "ACTIVE_WEAPON_SKILL_UUID", queueUUID);
-        NWScript.sendMessageToPC(pc, "Weapon skill '" + entity.getName() + "' queued for next attack.");
+        setLocalInt(pc, "ACTIVE_WEAPON_SKILL", entity.getPerkID());
+        setLocalString(pc, "ACTIVE_WEAPON_SKILL_UUID", queueUUID);
+        sendMessageToPC(pc, "Weapon skill '" + entity.getName() + "' queued for next attack.");
 
         ApplyCooldown(pc, entity.getCooldown(), ability);
 
         // Player must attack within 30 seconds after queueing or else it wears off.
         Scheduler.delay(pc, 30000, () -> {
 
-            if(Objects.equals(NWScript.getLocalString(pc, "ACTIVE_WEAPON_SKILL_UUID"), queueUUID))
+            if(Objects.equals(getLocalString(pc, "ACTIVE_WEAPON_SKILL_UUID"), queueUUID))
             {
-                NWScript.deleteLocalInt(pc, "ACTIVE_WEAPON_SKILL");
-                NWScript.deleteLocalString(pc, "ACTIVE_WEAPON_SKILL_UUID");
-                NWScript.sendMessageToPC(pc, "Your weapon skill '" + entity.getName() + "' is no longer queued.");
+                deleteLocalInt(pc, "ACTIVE_WEAPON_SKILL");
+                deleteLocalString(pc, "ACTIVE_WEAPON_SKILL_UUID");
+                sendMessageToPC(pc, "Your weapon skill '" + entity.getName() + "' is no longer queued.");
             }
         });
     }
@@ -281,15 +284,15 @@ public class AbilitySystem {
         if(entity.getCurrentMana() > entity.getMaxMana())
             entity.setCurrentMana(entity.getMaxMana());
 
-        NWScript.sendMessageToPC(oPC, ColorToken.Custom(32,223,219) + "Mana: " + entity.getCurrentMana() + " / " + entity.getMaxMana());
+        sendMessageToPC(oPC, ColorToken.Custom(32,223,219) + "Mana: " + entity.getCurrentMana() + " / " + entity.getMaxMana());
 
         return entity;
     }
 
     public static void OnHitCastSpell(NWObject oPC)
     {
-        NWObject oTarget = NWScript.getSpellTargetObject();
-        int activeWeaponSkillID = NWScript.getLocalInt(oPC, "ACTIVE_WEAPON_SKILL");
+        NWObject oTarget = getSpellTargetObject();
+        int activeWeaponSkillID = getLocalInt(oPC, "ACTIVE_WEAPON_SKILL");
         if(activeWeaponSkillID <= 0) return;
 
         PerkRepository magicRepo = new PerkRepository();
@@ -301,8 +304,8 @@ public class AbilitySystem {
             perk.OnImpact(oPC, oTarget);
         }
 
-        NWScript.deleteLocalString(oPC, "ACTIVE_WEAPON_SKILL_UUID");
-        NWScript.deleteLocalInt(oPC, "ACTIVE_WEAPON_SKILL");
+        deleteLocalString(oPC, "ACTIVE_WEAPON_SKILL_UUID");
+        deleteLocalInt(oPC, "ACTIVE_WEAPON_SKILL");
     }
 
 }
