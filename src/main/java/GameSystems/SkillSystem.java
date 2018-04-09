@@ -472,7 +472,7 @@ public class SkillSystem {
                 continue;
 
             PlayerGO pcGO = new PlayerGO(preg.getPC());
-            float cr = NWScript.getChallengeRating(creature);
+            float cr = getChallengeRating(creature);
             float baseXP = cr * 400 + ThreadLocalRandom.current().nextInt(20);
             float moduleXPAdjustment = getLocalFloat(getModule(), "SKILL_SYSTEM_MODULE_XP_MODIFIER");
             if(moduleXPAdjustment <= 0.0f) moduleXPAdjustment = 1.0f;
