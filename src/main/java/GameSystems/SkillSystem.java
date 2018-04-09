@@ -714,7 +714,7 @@ public class SkillSystem {
         ItemGO itemGO = new ItemGO(oItem);
         int rank = pcSkill.getRank();
         int recommendedRank = itemGO.getRecommendedLevel();
-        if(rank > recommendedRank) return;
+        if(rank >= recommendedRank) return;
 
         int delta = rank - recommendedRank;
         int penalty;

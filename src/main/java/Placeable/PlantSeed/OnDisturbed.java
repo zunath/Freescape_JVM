@@ -67,7 +67,7 @@ public class OnDisturbed implements IScriptEventHandler {
         String areaTag = getTag(getArea(planter));
         NWLocation plantLocation = getLocation(planter);
         int perkBonus = PerkSystem.GetPCPerkLevel(oPC, PerkID.FarmingEfficiency) * 2;
-        int ticks = (int)(plant.getBaseTicks() * (PerkSystem.GetPCPerkLevel(oPC, PerkID.ExpertFarmer) * 0.05f));
+        int ticks = (int)(plant.getBaseTicks() - ((PerkSystem.GetPCPerkLevel(oPC, PerkID.ExpertFarmer) * 0.05f)) * plant.getBaseTicks());
         GrowingPlantEntity growingPlant = new GrowingPlantEntity();
         growingPlant.setPlant(plant);
         growingPlant.setRemainingTicks(ticks);
