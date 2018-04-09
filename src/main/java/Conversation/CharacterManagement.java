@@ -16,7 +16,6 @@ public class CharacterManagement extends DialogBase implements IDialogHandler {
         DialogPage characterManagementPage = new DialogPage(
                 "Character Management & Information Page",
                 "Disable PVP Protection",
-                "Reset Skill Purchases",
                 //"Change Portrait",
                 "Change Head",
                 "Back"
@@ -47,16 +46,10 @@ public class CharacterManagement extends DialogBase implements IDialogHandler {
                     case 1: // Disable PVP Protection
                         HandleDisablePVPProtection();
                         break;
-                    case 2: // Reset Skill Purchases
-                        SwitchConversation("ResetSkillPoints");
-                        break;
-                    /*case 4: // Change Portrait
-                        SwitchConversation("ChangePortrait");
-                        break;*/
-                    case 3: // Change Head
+                    case 2: // Change Head
                         SwitchConversation("ChangeHead");
                         break;
-                    case 4: // Back
+                    case 3: // Back
                         SwitchConversation("RestMenu");
                         break;
                 }

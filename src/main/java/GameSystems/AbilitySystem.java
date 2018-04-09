@@ -294,7 +294,8 @@ public class AbilitySystem {
         PlayerGO pcGO = new PlayerGO(oPC);
         PlayerRepository playerRepo = new PlayerRepository();
         PlayerEntity entity = playerRepo.GetByPlayerID(pcGO.getUUID());
-        RestoreMana(oPC, amount, entity);
+        entity = RestoreMana(oPC, amount, entity);
+        playerRepo.save(entity);
     }
 
     public static void OnHitCastSpell(NWObject oPC)
