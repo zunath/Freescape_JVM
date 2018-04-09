@@ -14,6 +14,7 @@ import org.nwnx.nwnx2.jvm.Scheduler;
 import org.nwnx.nwnx2.jvm.constants.Ability;
 import org.nwnx.nwnx2.jvm.constants.BaseItem;
 import org.nwnx.nwnx2.jvm.constants.InventorySlot;
+import org.nwnx.nwnx2.jvm.constants.ObjectType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -384,6 +385,7 @@ public class SkillSystem {
         int skillID = GetWeaponSkillID(oSpellOrigin);
         if(skillID <= -1) return;
         if(getIsPC(oTarget) || getIsDM(oTarget)) return;
+        if(getObjectType(oTarget) != ObjectType.CREATURE) return;
 
         ItemGO itemGO = new ItemGO(oSpellOrigin);
         CreatureGO creatureGO = new CreatureGO(oTarget);
