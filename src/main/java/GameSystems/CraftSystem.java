@@ -6,6 +6,8 @@ import Entities.CraftBlueprintEntity;
 import Entities.CraftComponentEntity;
 import Entities.PCSkillEntity;
 import Enumerations.CraftDeviceID;
+import Enumerations.PerkID;
+import Enumerations.SkillID;
 import GameObject.ItemGO;
 import GameObject.PlayerGO;
 import Helper.ColorToken;
@@ -28,7 +30,7 @@ import static org.nwnx.nwnx2.jvm.NWScript.*;
 
 public class CraftSystem {
 
-    private static final float CraftDelay = 18.0f;
+    private static final float BaseCraftDelay = 18.0f;
 
 
     public static void CraftItem(final NWObject oPC, final NWObject device, final int blueprintID)
@@ -69,7 +71,7 @@ public class CraftSystem {
 
         if(allComponentsFound)
         {
-            final float modifiedCraftDelay = CraftDelay;
+            final float modifiedCraftDelay = CalculateCraftingDelay(oPC, blueprint.getSkill().getSkillID());
 
             applyEffectToObject(DurationType.TEMPORARY, effectCutsceneImmobilize(), oPC, modifiedCraftDelay + 0.1f);
             Scheduler.assign(oPC, () -> {
@@ -96,6 +98,37 @@ public class CraftSystem {
         {
             sendMessageToPC(oPC, ColorToken.Red() + "You are missing required components..." + ColorToken.End());
         }
+    }
+
+    private static float CalculateCraftingDelay(NWObject oPC, int skillID)
+    {
+        int perkID;
+        float adjustedSpeed = 1.0f;
+
+        if(skillID == SkillID.Metalworking) perkID = PerkID.SpeedyMetalworking;
+        else if(skillID == SkillID.Weaponsmith) perkID = PerkID.SpeedyWeaponsmith;
+        else if(skillID == SkillID.Armorsmith) perkID = PerkID.SpeedyArmorsmith;
+        else if(skillID == SkillID.Cooking) perkID = PerkID.SpeedyCooking;
+        else if(skillID == SkillID.Woodworking) perkID = PerkID.SpeedyWoodworking;
+        else return BaseCraftDelay;
+
+        int perkLevel = PerkSystem.GetPCPerkLevel(oPC, perkID);
+
+        switch (perkLevel)
+        {
+            case 1: adjustedSpeed = 0.9f; break;
+            case 2: adjustedSpeed = 0.8f; break;
+            case 3: adjustedSpeed = 0.7f; break;
+            case 4: adjustedSpeed = 0.6f; break;
+            case 5: adjustedSpeed = 0.5f; break;
+            case 6: adjustedSpeed = 0.4f; break;
+            case 7: adjustedSpeed = 0.3f; break;
+            case 8: adjustedSpeed = 0.2f; break;
+            case 9: adjustedSpeed = 0.1f; break;
+            case 10: adjustedSpeed = 0.01f; break;
+        }
+
+        return BaseCraftDelay * adjustedSpeed;
     }
 
     private static boolean CheckItemCounts(NWObject oPC, NWObject device, List<CraftComponentEntity> componentList)

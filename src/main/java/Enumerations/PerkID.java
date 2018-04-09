@@ -95,4 +95,11 @@ public class PerkID {
     public static final int ExpertFarmer = 92;
     public static final int OreBagger = 93;
     public static final int WoodBagger = 94;
+    public static final int SpecialObjectBlueprints = 95;
+    public static final int WoodComponentsBlueprints = 96;
+    public static final int SpeedyMetalworking = 97;
+    public static final int SpeedyWeaponsmith = 98;
+    public static final int SpeedyArmorsmith = 99;
+    public static final int SpeedyCooking = 100;
+    public static final int SpeedyWoodworking = 101;
 }
