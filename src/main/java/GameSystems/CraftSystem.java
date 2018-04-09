@@ -205,6 +205,16 @@ public class CraftSystem {
             NWObject craftedItem = createItemOnObject(blueprint.getItemResref(), oPC, blueprint.getQuantity(), "");
             setIdentified(craftedItem, true);
 
+            // If item isn't stackable, loop through and create as many as necessary.
+            if(getItemStackSize(craftedItem) < blueprint.getQuantity())
+            {
+                for(int x = 2; x <= blueprint.getQuantity(); x++)
+                {
+                    craftedItem = createItemOnObject(blueprint.getItemResref(), oPC, 1, "");
+                    setIdentified(craftedItem, true);
+                }
+            }
+
             sendMessageToPC(oPC, "You created " + blueprint.getQuantity() + "x " + blueprint.getItemName() + "!");
             xpModifier = 1.0f;
         }

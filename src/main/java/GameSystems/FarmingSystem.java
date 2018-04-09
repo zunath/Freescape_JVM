@@ -29,6 +29,7 @@ public class FarmingSystem {
             NWLocation location = location(area, position, plant.getLocationOrientation());
             NWObject plantPlc = createObject(ObjectType.PLACEABLE, resref, location, false, "");
             setLocalInt(plantPlc, "GROWING_PLANT_ID", plant.getGrowingPlantID());
+            setName(plantPlc, "Growing Plant (" + plant.getPlant().getName() + ")");
         }
 
     }
