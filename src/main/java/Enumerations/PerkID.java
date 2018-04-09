@@ -102,4 +102,6 @@ public class PerkID {
     public static final int SpeedyArmorsmith = 99;
     public static final int SpeedyCooking = 100;
     public static final int SpeedyWoodworking = 101;
+    public static final int FoodRecipes = 102;
+    public static final int Meditate = 103;
 }

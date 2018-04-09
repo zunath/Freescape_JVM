@@ -289,6 +289,14 @@ public class AbilitySystem {
         return entity;
     }
 
+    public static void RestoreMana(NWObject oPC, int amount)
+    {
+        PlayerGO pcGO = new PlayerGO(oPC);
+        PlayerRepository playerRepo = new PlayerRepository();
+        PlayerEntity entity = playerRepo.GetByPlayerID(pcGO.getUUID());
+        RestoreMana(oPC, amount, entity);
+    }
+
     public static void OnHitCastSpell(NWObject oPC)
     {
         NWObject oTarget = getSpellTargetObject();
