@@ -1,15 +1,20 @@
 package GameSystems;
 
+import Bioware.AddItemPropertyPolicy;
+import Bioware.XP2;
 import Common.Constants;
 import Data.Repository.PlayerRepository;
 import Data.Repository.SkillRepository;
 import Entities.*;
-import Enumerations.*;
+import Enumerations.CustomAttributeType;
+import Enumerations.CustomItemType;
+import Enumerations.PerkID;
+import Enumerations.SkillID;
 import GameObject.*;
 import NWNX.NWNX_Creature;
 import com.sun.tools.javac.util.Pair;
+import org.nwnx.nwnx2.jvm.NWItemProperty;
 import org.nwnx.nwnx2.jvm.NWObject;
-import org.nwnx.nwnx2.jvm.NWScript;
 import org.nwnx.nwnx2.jvm.Scheduler;
 import org.nwnx.nwnx2.jvm.constants.Ability;
 import org.nwnx.nwnx2.jvm.constants.BaseItem;
@@ -33,6 +38,7 @@ public class SkillSystem {
     private static final float TertiaryIncrease = 0.05f;
     private static final int MaxAttributeBonus = 70;
     public static final int SkillCap = 500;
+    private static final String IPPenaltyTag = "SKILL_PENALTY_ITEM_PROPERTY";
 
     public static void OnModuleEnter()
     {
@@ -56,7 +62,9 @@ public class SkillSystem {
     public static void OnModuleItemEquipped()
     {
         NWObject oPC = getPCItemLastEquippedBy();
+        NWObject oItem = getPCItemLastEquipped();
         ApplyStatChanges(oPC, null);
+        ApplyWeaponPenalties(oPC, oItem);
     }
 
     public static void OnModuleItemUnequipped()
@@ -65,6 +73,7 @@ public class SkillSystem {
         NWObject oItem = getPCItemLastUnequipped();
         HandleGlovesUnequipEvent();
         ApplyStatChanges(oPC, oItem);
+        RemoveWeaponPenalties(oItem);
     }
 
     public static void OnAreaExit()
@@ -695,5 +704,87 @@ public class SkillSystem {
         return ac;
     }
 
+    private static void ApplyWeaponPenalties(NWObject oPC, NWObject oItem)
+    {
+        int skillID = GetWeaponSkillID(oItem);
+        if(skillID <= 0) return;
 
+        PCSkillEntity pcSkill = GetPCSkill(oPC, skillID);
+        if(pcSkill == null) return;
+        ItemGO itemGO = new ItemGO(oItem);
+        int rank = pcSkill.getRank();
+        int recommendedRank = itemGO.getRecommendedLevel();
+        if(rank > recommendedRank) return;
+
+        int delta = rank - recommendedRank;
+        int penalty;
+
+        if(delta <= -20)
+        {
+            penalty = 99;
+        }
+        else if(delta <= -16)
+        {
+            penalty = 5;
+        }
+        else if(delta <= -12)
+        {
+            penalty = 4;
+        }
+        else if(delta <= -8)
+        {
+            penalty = 3;
+        }
+        else if(delta <= -4)
+        {
+            penalty = 2;
+        }
+        else if(delta <= 0)
+        {
+            penalty = 1;
+        }
+        else penalty = 99;
+
+        // No combat damage penalty
+        if(penalty == 99)
+        {
+            NWItemProperty noDamage = itemPropertyNoDamage();
+            noDamage = tagItemProperty(noDamage, IPPenaltyTag);
+            XP2.IPSafeAddItemProperty(oItem, noDamage, 0.0f, AddItemPropertyPolicy.ReplaceExisting, false, false);
+            penalty = 5; // Reset to 5 so that the following penalties apply.
+        }
+
+        // Decreased attack penalty
+        NWItemProperty ipPenalty = itemPropertyAttackPenalty(penalty);
+        ipPenalty = tagItemProperty(ipPenalty, IPPenaltyTag);
+        XP2.IPSafeAddItemProperty(oItem, ipPenalty, 0.0f, AddItemPropertyPolicy.ReplaceExisting, false, false);
+
+        // Decreased damage penalty
+        ipPenalty = itemPropertyDamagePenalty(penalty);
+        ipPenalty = tagItemProperty(ipPenalty, IPPenaltyTag);
+        XP2.IPSafeAddItemProperty(oItem, ipPenalty, 0.0f, AddItemPropertyPolicy.ReplaceExisting, false, false);
+
+        // Decreased enhancement bonus penalty
+        ipPenalty = itemPropertyEnhancementPenalty(penalty);
+        ipPenalty = tagItemProperty(ipPenalty, IPPenaltyTag);
+        XP2.IPSafeAddItemProperty(oItem, ipPenalty, 0.0f, AddItemPropertyPolicy.ReplaceExisting, false, false);
+
+        sendMessageToPC(oPC, "A penalty has been applied to your weapon '" + getName(oItem, false) + "' due to your skill being under the recommended level.");
+    }
+
+    private static void RemoveWeaponPenalties(NWObject oItem)
+    {
+        int skillID = GetWeaponSkillID(oItem);
+        if(skillID <= 0) return;
+
+        NWItemProperty[] ips = getItemProperties(oItem);
+        for(NWItemProperty ip: ips)
+        {
+            String tag = getItemPropertyTag(ip);
+            if(tag.equals(IPPenaltyTag))
+            {
+                removeItemProperty(oItem, ip);
+            }
+        }
+    }
 }
