@@ -88,8 +88,8 @@ public class GraspingIce implements IPerk {
             applyEffectToObject(DurationType.TEMPORARY, effectSlow(), oTarget, slowLength);
         }
 
-        applyEffectToObject(DurationType.INSTANT, effectDamage(damage, DamageType.MAGICAL, DamagePower.NORMAL), oTarget, 0.0f);
         SkillSystem.RegisterPCToNPCForSkill(oPC, oTarget, SkillID.EvocationMagic);
+        applyEffectToObject(DurationType.INSTANT, effectDamage(damage, DamageType.MAGICAL, DamagePower.NORMAL), oTarget, 0.0f);
     }
 
     @Override

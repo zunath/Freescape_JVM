@@ -79,9 +79,9 @@ public class LightningShock implements IPerk {
         float damageMultiplier = 1.0f + (intelligence * 0.2f) + (wisdom * 0.1f);
         damage = (int)((float)damage * damageMultiplier);
 
+        SkillSystem.RegisterPCToNPCForSkill(oPC, oTarget, SkillID.EvocationMagic);
         applyEffectToObject(DurationType.INSTANT, effectVisualEffect(VfxImp.DOOM, false), oTarget, 0.0f);
         applyEffectToObject(DurationType.INSTANT, effectDamage(damage, DamageType.MAGICAL, DamagePower.NORMAL), oTarget, 0.0f);
-        SkillSystem.RegisterPCToNPCForSkill(oPC, oTarget, SkillID.EvocationMagic);
     }
 
     @Override

@@ -86,8 +86,8 @@ public class HolyShot implements IPerk {
             applyEffectToObject(DurationType.INSTANT, vfx, oTarget, 0.0f);
         });
 
-        applyEffectToObject(DurationType.INSTANT, effectDamage(damage, DamageType.MAGICAL, DamagePower.NORMAL), oTarget, 0.0f);
         SkillSystem.RegisterPCToNPCForSkill(oPC, oTarget, SkillID.AlterationMagic);
+        applyEffectToObject(DurationType.INSTANT, effectDamage(damage, DamageType.MAGICAL, DamagePower.NORMAL), oTarget, 0.0f);
     }
 
     @Override

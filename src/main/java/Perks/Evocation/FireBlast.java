@@ -90,8 +90,8 @@ public class FireBlast implements IPerk {
             CustomEffectSystem.ApplyCustomEffect(oPC, oTarget, CustomEffectType.Burning, ticks, level);
         }
 
-        applyEffectToObject(DurationType.INSTANT, effectDamage(damage, DamageType.FIRE, DamagePower.NORMAL), oTarget, 0.0f);
         SkillSystem.RegisterPCToNPCForSkill(oPC, oTarget, SkillID.EvocationMagic);
+        applyEffectToObject(DurationType.INSTANT, effectDamage(damage, DamageType.FIRE, DamagePower.NORMAL), oTarget, 0.0f);
     }
 
     @Override
