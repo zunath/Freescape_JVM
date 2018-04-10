@@ -45,4 +45,4 @@ docker run --rm -it ^
 -e SQL_SERVER_USERNAME=yourUsername ^
 -e SQL_SERVER_PASSWORD=yourPassword ^
 -e SQL_SERVER_DATABASE=czs-db ^
-nwnxee/nwserver:8164.java
+nwnxee/nwserver:8166.java

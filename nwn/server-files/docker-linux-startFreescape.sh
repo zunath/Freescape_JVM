@@ -42,4 +42,4 @@ docker run --rm -it \
 -e SQL_SERVER_USERNAME=yourUsername \
 -e SQL_SERVER_PASSWORD=yourPassword \
 -e SQL_SERVER_DATABASE=czs-db \
-glorwinger/nwserver:8164.java.nwnx
+nwnxee/nwserver:8166.java
