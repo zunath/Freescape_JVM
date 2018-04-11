@@ -136,25 +136,4 @@ public class NWNX_Item {
         NWNX_CallFunction(NWNX_Item, sFunc);
     }
 
-
-    public static void SetArmorValue(NWObject oItem, int armorValue)
-    {
-        String sFunc = "SetArmorValue";
-
-        NWNX_PushArgumentInt(NWNX_Item, sFunc, armorValue);
-        NWNX_PushArgumentObject(NWNX_Item, sFunc, oItem);
-
-        NWNX_CallFunction(NWNX_Item, sFunc);
-    }
-
-    public static int GetArmorValue(NWObject oItem)
-    {
-        String sFunc = "GetArmorValue";
-
-        NWNX_PushArgumentObject(NWNX_Item, sFunc, oItem);
-
-        NWNX_CallFunction(NWNX_Item, sFunc);
-        return NWNX_GetReturnValueInt(NWNX_Item, sFunc);
-    }
-
 }

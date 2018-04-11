@@ -117,14 +117,18 @@ public class PlayerInitializationSystem {
         slot = NWNX_Player_QuickBarSlot.EquipItem(getItemPossessedBy(oPC, "survival_knife"), NWObject.INVALID);
         NWNX_Player.SetQuickBarSlot(oPC, 2, slot);
 
+        // Currently bugged in NWNX. Commenting out for now.
+        /*
         slot = NWNX_Player_QuickBarSlot.EquipItem(getItemPossessedBy(oPC, "basic_hammer"), NWObject.INVALID);
         NWNX_Player.SetQuickBarSlot(oPC, 3, slot);
 
         slot = NWNX_Player_QuickBarSlot.EquipItem(getItemPossessedBy(oPC, "nw_wthdt001"), NWObject.INVALID);
         NWNX_Player.SetQuickBarSlot(oPC, 4, slot);
-
+        */
 
         QuickBarSlot empty = NWNX_Player_QuickBarSlot.Empty(QuickBarSlotType.EMPTY);
+        NWNX_Player.SetQuickBarSlot(oPC, 3, empty);
+        NWNX_Player.SetQuickBarSlot(oPC, 4, empty);
         NWNX_Player.SetQuickBarSlot(oPC, 5, empty);
         NWNX_Player.SetQuickBarSlot(oPC, 6, empty);
         NWNX_Player.SetQuickBarSlot(oPC, 7, empty);
