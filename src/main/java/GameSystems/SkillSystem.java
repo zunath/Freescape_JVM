@@ -205,6 +205,14 @@ public class SkillSystem {
             floatingTextStringOnCreature("Your " + skill.getSkill().getName() + " skill level increased!", oPC, false);
 
             req = skillRepo.GetSkillXPRequirementByRank(skillID, skill.getRank());
+
+            // Reapply skill penalties on a skill level up.
+            for(int slot = 0; slot < Constants.NumberOfInventorySlots; slot++)
+            {
+                NWObject item = getItemInSlot(slot, oPC);
+                RemoveWeaponPenalties(item);
+                ApplyWeaponPenalties(item, null);
+            }
         }
 
         skillRepo.Save(skill);

@@ -88,6 +88,14 @@ public class ItemSystem {
         {
             description += ColorToken.Orange() + "AC: " + ColorToken.End() + itemGO.getAC() + "\n";
         }
+        if(itemGO.getHPBonus() > 0)
+        {
+            description += ColorToken.Orange() + "HP Bonus: " + ColorToken.End() + itemGO.getHPBonus() + "\n";
+        }
+        if(itemGO.getManaBonus() > 0)
+        {
+            description += ColorToken.Orange() + "Mana Bonus: " + ColorToken.End() + itemGO.getManaBonus() + "\n";
+        }
         if(itemGO.getLoggingBonus() > 0)
         {
             description += ColorToken.Orange() + "Logging Bonus: " + ColorToken.End() + itemGO.getLoggingBonus() + "\n";
