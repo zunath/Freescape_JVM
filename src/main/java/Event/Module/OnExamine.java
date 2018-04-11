@@ -16,7 +16,7 @@ public class OnExamine implements IScriptEventHandler {
         NWObject examinedObject = NWNX_Events.OnExamineObject_GetTarget();
         ExaminationSystem.OnModuleExamine(examiner, examinedObject);
 
-        String description = "";
+        String description = NWScript.getDescription(examinedObject, true, true) + "\n\n";
         description = ItemSystem.OnModuleExamine(description, examiner, examinedObject);
         description = PerkSystem.OnModuleExamine(description, examiner, examinedObject);
         description = DurabilitySystem.OnModuleExamine(description, examinedObject);

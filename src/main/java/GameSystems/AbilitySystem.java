@@ -177,7 +177,9 @@ public class AbilitySystem {
                 effectVisualEffect(VfxDur.ELEMENTAL_SHIELD, false),
                 pc,
                 castingTime + 0.2f);
-        actionPlayAnimation(Animation.LOOPING_CONJURE1, 1.0f, castingTime - 0.1f);
+
+        final float animationTime = castingTime;
+        Scheduler.assign(pc, () -> actionPlayAnimation(Animation.LOOPING_CONJURE1, 1.0f, animationTime - 0.1f));
 
         pcGO.setIsBusy(true);
         CheckForSpellInterruption(pc, spellUUID, getPosition(pc));

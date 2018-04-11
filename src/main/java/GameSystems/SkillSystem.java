@@ -13,13 +13,11 @@ import Enumerations.SkillID;
 import GameObject.*;
 import NWNX.NWNX_Creature;
 import com.sun.tools.javac.util.Pair;
+import org.nwnx.nwnx2.jvm.NWEffect;
 import org.nwnx.nwnx2.jvm.NWItemProperty;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.Scheduler;
-import org.nwnx.nwnx2.jvm.constants.Ability;
-import org.nwnx.nwnx2.jvm.constants.BaseItem;
-import org.nwnx.nwnx2.jvm.constants.InventorySlot;
-import org.nwnx.nwnx2.jvm.constants.ObjectType;
+import org.nwnx.nwnx2.jvm.constants.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -632,6 +630,8 @@ public class SkillSystem {
         for(int slot = 0; slot < Constants.NumberOfInventorySlots; slot++)
         {
             NWObject item = getItemInSlot(slot, oPC);
+            if(item.equals(ignoreItem)) continue;
+
             ItemGO itemGO = new ItemGO(item);
             equippedItemHPBonus += itemGO.getHPBonus();
             equippedItemManaBonus += itemGO.getManaBonus();
@@ -644,6 +644,12 @@ public class SkillSystem {
         if(hp > 255) hp = 255;
         if(hp < 20) hp = 20;
         NWNX_Creature.SetMaxHitPointsByLevel(oPC, 1, hp);
+        if(getCurrentHitPoints(oPC) > getMaxHitPoints(oPC))
+        {
+            int amount = getCurrentHitPoints(oPC) - getMaxHitPoints(oPC);
+            NWEffect damage = effectDamage(amount, DamageType.MAGICAL, DamagePower.NORMAL);
+            applyEffectToObject(DurationType.INSTANT, damage, oPC, 0.0f);
+        }
 
         // Apply Mana
         int mana = 20;

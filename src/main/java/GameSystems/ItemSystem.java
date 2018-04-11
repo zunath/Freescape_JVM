@@ -96,6 +96,15 @@ public class ItemSystem {
         {
             description += ColorToken.Orange() + "Mana Bonus: " + ColorToken.End() + itemGO.getManaBonus() + "\n";
         }
+        if(itemGO.getCastingSpeed() > 0)
+        {
+            description += ColorToken.Orange() + "Casting Speed: +" + ColorToken.End() + itemGO.getCastingSpeed() + "%\n";
+        }
+        else if(itemGO.getCastingSpeed() < 0)
+        {
+            description += ColorToken.Orange() + "Casting Penalty: -" + ColorToken.End() + itemGO.getCastingSpeed() + "%\n";
+        }
+
         if(itemGO.getLoggingBonus() > 0)
         {
             description += ColorToken.Orange() + "Logging Bonus: " + ColorToken.End() + itemGO.getLoggingBonus() + "\n";
