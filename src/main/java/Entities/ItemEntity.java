@@ -56,6 +56,13 @@ public class ItemEntity {
     @Column(name = "Weight")
     private int weight;
 
+    @Column(name = "HPBonus")
+    private int hpBonus;
+
+    @Column(name = "ManaBonus")
+    private int manaBonus;
+
+
     public String getResref() {
         return resref;
     }
@@ -182,5 +189,21 @@ public class ItemEntity {
 
     public void setWeight(int weight) {
         this.weight = weight;
+    }
+
+    public int getHpBonus() {
+        return hpBonus;
+    }
+
+    public void setHpBonus(int hpBonus) {
+        this.hpBonus = hpBonus;
+    }
+
+    public int getManaBonus() {
+        return manaBonus;
+    }
+
+    public void setManaBonus(int manaBonus) {
+        this.manaBonus = manaBonus;
     }
 }

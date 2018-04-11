@@ -331,6 +331,8 @@ public class ItemSystem {
         itemGO.setCraftBonusWoodworking(entity.getCraftBonusWoodworking());
         itemGO.setAssociatedSkillID(entity.getAssociatedSkillID());
         itemGO.setCraftTierLevel(entity.getCraftTierLevel());
+        itemGO.setHPBonus(entity.getHpBonus());
+        itemGO.setManaBonus(entity.getManaBonus());
 
         if(entity.getWeight() > 0)
         {

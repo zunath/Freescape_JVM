@@ -14,6 +14,8 @@ SELECT i.Resref ,
        i.AssociatedSkillID,
        i.CraftTierLevel,
        i.CraftBonusWoodworking,
-       i.Weight
+       i.Weight,
+       i.HPBonus,
+       i.ManaBonus
 FROM dbo.Items i
 WHERE i.Resref = :resref

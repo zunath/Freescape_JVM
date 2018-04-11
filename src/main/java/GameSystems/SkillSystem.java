@@ -617,9 +617,22 @@ public class SkillSystem {
         int bab = CalculateBAB(oPC, ignoreItem);
         NWNX_Creature.SetBaseAttackBonus(oPC, bab);
 
+
+        int equippedItemHPBonus = 0;
+        int equippedItemManaBonus = 0;
+
+        for(int slot = 0; slot < Constants.NumberOfInventorySlots; slot++)
+        {
+            NWObject item = getItemInSlot(slot, oPC);
+            ItemGO itemGO = new ItemGO(item);
+            equippedItemHPBonus += itemGO.getHPBonus();
+            equippedItemManaBonus += itemGO.getManaBonus();
+        }
+
         // Apply HP
         int hp = 30 + getAbilityModifier(Ability.CONSTITUTION, oPC)  * 5;
         hp += PerkSystem.GetPCPerkLevel(oPC, PerkID.Health) * 5;
+        hp += equippedItemHPBonus;
         if(hp > 255) hp = 255;
         if(hp < 20) hp = 20;
         NWNX_Creature.SetMaxHitPointsByLevel(oPC, 1, hp);
@@ -630,6 +643,7 @@ public class SkillSystem {
                 getAbilityModifier(Ability.WISDOM, oPC) +
                 getAbilityModifier(Ability.CHARISMA, oPC)) * 5;
         mana += PerkSystem.GetPCPerkLevel(oPC, PerkID.Mana) * 5;
+        mana += equippedItemManaBonus;
         if(mana < 0) mana = 0;
         pcEntity.setMaxMana(mana);
 

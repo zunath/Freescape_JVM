@@ -197,6 +197,26 @@ public class ItemGO {
         setLocalInt(item, "CUSTOM_ITEM_PROPERTY_CRAFT_TIER_LEVEL", craftTierLevel);
     }
 
+    public int getHPBonus()
+    {
+        return getLocalInt(item, "CUSTOM_ITEM_PROPERTY_HP_BONUS");
+    }
+
+    public void setHPBonus(int hpBonus)
+    {
+        setLocalInt(item, "CUSTOM_ITEM_PROPERTY_HP_BONUS", hpBonus);
+    }
+
+    public int getManaBonus()
+    {
+        return getLocalInt(item, "CUSTOM_ITEM_PROPERTY_MANA_BONUS");
+    }
+
+    public void setManaBonus(int manaBonus)
+    {
+        setLocalInt(item, "CUSTOM_ITEM_PROPERTY_MANA_BONUS", manaBonus);
+    }
+
     public void ReduceItemStack()
     {
         int stackSize = getItemStackSize(item);
