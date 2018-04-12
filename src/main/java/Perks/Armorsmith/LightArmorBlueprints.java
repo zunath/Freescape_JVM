@@ -3,7 +3,7 @@ package Perks.Armorsmith;
 import Perks.IPerk;
 import org.nwnx.nwnx2.jvm.NWObject;
 
-public class ArmorBlueprints implements IPerk {
+public class LightArmorBlueprints implements IPerk {
     @Override
     public boolean CanCastSpell(NWObject oPC, NWObject oTarget) {
         return false;
