@@ -514,21 +514,30 @@ public class SkillSystem {
                 GiveSkillXP(preg.getPC(), skillID, (int)(adjustedXP));
             }
 
-            ItemGO itemGO = new ItemGO(getItemInSlot(InventorySlot.CHEST, preg.getPC()));
-            if(itemGO.getCustomItemType() == CustomItemType.LightArmor)
+            float armorXP = baseXP * 0.20f;
+            int lightArmorPoints = 0;
+            int heavyArmorPoints = 0;
+
+            for(int slot = 0; slot < Constants.NumberOfInventorySlots; slot++)
             {
-                int skillRank = skillRepo.GetPCSkillByID(pcGO.getUUID(), SkillID.LightArmor).getRank();
-                float adjustedXP = baseXP * 0.10f;
-                adjustedXP = CalculateSkillAdjustedXP(adjustedXP, itemGO.getRecommendedLevel(), skillRank);
-                GiveSkillXP(preg.getPC(), SkillID.LightArmor, (int)adjustedXP);
+                ItemGO itemGO = new ItemGO(getItemInSlot(slot, preg.getPC()));
+                if(itemGO.getCustomItemType() == CustomItemType.LightArmor)
+                {
+                    lightArmorPoints++;
+                }
+                else if(itemGO.getCustomItemType() == CustomItemType.HeavyArmor)
+                {
+                    heavyArmorPoints++;
+                }
             }
-            else if(itemGO.getCustomItemType() == CustomItemType.HeavyArmor)
-            {
-                int skillRank = skillRepo.GetPCSkillByID(pcGO.getUUID(), SkillID.HeavyArmor).getRank();
-                float adjustedXP = baseXP * 0.10f;
-                adjustedXP = CalculateSkillAdjustedXP(adjustedXP, itemGO.getRecommendedLevel(), skillRank);
-                GiveSkillXP(preg.getPC(), SkillID.HeavyArmor, (int)adjustedXP);
-            }
+            totalPoints = lightArmorPoints + heavyArmorPoints;
+            if(totalPoints <= 0) continue;
+
+            float percent = (float)lightArmorPoints / (float)totalPoints;
+            GiveSkillXP(preg.getPC(), SkillID.LightArmor, (int)(armorXP * percent));
+
+            percent = (float)heavyArmorPoints / (float)totalPoints;
+            GiveSkillXP(preg.getPC(), SkillID.HeavyArmor, (int)(armorXP * percent));
         }
 
         CreatureRegistrations.remove(creatureGO.getGlobalUUID());
