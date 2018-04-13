@@ -146,9 +146,9 @@ public class DurabilitySystem {
         int itemType = NWScript.getBaseItemType(item);
         if(!DurabilitySystem.GetValidDurabilityTypes().contains(itemType))
             return;
-        InitializeDurability(item);
 
         NWScript.setLocalFloat(item, MaxDurabilityVariable, value);
+        InitializeDurability(item);
     }
 
     private static void InitializeDurability(NWObject item)
