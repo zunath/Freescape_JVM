@@ -6,10 +6,7 @@ import Data.Repository.ServerConfigurationRepository;
 import Entities.PlayerEntity;
 import Entities.ServerConfigurationEntity;
 import GameObject.PlayerGO;
-import GameSystems.ActivityLoggingSystem;
-import GameSystems.PlayerInitializationSystem;
-import GameSystems.QuestSystem;
-import GameSystems.SkillSystem;
+import GameSystems.*;
 import Helper.ColorToken;
 import org.nwnx.nwnx2.jvm.NWEffect;
 import org.nwnx.nwnx2.jvm.NWObject;
@@ -33,8 +30,8 @@ public class OnClientEnter implements IScriptEventHandler {
         ApplyGhostwalk();
         QuestSystem.OnClientEnter();
         ActivityLoggingSystem.OnModuleClientEnter();
-
         ApplyScriptEvents(oPC);
+        MapPinSystem.OnClientEnter();
     }
 
     private void ApplyGhostwalk()

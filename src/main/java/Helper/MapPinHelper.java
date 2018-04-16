@@ -9,12 +9,12 @@ public class MapPinHelper {
 
     public static int GetNumberOfMapPins(NWObject oPC)
     {
-        if(!NWScript.getIsPC(oPC)) return -1;
         return NWScript.getLocalInt(oPC, "NW_TOTAL_MAP_PINS");
     }
 
     public static MapPinGameObject GetMapPin(NWObject oPC, int index)
     {
+        index++;
         MapPinGameObject mapPin = new MapPinGameObject();
         mapPin.setText(NWScript.getLocalString(oPC, "NW_MAP_PIN_NTRY_" + index));
         mapPin.setPositionX(NWScript.getLocalFloat(oPC, "NW_MAP_PIN_XPOS_" + index));
@@ -43,9 +43,10 @@ public class MapPinHelper {
 
     public static void SetMapPin(NWObject oPC, String text, float positionX, float positionY, NWObject area, String tag)
     {
+        int numberOfMapPins = GetNumberOfMapPins(oPC);
         int storeAtIndex = -1;
 
-        for(int index = 0; index <= GetNumberOfMapPins(oPC); index++)
+        for(int index = 0; index < numberOfMapPins; index++)
         {
             MapPinGameObject mapPin = GetMapPin(oPC, index);
             if(mapPin.getText().equals(""))
@@ -57,21 +58,33 @@ public class MapPinHelper {
 
         if(storeAtIndex == -1)
         {
-            storeAtIndex = GetNumberOfMapPins(oPC) + 1;
+            numberOfMapPins++;
+            storeAtIndex = numberOfMapPins-1;
         }
 
+        storeAtIndex++;
         NWScript.setLocalString(oPC, "NW_MAP_PIN_NTRY_" + storeAtIndex, text);
         NWScript.setLocalFloat(oPC, "NW_MAP_PIN_XPOS_" + storeAtIndex, positionX);
         NWScript.setLocalFloat(oPC, "NW_MAP_PIN_YPOS_" + storeAtIndex, positionY);
         NWScript.setLocalObject(oPC, "NW_MAP_PIN_AREA_" + storeAtIndex, area);
-        NWScript.setLocalString(oPC, "CUSTOM_NW_MAP_PIN_TAG_" + storeAtIndex, tag);
+        NWScript.setLocalInt(oPC, "NW_TOTAL_MAP_PINS", numberOfMapPins);
+
+        if(tag != null)
+        {
+            NWScript.setLocalString(oPC, "CUSTOM_NW_MAP_PIN_TAG_" + storeAtIndex, tag);
+        }
+    }
+
+    public static void SetMapPin(NWObject oPC, String text, float positionX, float positionY, NWObject area)
+    {
+        SetMapPin(oPC, text, positionX, positionY, area, null);
     }
 
     public static void DeleteMapPin(NWObject oPC, int index)
     {
         int numberOfPins = GetNumberOfMapPins(oPC);
-        if(index > numberOfPins-1) return;
 
+        if(index > numberOfPins-1) return;
         MapPinGameObject mapPin = GetMapPin(oPC, index);
 
         if(mapPin != null)
