@@ -1,9 +1,12 @@
 package Conversation;
 
+import Data.Repository.StructureRepository;
 import Dialog.DialogBase;
 import Dialog.DialogPage;
 import Dialog.IDialogHandler;
 import Dialog.PlayerDialog;
+import Entities.PCTerritoryFlagStructureEntity;
+import Enumerations.StructurePermission;
 import GameSystems.StructureSystem;
 import Helper.ColorToken;
 import org.nwnx.nwnx2.jvm.NWLocation;
@@ -45,7 +48,19 @@ public class StructureStorage extends DialogBase implements IDialogHandler {
 
     @Override
     public void Initialize() {
+        StructureRepository repo = new StructureRepository();
+        int structureID = StructureSystem.GetPlaceableStructureID(GetDialogTarget());
+        PCTerritoryFlagStructureEntity structure = repo.GetPCStructureByID(structureID);
 
+        if(!StructureSystem.PlayerHasPermission(GetPC(), StructurePermission.CanAccessPersistentStorage, structure.getPcTerritoryFlag().getPcTerritoryFlagID()))
+        {
+            SetResponseVisible("MainPage", 1, false);
+        }
+
+        if(!StructureSystem.PlayerHasPermission(GetPC(), StructurePermission.CanRenameStructures, structure.getPcTerritoryFlag().getPcTerritoryFlagID()))
+        {
+            SetResponseVisible("MainPage", 2, false);
+        }
     }
 
     @Override
@@ -113,9 +128,8 @@ public class StructureStorage extends DialogBase implements IDialogHandler {
         {
             case 1: // Confirm Change Name
                 String name = getLocalString(GetPC(), "NEW_CONTAINER_NAME");
-                StructureSystem.SetStructureCustomName(GetDialogTarget(), name);
+                StructureSystem.SetStructureCustomName(GetPC(), GetDialogTarget(), name);
                 EndConversation();
-                floatingTextStringOnCreature("New name set: " + name, GetPC(), false);
                 break;
             case 2: // Back
                 ChangePage("ChangeNamePage");

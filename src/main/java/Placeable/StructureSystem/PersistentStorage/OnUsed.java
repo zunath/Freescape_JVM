@@ -18,7 +18,8 @@ public class OnUsed implements IScriptEventHandler {
         StructureRepository repo = new StructureRepository();
         PCTerritoryFlagStructureEntity structure = repo.GetPCStructureByID(structureID);
 
-        if(StructureSystem.PlayerHasPermission(oPC, StructurePermission.CanAccessPersistentStorage, structure.getPcTerritoryFlag().getPcTerritoryFlagID()))
+        if(StructureSystem.PlayerHasPermission(oPC, StructurePermission.CanAccessPersistentStorage, structure.getPcTerritoryFlag().getPcTerritoryFlagID()) ||
+                StructureSystem.PlayerHasPermission(oPC, StructurePermission.CanRenameStructures, structure.getPcTerritoryFlag().getPcTerritoryFlagID()))
         {
             DialogManager.startConversation(oPC, objSelf, "StructureStorage");
         }

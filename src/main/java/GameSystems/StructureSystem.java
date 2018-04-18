@@ -731,22 +731,30 @@ public class StructureSystem {
         return header;
     }
 
-    public static void SetStructureCustomName(NWObject structure, String customName)
+    public static void SetStructureCustomName(NWObject oPC, NWObject structure, String customName)
     {
+        StructureRepository repo = new StructureRepository();
         int structureID = GetPlaceableStructureID(structure);
         customName = customName.trim();
 
         if(structureID <= 0) return;
         if(customName.equals("")) return;
 
-        StructureRepository repo = new StructureRepository();
         PCTerritoryFlagStructureEntity entity = repo.GetPCStructureByID(structureID);
+
+        if(!PlayerHasPermission(oPC, StructurePermission.CanRenameStructures, entity.getPcTerritoryFlag().getPcTerritoryFlagID()))
+        {
+            floatingTextStringOnCreature("You don't have permission to rename structures. Contact the territory owner for permission.", oPC, false);
+            return;
+        }
 
         customName += " (" + entity.getBlueprint().getItemStorageCount() + " items)";
         entity.setCustomName(customName);
 
         repo.Save(entity);
         setName(structure, customName);
+
+        floatingTextStringOnCreature("New name set: " + customName, oPC, false);
     }
 
 }
