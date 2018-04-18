@@ -484,6 +484,7 @@ public class StructureSystem {
             pcStructure.setLocationZ(entity.getLocationZ());
             pcStructure.setPcTerritoryFlag(entity.getPcTerritoryFlag());
             pcStructure.setIsUseable(entity.getBlueprint().isUseable());
+            pcStructure.setCustomName("");
 
             repo.Save(pcStructure);
             setLocalInt(structurePlaceable, StructureIDVariableName, pcStructure.getPcTerritoryFlagStructureID());

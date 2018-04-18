@@ -4,16 +4,13 @@ import Dialog.DialogBase;
 import Dialog.DialogPage;
 import Dialog.IDialogHandler;
 import Dialog.PlayerDialog;
-import Helper.ColorToken;
 import GameSystems.StructureSystem;
-import com.sun.xml.internal.bind.v2.runtime.Name;
+import Helper.ColorToken;
 import org.nwnx.nwnx2.jvm.NWLocation;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.NWScript;
 import org.nwnx.nwnx2.jvm.Scheduler;
 import org.nwnx.nwnx2.jvm.constants.ObjectType;
-
-import java.util.NavigableMap;
 
 import static org.nwnx.nwnx2.jvm.NWScript.*;
 
