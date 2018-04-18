@@ -18,6 +18,7 @@ public class CharacterManagement extends DialogBase implements IDialogHandler {
                 "Disable PVP Protection",
                 //"Change Portrait",
                 "Change Head",
+                "Change Description",
                 "Back"
         );
 
@@ -49,7 +50,10 @@ public class CharacterManagement extends DialogBase implements IDialogHandler {
                     case 2: // Change Head
                         SwitchConversation("ChangeHead");
                         break;
-                    case 3: // Back
+                    case 3: // Change Description
+                        SwitchConversation("ChangeDescription");
+                        break;
+                    case 4: // Back
                         SwitchConversation("RestMenu");
                         break;
                 }
