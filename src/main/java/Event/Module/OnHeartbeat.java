@@ -8,10 +8,15 @@ import GameSystems.AbilitySystem;
 import GameSystems.CustomEffectSystem;
 import GameSystems.FoodSystem;
 import GameSystems.ItemSystem;
+import org.nwnx.nwnx2.jvm.NWEffect;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.NWScript;
 import org.nwnx.nwnx2.jvm.constants.Ability;
+import org.nwnx.nwnx2.jvm.constants.BaseItem;
 import org.nwnx.nwnx2.jvm.constants.DurationType;
+import org.nwnx.nwnx2.jvm.constants.EffectType;
+
+import static org.nwnx.nwnx2.jvm.NWScript.*;
 
 @SuppressWarnings("unused")
 public class OnHeartbeat implements IScriptEventHandler {
@@ -23,17 +28,18 @@ public class OnHeartbeat implements IScriptEventHandler {
 
 		playerRepo = new PlayerRepository();
 
-		NWObject[] players = NWScript.getPCs();
-		for(NWObject pc : players)
+		for(NWObject pc : getPCs())
 		{
-			if(!NWScript.getIsDM(pc))
+			if(!getIsDM(pc))
 			{
+				HandleEffectLifespan(pc);
+
 				PlayerGO pcGO = new PlayerGO(pc);
 				PlayerEntity entity = playerRepo.GetByPlayerID(pcGO.getUUID());
 
 				if(entity != null)
 				{
-					entity = HandleFoodTick(pc, entity);
+					entity = FoodSystem.RunHungerCycle(pc, entity);
 					entity = HandleRegenerationTick(pc, entity);
 					entity = HandleManaRegenerationTick(pc, entity);
 					playerRepo.save(entity);
@@ -52,15 +58,15 @@ public class OnHeartbeat implements IScriptEventHandler {
 	// Export all characters every minute.
 	private void SaveCharacters()
 	{
-		int currentTick = NWScript.getLocalInt(NWObject.MODULE, "SAVE_CHARACTERS_TICK") + 1;
+		int currentTick = getLocalInt(NWObject.MODULE, "SAVE_CHARACTERS_TICK") + 1;
 
 		if(currentTick >= 10)
 		{
-			NWScript.exportAllCharacters();
+			exportAllCharacters();
 			currentTick = 0;
 		}
 
-		NWScript.setLocalInt(NWObject.MODULE, "SAVE_CHARACTERS_TICK", currentTick);
+		setLocalInt(NWObject.MODULE, "SAVE_CHARACTERS_TICK", currentTick);
 	}
 
 	private PlayerEntity HandleRegenerationTick(NWObject oPC, PlayerEntity entity)
@@ -73,12 +79,12 @@ public class OnHeartbeat implements IScriptEventHandler {
 		{
 			if(entity.getCurrentHunger() <= 20)
 			{
-				NWScript.sendMessageToPC(oPC, "You are hungry and not recovering HP naturally. Eat food to start recovering again.");
+				sendMessageToPC(oPC, "You are hungry and not recovering HP naturally. Eat food to start recovering again.");
 			}
-			else if(NWScript.getCurrentHitPoints(oPC) < NWScript.getMaxHitPoints(oPC))
+			else if(getCurrentHitPoints(oPC) < getMaxHitPoints(oPC))
 			{
 				// CON bonus
-				int con = NWScript.getAbilityModifier(Ability.CONSTITUTION, oPC);
+				int con = getAbilityModifier(Ability.CONSTITUTION, oPC);
 				if(con > 0)
 				{
 					amount += con;
@@ -86,7 +92,7 @@ public class OnHeartbeat implements IScriptEventHandler {
 
 				entity = FoodSystem.DecreaseHungerLevel(entity, oPC, 3);
 
-				NWScript.applyEffectToObject(DurationType.INSTANT, NWScript.effectHeal(amount), oPC, 0.0f);
+				applyEffectToObject(DurationType.INSTANT, effectHeal(amount), oPC, 0.0f);
 			}
 
 			entity.setRegenerationTick(rate);
@@ -105,12 +111,12 @@ public class OnHeartbeat implements IScriptEventHandler {
 		{
 			if(entity.getCurrentHunger() <= 20)
 			{
-				NWScript.sendMessageToPC(oPC, "You are hungry and not recovering mana naturally. Eat food to start recovering again.");
+				sendMessageToPC(oPC, "You are hungry and not recovering mana naturally. Eat food to start recovering again.");
 			}
 			else if(entity.getCurrentMana() < entity.getMaxMana())
 			{
 				// CHA bonus
-				int cha = NWScript.getAbilityModifier(Ability.CHARISMA, oPC);
+				int cha = getAbilityModifier(Ability.CHARISMA, oPC);
 				if(cha > 0)
 				{
 					amount += cha;
@@ -125,9 +131,31 @@ public class OnHeartbeat implements IScriptEventHandler {
 		return entity;
 	}
 
-	private PlayerEntity HandleFoodTick(NWObject oPC, PlayerEntity entity)
+	private void HandleEffectLifespan(NWObject oPC)
 	{
-		return FoodSystem.RunHungerCycle(oPC, entity);
+		for(NWEffect effect: getEffects(oPC))
+		{
+			String tag = getEffectTag(effect);
+
+			if(tag.equals(""))
+			{
+				tag = "EFFECT_TICKS 40";
+			}
+
+			if(!tag.substring(0, 13).equals("EFFECT_TICKS ")) continue;
+			if(getEffectDurationType(effect) != DurationType.PERMANENT) continue;
+
+			int ticks = Integer.parseInt(tag.substring(13)) - 1;
+
+			if(ticks <= 0)
+			{
+				removeEffect(oPC, effect);
+			}
+			else
+			{
+				tagEffect(effect, "EFFECT_TICKS " + ticks);
+			}
+		}
 	}
 }
 
