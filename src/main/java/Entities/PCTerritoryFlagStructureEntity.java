@@ -37,6 +37,9 @@ public class PCTerritoryFlagStructureEntity {
     @Column(name = "CreateDate", insertable = false)
     private Date createDate;
 
+    @Column(name = "CustomName")
+    private String customName;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "StructureBlueprintID")
     private StructureBlueprintEntity blueprint;
@@ -136,5 +139,13 @@ public class PCTerritoryFlagStructureEntity {
 
     public void setItems(List<PCTerritoryFlagStructureItemEntity> items) {
         this.items = items;
+    }
+
+    public String getCustomName() {
+        return customName;
+    }
+
+    public void setCustomName(String customName) {
+        this.customName = customName;
     }
 }

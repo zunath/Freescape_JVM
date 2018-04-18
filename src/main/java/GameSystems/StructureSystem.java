@@ -7,6 +7,7 @@ import Enumerations.StructurePermission;
 import GameObject.PlayerGO;
 import Helper.ColorToken;
 import Helper.ItemHelper;
+import NWNX.NWNX_Chat;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.nwnx.nwnx2.jvm.*;
@@ -16,6 +17,8 @@ import org.nwnx.nwnx2.jvm.constants.ObjectType;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.nwnx.nwnx2.jvm.NWScript.*;
 
 
 public class StructureSystem {
@@ -41,80 +44,102 @@ public class StructureSystem {
         List<ConstructionSiteEntity> constructionSites = repo.GetAllConstructionSites();
         for(ConstructionSiteEntity entity : constructionSites)
         {
-            NWObject oArea = NWScript.getObjectByTag(entity.getLocationAreaTag(), 0);
-            NWVector position = NWScript.vector((float) entity.getLocationX(), (float) entity.getLocationY(), (float) entity.getLocationZ());
-            NWLocation location = NWScript.location(oArea, position, (float) entity.getLocationOrientation());
+            NWObject oArea = getObjectByTag(entity.getLocationAreaTag(), 0);
+            NWVector position = vector((float) entity.getLocationX(), (float) entity.getLocationY(), (float) entity.getLocationZ());
+            NWLocation location = location(oArea, position, (float) entity.getLocationOrientation());
 
-            NWObject constructionSite = NWScript.createObject(ObjectType.PLACEABLE, ConstructionSiteResref, location, false, "");
-            NWScript.setLocalInt(constructionSite, ConstructionSiteIDVariableName, entity.getConstructionSiteID());
-            NWScript.setName(constructionSite, "Construction Site: " + entity.getBlueprint().getName());
+            NWObject constructionSite = createObject(ObjectType.PLACEABLE, ConstructionSiteResref, location, false, "");
+            setLocalInt(constructionSite, ConstructionSiteIDVariableName, entity.getConstructionSiteID());
+            setName(constructionSite, "Construction Site: " + entity.getBlueprint().getName());
 
-            NWEffect eGhostWalk = NWScript.effectCutsceneGhost();
-            NWScript.applyEffectToObject(Duration.TYPE_PERMANENT, eGhostWalk, constructionSite, 0.0f);
+            NWEffect eGhostWalk = effectCutsceneGhost();
+            applyEffectToObject(Duration.TYPE_PERMANENT, eGhostWalk, constructionSite, 0.0f);
         }
 
         List<PCTerritoryFlagEntity> territoryFlags = repo.GetAllTerritoryFlags();
         for(PCTerritoryFlagEntity flag : territoryFlags)
         {
-            NWObject oArea = NWScript.getObjectByTag(flag.getLocationAreaTag(), 0);
-            NWVector position = NWScript.vector((float) flag.getLocationX(), (float) flag.getLocationY(), (float) flag.getLocationZ());
-            NWLocation location = NWScript.location(oArea, position, (float) flag.getLocationOrientation());
+            NWObject oArea = getObjectByTag(flag.getLocationAreaTag(), 0);
+            NWVector position = vector((float) flag.getLocationX(), (float) flag.getLocationY(), (float) flag.getLocationZ());
+            NWLocation location = location(oArea, position, (float) flag.getLocationOrientation());
             PlayerEntity playerEntity = playerRepo.GetByPlayerID(flag.getPlayerID());
 
-            NWObject territoryFlag = NWScript.createObject(ObjectType.PLACEABLE, flag.getBlueprint().getResref(), location, false, "");
-            NWScript.setLocalInt(territoryFlag, TerritoryFlagIDVariableName, flag.getPcTerritoryFlagID());
-            NWScript.setName(territoryFlag, playerEntity.getCharacterName() + "'s Territory");
+            NWObject territoryFlag = createObject(ObjectType.PLACEABLE, flag.getBlueprint().getResref(), location, false, "");
+            setLocalInt(territoryFlag, TerritoryFlagIDVariableName, flag.getPcTerritoryFlagID());
+            setName(territoryFlag, playerEntity.getCharacterName() + "'s Territory");
 
             for(PCTerritoryFlagStructureEntity structure : flag.getStructures())
             {
-                oArea = NWScript.getObjectByTag(structure.getLocationAreaTag(), 0);
-                position = NWScript.vector((float) structure.getLocationX(), (float) structure.getLocationY(), (float) structure.getLocationZ());
-                location = NWScript.location(oArea, position, (float) structure.getLocationOrientation());
+                oArea = getObjectByTag(structure.getLocationAreaTag(), 0);
+                position = vector((float) structure.getLocationX(), (float) structure.getLocationY(), (float) structure.getLocationZ());
+                location = location(oArea, position, (float) structure.getLocationOrientation());
 
-                NWObject structurePlaceable = NWScript.createObject(ObjectType.PLACEABLE, structure.getBlueprint().getResref(), location, false, "");
-                NWScript.setLocalInt(structurePlaceable, StructureIDVariableName, structure.getPcTerritoryFlagStructureID());
-                NWScript.setPlotFlag(structurePlaceable, true);
-                NWScript.setUseableFlag(structurePlaceable, structure.isUseable());
+                NWObject structurePlaceable = createObject(ObjectType.PLACEABLE, structure.getBlueprint().getResref(), location, false, "");
+                setLocalInt(structurePlaceable, StructureIDVariableName, structure.getPcTerritoryFlagStructureID());
+                setPlotFlag(structurePlaceable, true);
+                setUseableFlag(structurePlaceable, structure.isUseable());
+
+                if(!structure.getCustomName().equals(""))
+                {
+                    setName(structurePlaceable, structure.getCustomName());
+                }
 
                 if(structure.getBlueprint().getItemStorageCount() > 0)
                 {
-                    NWScript.setName(structurePlaceable, NWScript.getName(structurePlaceable, false) + " (" + structure.getBlueprint().getItemStorageCount() + " items)");
+                    setName(structurePlaceable, getName(structurePlaceable, false) + " (" + structure.getBlueprint().getItemStorageCount() + " items)");
                 }
             }
 
         }
     }
 
+    public static void OnModuleNWNXChat(NWObject sender)
+    {
+        if(getLocalInt(sender, "LISTENING_FOR_NEW_CONTAINER_NAME") != 1) return;
+        if(!getIsPC(sender)) return;
+
+        NWNX_Chat.SkipMessage();
+        String text = NWNX_Chat.GetMessage().trim();
+        if(text.length() > 32)
+        {
+            floatingTextStringOnCreature("Container names must be 32 characters or less.", sender, false);
+            return;
+        }
+
+        setLocalString(sender, "NEW_CONTAINER_NAME", text);
+        sendMessageToPC(sender, "New container name received. Please press the 'Next' button in the conversation window.");
+    }
+
     public static boolean IsPCMovingStructure(NWObject oPC)
     {
-        return NWScript.getLocalInt(oPC, IsMovingStructureLocationVariableName) == 1 &&
-                !NWScript.getLocalObject(oPC, MovingStructureVariableName).equals(NWObject.INVALID);
+        return getLocalInt(oPC, IsMovingStructureLocationVariableName) == 1 &&
+                !getLocalObject(oPC, MovingStructureVariableName).equals(NWObject.INVALID);
     }
 
     public static void SetIsPCMovingStructure(NWObject oPC, NWObject structure, boolean isMoving)
     {
         if(isMoving)
         {
-            NWScript.setLocalInt(oPC, IsMovingStructureLocationVariableName, 1);
-            NWScript.setLocalObject(oPC, MovingStructureVariableName, structure);
+            setLocalInt(oPC, IsMovingStructureLocationVariableName, 1);
+            setLocalObject(oPC, MovingStructureVariableName, structure);
         }
         else
         {
-            NWScript.deleteLocalInt(oPC, IsMovingStructureLocationVariableName);
-            NWScript.deleteLocalObject(oPC, MovingStructureVariableName);
+            deleteLocalInt(oPC, IsMovingStructureLocationVariableName);
+            deleteLocalObject(oPC, MovingStructureVariableName);
         }
     }
 
     private static void SetPlaceableStructureID(NWObject structure, int structureID)
     {
-        NWScript.setLocalInt(structure, StructureIDVariableName, structureID);
+        setLocalInt(structure, StructureIDVariableName, structureID);
     }
 
     public static int GetPlaceableStructureID(NWObject structure)
     {
-        return NWScript.getLocalInt(structure, StructureIDVariableName) <= 0 ?
+        return getLocalInt(structure, StructureIDVariableName) <= 0 ?
                 -1 :
-                NWScript.getLocalInt(structure, StructureIDVariableName);
+                getLocalInt(structure, StructureIDVariableName);
     }
 
     // Assumption: There will never be an overlap of two or more territory flags' areas of influence.
@@ -122,7 +147,7 @@ public class StructureSystem {
     public static NWObject GetTerritoryFlagOwnerOfLocation(NWLocation location)
     {
         StructureRepository repo = new StructureRepository();
-        String areaTag = NWScript.getTag(location.getArea());
+        String areaTag = getTag(location.getArea());
         List<PCTerritoryFlagEntity> areaFlags = repo.GetAllFlagsInArea(areaTag);
         NWObject placeable = NWObject.INVALID;
 
@@ -135,17 +160,17 @@ public class StructureSystem {
                     (float)flag.getLocationZ(),
                     (float)flag.getLocationOrientation()
             );
-            float distance = NWScript.getDistanceBetweenLocations(flagLocation, location);
+            float distance = getDistanceBetweenLocations(flagLocation, location);
 
             if(distance <= flag.getBlueprint().getMaxBuildDistance())
             {
                 // Found the territory which "owns" this location. Look for the flag placeable with a matching ID.
                 int currentPlaceable = 1;
-                NWObject checker = NWScript.createObject(ObjectType.PLACEABLE, TemporaryLocationCheckerObjectResref, location, false, "");
+                NWObject checker = createObject(ObjectType.PLACEABLE, TemporaryLocationCheckerObjectResref, location, false, "");
 
                 do
                 {
-                    placeable = NWScript.getNearestObject(ObjectType.PLACEABLE, checker, currentPlaceable);
+                    placeable = getNearestObject(ObjectType.PLACEABLE, checker, currentPlaceable);
 
                     if(GetTerritoryFlagID(placeable) == flag.getPcTerritoryFlagID())
                     {
@@ -156,7 +181,7 @@ public class StructureSystem {
                 } while(!placeable.equals(NWObject.INVALID));
 
 
-                NWScript.destroyObject(checker, 0.0f);
+                destroyObject(checker, 0.0f);
 
             }
 
@@ -168,11 +193,11 @@ public class StructureSystem {
     {
         StructureRepository repo = new StructureRepository();
         NWObject flag = GetTerritoryFlagOwnerOfLocation(targetLocation);
-        NWLocation flagLocation = NWScript.getLocation(flag);
+        NWLocation flagLocation = getLocation(flag);
         int pcTerritoryFlagID = GetTerritoryFlagID(flag);
         PCTerritoryFlagEntity entity = repo.GetPCTerritoryFlagByID(pcTerritoryFlagID);
         PlayerGO pcGO = new PlayerGO(oPC);
-        float distance = NWScript.getDistanceBetweenLocations(flagLocation, targetLocation);
+        float distance = getDistanceBetweenLocations(flagLocation, targetLocation);
 
         if(flag.equals(NWObject.INVALID) ||
                 distance > entity.getBlueprint().getMaxBuildDistance())
@@ -204,12 +229,12 @@ public class StructureSystem {
 
     private static boolean IsWithinRangeOfTerritoryFlag(NWObject oCheck)
     {
-        NWLocation location = NWScript.getLocation(oCheck);
+        NWLocation location = getLocation(oCheck);
         NWObject flag = GetTerritoryFlagOwnerOfLocation(location);
 
         if(flag.equals(NWObject.INVALID)) return false;
 
-        float distance = NWScript.getDistanceBetween(oCheck, flag);
+        float distance = getDistanceBetween(oCheck, flag);
         StructureRepository repo = new StructureRepository();
         int flagID = GetTerritoryFlagID(flag);
         PCTerritoryFlagEntity entity = repo.GetPCTerritoryFlagByID(flagID);
@@ -223,35 +248,35 @@ public class StructureSystem {
 
         if(buildStatus == 0) // 0 = Can't do it in that location
         {
-            NWScript.floatingTextStringOnCreature(ColorToken.Red() + "You can't build a construction site there." + ColorToken.End(), oPC, false);
+            floatingTextStringOnCreature(ColorToken.Red() + "You can't build a construction site there." + ColorToken.End(), oPC, false);
         }
         else if(buildStatus == 1) // 1 = Success
         {
-            NWObject constructionSite = NWScript.createObject(ObjectType.PLACEABLE, ConstructionSiteResref, location, false, "");
-            NWEffect eGhostWalk = NWScript.effectCutsceneGhost();
-            NWScript.applyEffectToObject(Duration.TYPE_PERMANENT, eGhostWalk, constructionSite, 0.0f);
+            NWObject constructionSite = createObject(ObjectType.PLACEABLE, ConstructionSiteResref, location, false, "");
+            NWEffect eGhostWalk = effectCutsceneGhost();
+            applyEffectToObject(Duration.TYPE_PERMANENT, eGhostWalk, constructionSite, 0.0f);
 
-            NWScript.floatingTextStringOnCreature("Construction site created! Use the construction site to select a blueprint.", oPC, false);
+            floatingTextStringOnCreature("Construction site created! Use the construction site to select a blueprint.", oPC, false);
         }
         else if(buildStatus == 2) // 2 = Territory can't hold any more structures.
         {
-            NWScript.floatingTextStringOnCreature(ColorToken.Red() + "The maximum number of structures this territory can manage has been reached. Raze a structure or upgrade your territory to create a new structure." + ColorToken.End(), oPC, false);
+            floatingTextStringOnCreature(ColorToken.Red() + "The maximum number of structures this territory can manage has been reached. Raze a structure or upgrade your territory to create a new structure." + ColorToken.End(), oPC, false);
         }
     }
 
     public static int GetConstructionSiteID(NWObject site)
     {
-        return NWScript.getLocalInt(site, ConstructionSiteIDVariableName);
+        return getLocalInt(site, ConstructionSiteIDVariableName);
     }
 
     private static void SetConstructionSiteID(NWObject site, int constructionSiteID)
     {
-        NWScript.setLocalInt(site, ConstructionSiteIDVariableName, constructionSiteID);
+        setLocalInt(site, ConstructionSiteIDVariableName, constructionSiteID);
     }
 
     public static int GetTerritoryFlagID(NWObject flag)
     {
-        return NWScript.getLocalInt(flag, TerritoryFlagIDVariableName);
+        return getLocalInt(flag, TerritoryFlagIDVariableName);
     }
 
     public static void SelectBlueprint(NWObject oPC, NWObject constructionSite, int blueprintID)
@@ -259,9 +284,9 @@ public class StructureSystem {
         PlayerGO pcGO = new PlayerGO(oPC);
         StructureRepository repo = new StructureRepository();
         ConstructionSiteEntity entity = new ConstructionSiteEntity();
-        NWObject area = NWScript.getArea(constructionSite);
-        String areaTag = NWScript.getTag(area);
-        NWLocation location = NWScript.getLocation(constructionSite);
+        NWObject area = getArea(constructionSite);
+        String areaTag = getTag(area);
+        NWLocation location = getLocation(constructionSite);
         StructureBlueprintEntity blueprint = repo.GetStructureBlueprintByID(blueprintID);
 
         entity.setLocationAreaTag(areaTag);
@@ -291,35 +316,35 @@ public class StructureSystem {
 
         repo.Save(entity);
         SetConstructionSiteID(constructionSite, entity.getConstructionSiteID());
-        NWScript.setName(constructionSite, "Construction Site: " + entity.getBlueprint().getName());
+        setName(constructionSite, "Construction Site: " + entity.getBlueprint().getName());
     }
 
     public static void MoveStructure(NWObject oPC, NWLocation location)
     {
         StructureRepository repo = new StructureRepository();
-        NWObject target = NWScript.getLocalObject(oPC, MovingStructureVariableName);
+        NWObject target = getLocalObject(oPC, MovingStructureVariableName);
         NWObject nearestFlag = GetTerritoryFlagOwnerOfLocation(location);
-        NWLocation nearestFlagLocation = NWScript.getLocation(nearestFlag);
+        NWLocation nearestFlagLocation = getLocation(nearestFlag);
         int nearestFlagID = GetTerritoryFlagID(nearestFlag);
         boolean outsideOwnFlagRadius = false;
         int constructionSiteID = GetConstructionSiteID(target);
         int structureID = GetPlaceableStructureID(target);
-        NWScript.deleteLocalInt(oPC, IsMovingStructureLocationVariableName);
-        NWScript.deleteLocalObject(oPC, MovingStructureVariableName);
+        deleteLocalInt(oPC, IsMovingStructureLocationVariableName);
+        deleteLocalObject(oPC, MovingStructureVariableName);
 
         if(target.equals(NWObject.INVALID) ||
-                !location.getArea().equals(NWScript.getArea(target))) {
+                !location.getArea().equals(getArea(target))) {
             return;
         }
 
         if(!PlayerHasPermission(oPC, StructurePermission.CanMoveStructures, nearestFlagID))
         {
-            NWScript.floatingTextStringOnCreature("You do not have permission to move this structure.", oPC, false);
+            floatingTextStringOnCreature("You do not have permission to move this structure.", oPC, false);
             return;
         }
 
         // Moving construction site, no blueprint set
-        if(constructionSiteID <= 0 && NWScript.getResRef(target).equals(ConstructionSiteResref))
+        if(constructionSiteID <= 0 && getResRef(target).equals(ConstructionSiteResref))
         {
             if(CanPCBuildInLocation(oPC, location, StructurePermission.CanMoveStructures) == 0)
             {
@@ -337,14 +362,14 @@ public class StructureSystem {
             if(isTerritoryMarkerConstructionSite )
             {
                 PCTerritoryFlagEntity nearestFlagEntity = repo.GetPCTerritoryFlagByID(nearestFlagID);
-                if(nearestFlagEntity != null && NWScript.getDistanceBetweenLocations(location, nearestFlagLocation) <= nearestFlagEntity.getBlueprint().getMaxBuildDistance())
+                if(nearestFlagEntity != null && getDistanceBetweenLocations(location, nearestFlagLocation) <= nearestFlagEntity.getBlueprint().getMaxBuildDistance())
                 {
-                    NWScript.floatingTextStringOnCreature("Cannot move territory markers within the building range of another territory marker.", oPC, false);
+                    floatingTextStringOnCreature("Cannot move territory markers within the building range of another territory marker.", oPC, false);
                     return;
                 }
             }
             else if(entity.getPcTerritoryFlag().getPcTerritoryFlagID() != nearestFlagID ||
-                    NWScript.getDistanceBetweenLocations(nearestFlagLocation, location) > entity.getPcTerritoryFlag().getBlueprint().getMaxBuildDistance())
+                    getDistanceBetweenLocations(nearestFlagLocation, location) > entity.getPcTerritoryFlag().getBlueprint().getMaxBuildDistance())
             {
                 outsideOwnFlagRadius = true;
             }
@@ -363,7 +388,7 @@ public class StructureSystem {
             PCTerritoryFlagStructureEntity entity = repo.GetPCStructureByID(structureID);
 
             if(entity.getPcTerritoryFlag().getPcTerritoryFlagID() != nearestFlagID ||
-                    NWScript.getDistanceBetweenLocations(nearestFlagLocation, location) > entity.getPcTerritoryFlag().getBlueprint().getMaxBuildDistance())
+                    getDistanceBetweenLocations(nearestFlagLocation, location) > entity.getPcTerritoryFlag().getBlueprint().getMaxBuildDistance())
             {
                 outsideOwnFlagRadius = true;
             }
@@ -380,27 +405,27 @@ public class StructureSystem {
 
         if(outsideOwnFlagRadius)
         {
-            NWScript.floatingTextStringOnCreature("Unable to move structure to that location. New location must be within range of the territory marker it is attached to.", oPC, false);
+            floatingTextStringOnCreature("Unable to move structure to that location. New location must be within range of the territory marker it is attached to.", oPC, false);
             return;
         }
-        NWObject copy = NWScript.createObject(ObjectType.PLACEABLE, NWScript.getResRef(target), location, false, "");
-        NWScript.setName(copy, NWScript.getName(target, false));
+        NWObject copy = createObject(ObjectType.PLACEABLE, getResRef(target), location, false, "");
+        setName(copy, getName(target, false));
 
         if(constructionSiteID > 0) SetConstructionSiteID(copy, constructionSiteID);
         else if (structureID > 0) SetPlaceableStructureID(copy, structureID);
 
-        NWScript.destroyObject(NWScript.getLocalObject(target, "GateBlock"), 0.0f);
-        NWScript.destroyObject(target, 0.0f);
+        destroyObject(getLocalObject(target, "GateBlock"), 0.0f);
+        destroyObject(target, 0.0f);
     }
 
     public static void LogQuickBuildAction(NWObject oDM, NWObject completedStructure)
     {
-        if(!NWScript.getIsPC(oDM) && !NWScript.getIsDM(oDM)) return;
+        if(!getIsPC(oDM) && !getIsDM(oDM)) return;
 
         StructureRepository repo = new StructureRepository();
-        String name = NWScript.getName(oDM, false);
-        int flagID = NWScript.getLocalInt(completedStructure, TerritoryFlagIDVariableName);
-        long structureID = (long)NWScript.getLocalInt(completedStructure, StructureIDVariableName);
+        String name = getName(oDM, false);
+        int flagID = getLocalInt(completedStructure, TerritoryFlagIDVariableName);
+        long structureID = (long)getLocalInt(completedStructure, StructureIDVariableName);
 
         StructureQuickBuildAuditEntity audit = new StructureQuickBuildAuditEntity();
         audit.setDateBuilt(new Timestamp(new DateTime(DateTimeZone.UTC).getMillis()));
@@ -425,16 +450,16 @@ public class StructureSystem {
         int constructionSiteID = GetConstructionSiteID(constructionSite);
         ConstructionSiteEntity entity = repo.GetConstructionSiteByID(constructionSiteID);
         StructureBlueprintEntity blueprint = entity.getBlueprint();
-        NWLocation location = NWScript.getLocation(constructionSite);
+        NWLocation location = getLocation(constructionSite);
 
-        NWObject structurePlaceable = NWScript.createObject(ObjectType.PLACEABLE, blueprint.getResref(), location, false, "");
-        NWScript.destroyObject(constructionSite, 0.0f);
+        NWObject structurePlaceable = createObject(ObjectType.PLACEABLE, blueprint.getResref(), location, false, "");
+        destroyObject(constructionSite, 0.0f);
 
         if(blueprint.isTerritoryFlag())
         {
             PlayerRepository playerRepo = new PlayerRepository();
             PlayerEntity playerEntity = playerRepo.GetByPlayerID(entity.getPlayerID());
-            NWScript.setName(structurePlaceable, playerEntity.getCharacterName() + "'s Territory");
+            setName(structurePlaceable, playerEntity.getCharacterName() + "'s Territory");
 
             PCTerritoryFlagEntity pcFlag = new PCTerritoryFlagEntity();
             pcFlag.setBlueprint(blueprint);
@@ -446,7 +471,7 @@ public class StructureSystem {
             pcFlag.setPlayerID(entity.getPlayerID());
 
             repo.Save(pcFlag);
-            NWScript.setLocalInt(structurePlaceable, TerritoryFlagIDVariableName, pcFlag.getPcTerritoryFlagID());
+            setLocalInt(structurePlaceable, TerritoryFlagIDVariableName, pcFlag.getPcTerritoryFlagID());
         }
         else
         {
@@ -461,11 +486,11 @@ public class StructureSystem {
             pcStructure.setIsUseable(entity.getBlueprint().isUseable());
 
             repo.Save(pcStructure);
-            NWScript.setLocalInt(structurePlaceable, StructureIDVariableName, pcStructure.getPcTerritoryFlagStructureID());
+            setLocalInt(structurePlaceable, StructureIDVariableName, pcStructure.getPcTerritoryFlagStructureID());
 
             if(entity.getBlueprint().getItemStorageCount() > 0)
             {
-                NWScript.setName(structurePlaceable, NWScript.getName(structurePlaceable, false) + " (" + entity.getBlueprint().getItemStorageCount() + " items)");
+                setName(structurePlaceable, getName(structurePlaceable, false) + " (" + entity.getBlueprint().getItemStorageCount() + " items)");
             }
         }
 
@@ -501,24 +526,24 @@ public class StructureSystem {
 
 
         int currentPlaceable = 1;
-        NWObject placeable = NWScript.getNearestObject(ObjectType.PLACEABLE, flag, currentPlaceable);
+        NWObject placeable = getNearestObject(ObjectType.PLACEABLE, flag, currentPlaceable);
         while(!placeable.equals(NWObject.INVALID))
         {
-            if(NWScript.getDistanceBetween(placeable, flag) > entity.getBlueprint().getMaxBuildDistance()) break;
+            if(getDistanceBetween(placeable, flag) > entity.getBlueprint().getMaxBuildDistance()) break;
 
             if(constructionSiteIDs.contains(GetConstructionSiteID(placeable)) ||
                     structureSiteIDs.contains(GetPlaceableStructureID(placeable)))
             {
 
-                NWScript.destroyObject(NWScript.getLocalObject(placeable, "GateBlock"), 0.0f);
-                NWScript.destroyObject(placeable, 0.0f);
+                destroyObject(getLocalObject(placeable, "GateBlock"), 0.0f);
+                destroyObject(placeable, 0.0f);
             }
 
             currentPlaceable++;
-            placeable = NWScript.getNearestObject(ObjectType.PLACEABLE, flag, currentPlaceable);
+            placeable = getNearestObject(ObjectType.PLACEABLE, flag, currentPlaceable);
         }
 
-        NWScript.destroyObject(flag, 0.0f);
+        destroyObject(flag, 0.0f);
         repo.Delete(entity);
     }
 
@@ -533,14 +558,14 @@ public class StructureSystem {
         entity.setPlayerID(newOwnerUUID);
         repo.Save(entity);
 
-        NWScript.setName(oFlag, playerEntity.getCharacterName() + "'s Territory");
+        setName(oFlag, playerEntity.getCharacterName() + "'s Territory");
 
-        for(NWObject oPC : NWScript.getPCs())
+        for(NWObject oPC : getPCs())
         {
             PlayerGO pcGO = new PlayerGO(oPC);
             if(pcGO.getUUID().equals(newOwnerUUID))
             {
-                NWScript.floatingTextStringOnCreature("Ownership of a territory in " + NWScript.getName(NWScript.getArea(oFlag), false)  + " has been transferred to you.", oPC, false);
+                floatingTextStringOnCreature("Ownership of a territory in " + getName(getArea(oFlag), false)  + " has been transferred to you.", oPC, false);
                 break;
             }
         }
@@ -559,20 +584,20 @@ public class StructureSystem {
                 for(ConstructionSiteComponentEntity comp: entity.getComponents())
                 {
                     int quantity = comp.getStructureComponent().getQuantity() - comp.getQuantity();
-                    for(int q = 1; q <= quantity; q++) NWScript.createItemOnObject(comp.getStructureComponent().getResref(), oPC, 1, "");
+                    for(int q = 1; q <= quantity; q++) createItemOnObject(comp.getStructureComponent().getResref(), oPC, 1, "");
                 }
             }
 
             repo.Delete(entity);
         }
-        NWScript.destroyObject(site, 0.0f);
+        destroyObject(site, 0.0f);
     }
 
     public static boolean WillBlueprintOverlapWithExistingFlags(NWLocation location, int blueprintID)
     {
         StructureRepository repo = new StructureRepository();
-        NWObject area = NWScript.getAreaFromLocation(location);
-        List<PCTerritoryFlagEntity> flags = repo.GetAllFlagsInArea(NWScript.getTag(area));
+        NWObject area = getAreaFromLocation(location);
+        List<PCTerritoryFlagEntity> flags = repo.GetAllFlagsInArea(getTag(area));
         StructureBlueprintEntity blueprint = repo.GetStructureBlueprintByID(blueprintID);
 
         for(PCTerritoryFlagEntity flag : flags)
@@ -585,7 +610,7 @@ public class StructureSystem {
                     (float)flag.getLocationOrientation()
             );
 
-            float distance = NWScript.getDistanceBetweenLocations(location, flagLocation);
+            float distance = getDistanceBetweenLocations(location, flagLocation);
             float overlapDistance = (float)flag.getBlueprint().getMaxBuildDistance() + (float)blueprint.getMaxBuildDistance();
 
             if(distance <= overlapDistance)
@@ -600,16 +625,16 @@ public class StructureSystem {
     public static boolean IsConstructionSiteValid(NWObject site)
     {
         StructureRepository repo = new StructureRepository();
-        NWLocation siteLocation = NWScript.getLocation(site);
+        NWLocation siteLocation = getLocation(site);
         NWObject flag = GetTerritoryFlagOwnerOfLocation(siteLocation);
-        NWLocation flaglocation = NWScript.getLocation(flag);
+        NWLocation flaglocation = getLocation(flag);
         int flagID = StructureSystem.GetTerritoryFlagID(flag);
         int constructionSiteID = StructureSystem.GetConstructionSiteID(site);
         if(flagID <= 0) return true;
 
         ConstructionSiteEntity constructionSiteEntity = repo.GetConstructionSiteByID(constructionSiteID);
         PCTerritoryFlagEntity flagEntity = repo.GetPCTerritoryFlagByID(flagID);
-        float distance = NWScript.getDistanceBetweenLocations(flaglocation, siteLocation);
+        float distance = getDistanceBetweenLocations(flaglocation, siteLocation);
 
         // Scenario #1: Territory's structure cap has been reached. Blueprint not set on this construction site.
         //              Site must be razed otherwise player would go over the cap.
@@ -637,7 +662,7 @@ public class StructureSystem {
     public static boolean PlayerHasPermission(NWObject oPC, int permissionID, int flagID)
     {
         if(flagID <= 0) return true;
-        if(NWScript.getIsDM(oPC)) return true;
+        if(getIsDM(oPC)) return true;
 
         PlayerGO pcGO = new PlayerGO(oPC);
         StructureRepository repo = new StructureRepository();
@@ -703,6 +728,24 @@ public class StructureSystem {
         }
 
         return header;
+    }
+
+    public static void SetStructureCustomName(NWObject structure, String customName)
+    {
+        int structureID = GetPlaceableStructureID(structure);
+        customName = customName.trim();
+
+        if(structureID <= 0) return;
+        if(customName.equals("")) return;
+
+        StructureRepository repo = new StructureRepository();
+        PCTerritoryFlagStructureEntity entity = repo.GetPCStructureByID(structureID);
+
+        customName += " (" + entity.getBlueprint().getItemStorageCount() + " items)";
+        entity.setCustomName(customName);
+
+        repo.Save(entity);
+        setName(structure, customName);
     }
 
 }
