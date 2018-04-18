@@ -1,10 +1,11 @@
 package Item.FirstAid;
 
 import Entities.PCSkillEntity;
+import Enumerations.CustomEffectType;
 import Enumerations.PerkID;
 import Enumerations.SkillID;
 import GameObject.ItemGO;
-import GameObject.PlayerGO;
+import GameSystems.CustomEffectSystem;
 import GameSystems.PerkSystem;
 import GameSystems.SkillSystem;
 import Item.IActionItem;
@@ -12,49 +13,40 @@ import org.nwnx.nwnx2.jvm.NWEffect;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.NWScript;
 import org.nwnx.nwnx2.jvm.constants.Animation;
-import org.nwnx.nwnx2.jvm.constants.DurationType;
 import org.nwnx.nwnx2.jvm.constants.EffectType;
 
 import java.util.concurrent.ThreadLocalRandom;
 
 import static org.nwnx.nwnx2.jvm.NWScript.*;
 
-public class HealingKit implements IActionItem {
-
+public class TreatmentKit implements IActionItem {
     @Override
     public Object StartUseItem(NWObject user, NWObject item, NWObject target) {
-        sendMessageToPC(user, "You begin treating " + getName(target, false) + "'s wounds...");
+        sendMessageToPC(user, "You begin treating " + getName(target, false) + "'s infection...");
         return null;
     }
 
     @Override
     public void ApplyEffects(NWObject user, NWObject item, NWObject target, Object customData) {
 
-        PlayerGO targetGO = new PlayerGO(target);
-        ItemGO itemGO = new ItemGO(item);
+        CustomEffectSystem.RemovePCCustomEffect(target, CustomEffectType.Poison);
 
-        targetGO.removeEffect(EffectType.REGENERATE);
-        PCSkillEntity skill = SkillSystem.GetPCSkill(user, SkillID.FirstAid);
-        int luck = PerkSystem.GetPCPerkLevel(user, PerkID.Lucky);
-        int perkDurationBonus = PerkSystem.GetPCPerkLevel(user, PerkID.HealingKitExpert) * 6 + (luck * 2);
-        float duration = 30.0f + (skill.getRank() * 0.4f) + perkDurationBonus;
-        final int restoreAmount = 1 + getLocalInt(item, "HEALING_BONUS");
-
-        int perkBlastBonus = PerkSystem.GetPCPerkLevel(user, PerkID.ImmediateImprovement);
-        if(perkBlastBonus > 0)
+        for(NWEffect effect: getEffects(target))
         {
-            int blastHeal = restoreAmount * perkBlastBonus;
-            if(ThreadLocalRandom.current().nextInt(100) + 1 <= luck / 2)
+            if(getIsEffectValid(effect))
             {
-                blastHeal *= 2;
+                int effectType = getEffectType(effect);
+                if(effectType == EffectType.POISON || effectType == EffectType.DISEASE)
+                {
+                    removeEffect(target, effect);
+                }
             }
-            applyEffectToObject(DurationType.INSTANT, effectHeal(blastHeal), target, 0.0f);
         }
 
-        NWEffect regeneration = effectRegenerate(restoreAmount, 6.0f);
-        applyEffectToObject(DurationType.TEMPORARY, regeneration, target, duration);
-        sendMessageToPC(user, "You successfully treat " + getName(target, false) + "'s wounds.");
+        sendMessageToPC(user, "You successfully treat " + getName(target, false) + "'s infection.");
 
+        PCSkillEntity skill = SkillSystem.GetPCSkill(user, SkillID.FirstAid);
+        ItemGO itemGO = new ItemGO(item);
         int xp = (int)SkillSystem.CalculateSkillAdjustedXP(100, itemGO.getRecommendedLevel(), skill.getRank());
         SkillSystem.GiveSkillXP(user, SkillID.FirstAid, xp);
     }
@@ -87,7 +79,7 @@ public class HealingKit implements IActionItem {
     }
 
     @Override
-    public boolean ReducesItemCharge(NWObject user, NWObject item, NWObject target, Object customdata) {
+    public boolean ReducesItemCharge(NWObject user, NWObject item, NWObject target, Object customData) {
         int consumeChance = PerkSystem.GetPCPerkLevel(user, PerkID.FrugalMedic) * 10;
         return ThreadLocalRandom.current().nextInt(100) + 1 > consumeChance;
     }
@@ -95,14 +87,33 @@ public class HealingKit implements IActionItem {
     @Override
     public String IsValidTarget(NWObject user, NWObject item, NWObject target) {
 
-        if(!getIsPC(target) || getIsDM(target))
+        if(!NWScript.getIsPC(target) || NWScript.getIsDM(target))
         {
             return "Only players may be targeted with this item.";
         }
 
-        if(getCurrentHitPoints(target) >= getMaxHitPoints(target))
+        boolean hasEffect = false;
+        NWEffect[] effects = getEffects(target);
+        for(NWEffect effect: effects)
         {
-            return "Your target is not hurt.";
+            if(getIsEffectValid(effect))
+            {
+                int effectType = getEffectType(effect);
+                if(effectType == EffectType.POISON || effectType == EffectType.DISEASE)
+                {
+                    hasEffect = true;
+                }
+            }
+        }
+
+        if(CustomEffectSystem.DoesPCHaveCustomEffect(target, CustomEffectType.Poison))
+        {
+            hasEffect = true;
+        }
+
+        if(!hasEffect)
+        {
+            return "This player is not diseased or poisoned.";
         }
 
         return null;
