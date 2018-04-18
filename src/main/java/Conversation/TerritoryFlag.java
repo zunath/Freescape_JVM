@@ -158,7 +158,7 @@ public class TerritoryFlag extends DialogBase implements IDialogHandler {
 
         String header = ColorToken.Green() + "Current Build Privacy: " + ColorToken.End() + entity.getBuildPrivacy().getName() + "\n\n";
         header += ColorToken.Green() + "Owner Only: " + ColorToken.End() + "Only the owner of this territory may build and manipulate structures at this territory.\n";
-        header += ColorToken.Green() + "Friends Only: " + ColorToken.End() + "Only you and the people you mark as friends may build and manipualte structures at this territory.\n";
+        header += ColorToken.Green() + "Friends Only: " + ColorToken.End() + "Only you and the people you mark as friends may build and manipulate structures at this territory.\n";
         header += ColorToken.Green() + "Public: " + ColorToken.End() + "Anyone may build and manipulate structures at this territory.";
 
         return header;
