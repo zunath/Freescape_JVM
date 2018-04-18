@@ -3,9 +3,11 @@ package Conversation;
 import Conversation.ViewModels.CharacterManagementViewModel;
 import Dialog.*;
 import GameObject.PlayerGO;
+import GameSystems.HelmetToggleSystem;
 import Helper.ColorToken;
 import org.nwnx.nwnx2.jvm.NWObject;
-import org.nwnx.nwnx2.jvm.NWScript;
+
+import static org.nwnx.nwnx2.jvm.NWScript.floatingTextStringOnCreature;
 
 @SuppressWarnings("UnusedDeclaration")
 public class CharacterManagement extends DialogBase implements IDialogHandler {
@@ -19,6 +21,7 @@ public class CharacterManagement extends DialogBase implements IDialogHandler {
                 //"Change Portrait",
                 "Change Head",
                 "Change Description",
+                "Toggle Helmet Display",
                 "Back"
         );
 
@@ -53,7 +56,10 @@ public class CharacterManagement extends DialogBase implements IDialogHandler {
                     case 3: // Change Description
                         SwitchConversation("ChangeDescription");
                         break;
-                    case 4: // Back
+                    case 4: // Toggle Helmet Display
+                        HelmetToggleSystem.ToggleHelmetDisplay(GetPC());
+                        break;
+                    case 5: // Back
                         SwitchConversation("RestMenu");
                         break;
                 }
@@ -96,13 +102,13 @@ public class CharacterManagement extends DialogBase implements IDialogHandler {
         {
             pcGO.setHasPVPSanctuaryOverride(true);
             dto.setIsConfirmingDisableSanctuary(false);
-            NWScript.floatingTextStringOnCreature(ColorToken.Red() + "PVP protection has been disabled. You may now attack and be attacked by other players." + ColorToken.End(), GetPC(), false);
+            floatingTextStringOnCreature(ColorToken.Red() + "PVP protection has been disabled. You may now attack and be attacked by other players." + ColorToken.End(), GetPC(), false);
             SetResponseText("MainPage", 1, "Disable PVP Protection");
         }
         else
         {
             dto.setIsConfirmingDisableSanctuary(true);
-            NWScript.floatingTextStringOnCreature(ColorToken.Red() + "WARNING: PVP protection prevents other players from attacking you. If you disable this, players will immediately be able to attack you anywhere. Click again to confirm." + ColorToken.End(), GetPC(), false);
+            floatingTextStringOnCreature(ColorToken.Red() + "WARNING: PVP protection prevents other players from attacking you. If you disable this, players will immediately be able to attack you anywhere. Click again to confirm." + ColorToken.End(), GetPC(), false);
             SetResponseText("MainPage", 1, "CONFIRM DISABLE PVP PROTECTION");
         }
 

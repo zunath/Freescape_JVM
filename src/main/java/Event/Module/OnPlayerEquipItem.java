@@ -19,6 +19,7 @@ public class OnPlayerEquipItem implements IScriptEventHandler {
 		PerkSystem.OnModuleItemEquipped();
 		ItemSystem.OnModuleEquipItem();
 		HandleEquipmentSwappingDelay();
+		HelmetToggleSystem.OnModuleItemEquipped();
 	}
 
 	// Players abuse a bug in NWN which allows them to gain an extra attack.

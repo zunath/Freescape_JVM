@@ -95,6 +95,9 @@ public class PlayerEntity {
     @Column(name = "TotalSPAcquired")
     private int totalSPAcquired;
 
+    @Column(name = "DisplayHelmet")
+    private boolean displayHelmet;
+
     public PlayerEntity()
     {
 
@@ -436,4 +439,11 @@ public class PlayerEntity {
         this.totalSPAcquired = totalSPAcquired;
     }
 
+    public boolean isDisplayHelmet() {
+        return displayHelmet;
+    }
+
+    public void setDisplayHelmet(boolean displayHelmet) {
+        this.displayHelmet = displayHelmet;
+    }
 }

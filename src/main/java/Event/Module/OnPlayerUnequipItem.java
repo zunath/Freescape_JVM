@@ -1,6 +1,6 @@
 package Event.Module;
 import Common.IScriptEventHandler;
-import GameSystems.ItemSystem;
+import GameSystems.HelmetToggleSystem;
 import GameSystems.PerkSystem;
 import GameSystems.SkillSystem;
 import org.nwnx.nwnx2.jvm.*;
@@ -13,5 +13,6 @@ public class OnPlayerUnequipItem implements IScriptEventHandler {
 		NWScript.executeScript("x2_mod_def_unequ", objSelf);
 		SkillSystem.OnModuleItemUnequipped();
 		PerkSystem.OnModuleItemUnequipped();
+		HelmetToggleSystem.OnModuleItemUnequipped();
 	}
 }
