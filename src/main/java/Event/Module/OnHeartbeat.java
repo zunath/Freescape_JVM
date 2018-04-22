@@ -10,11 +10,10 @@ import GameSystems.FoodSystem;
 import GameSystems.ItemSystem;
 import org.nwnx.nwnx2.jvm.NWEffect;
 import org.nwnx.nwnx2.jvm.NWObject;
-import org.nwnx.nwnx2.jvm.NWScript;
 import org.nwnx.nwnx2.jvm.constants.Ability;
-import org.nwnx.nwnx2.jvm.constants.BaseItem;
 import org.nwnx.nwnx2.jvm.constants.DurationType;
-import org.nwnx.nwnx2.jvm.constants.EffectType;
+
+import java.util.*;
 
 import static org.nwnx.nwnx2.jvm.NWScript.*;
 

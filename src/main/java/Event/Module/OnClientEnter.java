@@ -41,6 +41,7 @@ public class OnClientEnter implements IScriptEventHandler {
         if(!getIsPC(oPC) || getIsDM(oPC)) return;
 
         NWEffect eGhostWalk = effectCutsceneGhost();
+        eGhostWalk = tagEffect(eGhostWalk, "GHOST_WALK");
         applyEffectToObject(Duration.TYPE_PERMANENT, eGhostWalk, oPC, 0.0f);
 
     }
