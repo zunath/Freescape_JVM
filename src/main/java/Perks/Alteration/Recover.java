@@ -106,7 +106,7 @@ public class Recover implements IPerk {
 
         NWEffect heal = effectHeal(healAmount);
         NWEffect regen = effectRegenerate(regenAmount, 6.0f);
-        applyEffectToObject(DurationType.TEMPORARY, regen, oTarget, length);
+        applyEffectToObject(DurationType.TEMPORARY, regen, oTarget, length + 0.1f);
         applyEffectToObject(DurationType.INSTANT, heal, oTarget, 0.0f);
 
         SkillSystem.RegisterPCToAllCombatTargetsForSkill(oPC, SkillID.AlterationMagic);

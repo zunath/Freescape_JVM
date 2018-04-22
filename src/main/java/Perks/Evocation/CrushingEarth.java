@@ -85,7 +85,7 @@ public class CrushingEarth implements IPerk {
 
         if(stunLength > 0.0f)
         {
-            applyEffectToObject(DurationType.TEMPORARY, effectStunned(), oTarget, stunLength);
+            applyEffectToObject(DurationType.TEMPORARY, effectStunned(), oTarget, stunLength + 0.1f);
         }
 
         SkillSystem.RegisterPCToNPCForSkill(oPC, oTarget, SkillID.EvocationMagic);

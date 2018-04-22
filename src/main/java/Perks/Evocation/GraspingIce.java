@@ -85,7 +85,7 @@ public class GraspingIce implements IPerk {
 
         if(slowLength > 0.0f)
         {
-            applyEffectToObject(DurationType.TEMPORARY, effectSlow(), oTarget, slowLength);
+            applyEffectToObject(DurationType.TEMPORARY, effectSlow(), oTarget, slowLength + 0.1f);
         }
 
         SkillSystem.RegisterPCToNPCForSkill(oPC, oTarget, SkillID.EvocationMagic);
