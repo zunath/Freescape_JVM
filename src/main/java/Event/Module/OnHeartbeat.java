@@ -4,34 +4,26 @@ import Data.Repository.DatabaseRepository;
 import Data.Repository.PlayerRepository;
 import Entities.PlayerEntity;
 import GameObject.PlayerGO;
-import GameSystems.AbilitySystem;
-import GameSystems.CustomEffectSystem;
-import GameSystems.FoodSystem;
-import GameSystems.ItemSystem;
-import org.nwnx.nwnx2.jvm.NWEffect;
+import GameSystems.*;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.constants.Ability;
 import org.nwnx.nwnx2.jvm.constants.DurationType;
-
-import java.util.*;
 
 import static org.nwnx.nwnx2.jvm.NWScript.*;
 
 @SuppressWarnings("unused")
 public class OnHeartbeat implements IScriptEventHandler {
 
-	private PlayerRepository playerRepo;
-
-	@Override
+    @Override
 	public void runScript(NWObject objSelf) {
 
-		playerRepo = new PlayerRepository();
+        PlayerRepository playerRepo = new PlayerRepository();
 
 		for(NWObject pc : getPCs())
 		{
 			if(!getIsDM(pc))
 			{
-				HandleEffectLifespan(pc);
+                EffectTrackerSystem.ProcessPCEffects(pc);
 
 				PlayerGO pcGO = new PlayerGO(pc);
 				PlayerEntity entity = playerRepo.GetByPlayerID(pcGO.getUUID());
@@ -128,33 +120,6 @@ public class OnHeartbeat implements IScriptEventHandler {
 		}
 
 		return entity;
-	}
-
-	private void HandleEffectLifespan(NWObject oPC)
-	{
-		for(NWEffect effect: getEffects(oPC))
-		{
-			String tag = getEffectTag(effect);
-
-			if(tag.equals(""))
-			{
-				tag = "EFFECT_TICKS 40";
-			}
-
-			if(!tag.substring(0, 13).equals("EFFECT_TICKS ")) continue;
-			if(getEffectDurationType(effect) != DurationType.PERMANENT) continue;
-
-			int ticks = Integer.parseInt(tag.substring(13)) - 1;
-
-			if(ticks <= 0)
-			{
-				removeEffect(oPC, effect);
-			}
-			else
-			{
-				tagEffect(effect, "EFFECT_TICKS " + ticks);
-			}
-		}
 	}
 }
 
