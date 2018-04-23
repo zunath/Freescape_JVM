@@ -24,7 +24,7 @@ public class PerkID {
     public static final int HealingKitExpert = 21;
     public static final int ImmediateImprovement = 22;
     public static final int FrugalMedic = 23;
-    public static final int DefensiveManeuver = 24;
+    public static final int ExpulsionManeuver = 24;
     public static final int BlockingRecovery = 25;
     public static final int Evasiveness = 26;
     public static final int DeflectDamage = 27;

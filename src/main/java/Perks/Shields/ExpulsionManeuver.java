@@ -12,7 +12,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import static GameSystems.PerkSystem.GetPCPerkLevel;
 
-public class DefensiveManeuver implements IPerk {
+public class ExpulsionManeuver implements IPerk {
     @Override
     public boolean CanCastSpell(NWObject oPC, NWObject oTarget) {
         return false;
@@ -41,7 +41,7 @@ public class DefensiveManeuver implements IPerk {
     @Override
     public void OnImpact(NWObject oPC, NWObject oItem) {
 
-        int perkLevel = GetPCPerkLevel(oPC, PerkID.DefensiveManeuver);
+        int perkLevel = GetPCPerkLevel(oPC, PerkID.ExpulsionManeuver);
         float length;
         int ab;
         int chance;
