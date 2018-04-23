@@ -57,6 +57,9 @@ public class PlayerInitializationSystem {
             setName(book, getName(oPC, false) + "'s Player Guide");
             setItemCursedFlag(book, true);
 
+            NWObject dyeKit = createItemOnObject("tk_omnidye", oPC, 1, "");
+            setItemCursedFlag(dyeKit, true);
+
             int numberOfFeats = NWNX_Creature.GetFeatCount(oPC);
             for(int currentFeat = numberOfFeats; currentFeat >= 0; currentFeat--)
             {
