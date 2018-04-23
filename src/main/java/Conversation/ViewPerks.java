@@ -179,6 +179,8 @@ public class ViewPerks extends DialogBase implements IDialogHandler {
                 ColorToken.Green() + "Category: " + ColorToken.End() + perk.getCategory().getName() + "\n" +
                 ColorToken.Green() + "Rank: " + ColorToken.End() + rank + " / " + maxRank + "\n" +
                 ColorToken.Green() + "Price: " + ColorToken.End() + price + "\n" +
+                (perk.getBaseManaCost() > 0 ? ColorToken.Green() + "Mana: " + ColorToken.End() + perk.getBaseManaCost() : "") + "\n" +
+                (perk.getCooldown() != null && perk.getCooldown().getBaseCooldownTime() > 0 ? ColorToken.Green() + "Cooldown: " + ColorToken.End() + perk.getCooldown().getBaseCooldownTime() + "s" : "") + "\n" +
                 ColorToken.Green() + "Description: " + ColorToken.End() + perk.getDescription() + "\n" +
                 ColorToken.Green() + "Current Bonus: " + ColorToken.End() + currentBonus + "\n" +
                 ColorToken.Green() + "Next Bonus: " + ColorToken.End() + nextBonus + "\n");
