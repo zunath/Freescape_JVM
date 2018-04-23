@@ -2,6 +2,8 @@ package GameSystems;
 
 import Data.Repository.FarmingRepository;
 import Entities.GrowingPlantEntity;
+import Entities.PlantEntity;
+import Helper.ColorToken;
 import org.nwnx.nwnx2.jvm.NWLocation;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.NWVector;
@@ -31,7 +33,20 @@ public class FarmingSystem {
             setLocalInt(plantPlc, "GROWING_PLANT_ID", plant.getGrowingPlantID());
             setName(plantPlc, "Growing Plant (" + plant.getPlant().getName() + ")");
         }
+    }
 
+    public static String OnModuleExamine(String existingDescription, NWObject examinedObject)
+    {
+        int plantID = getLocalInt(examinedObject, "PLANT_ID");
+        if(plantID <= 0) return existingDescription;
+        if(getObjectType(examinedObject) != ObjectType.ITEM) return existingDescription;
+
+        FarmingRepository farmRepo = new FarmingRepository();
+        PlantEntity plant = farmRepo.GetPlantByID(plantID);
+        if(plant == null) return existingDescription;
+
+        existingDescription += ColorToken.Orange() + "This item can be planted. Farming skill required: " + plant.getLevel() + ColorToken.End() + "\n\n";
+        return existingDescription;
     }
 
     public static void RemoveGrowingPlant(NWObject plant)
