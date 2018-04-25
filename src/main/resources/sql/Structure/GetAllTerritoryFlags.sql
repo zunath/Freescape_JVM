@@ -8,5 +8,6 @@ SELECT pctf.PCTerritoryFlagID ,
        pctf.LocationY ,
        pctf.LocationZ ,
        pctf.LocationOrientation ,
-       pctf.BuildPrivacySettingID
+       pctf.BuildPrivacySettingID,
+       pctf.ShowOwnerName
 FROM dbo.PCTerritoryFlags pctf

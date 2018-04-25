@@ -14,6 +14,8 @@ import org.nwnx.nwnx2.jvm.NWScript;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.nwnx.nwnx2.jvm.NWScript.*;
+
 @SuppressWarnings("unused")
 public class TerritoryFlag extends DialogBase implements IDialogHandler {
     @Override
@@ -23,6 +25,7 @@ public class TerritoryFlag extends DialogBase implements IDialogHandler {
                 "<SET LATER>",
                 "Manage Permissions",
                 "Transfer Territory Ownership",
+                "Toggle Owner Name",
                 ColorToken.Red() + "Raze Territory" + ColorToken.End()
         );
 
@@ -93,6 +96,13 @@ public class TerritoryFlag extends DialogBase implements IDialogHandler {
         model.setFlagID(flagID);
         SetDialogCustomData(model);
 
+        BuildMainPageHeader();
+    }
+
+    private void BuildMainPageHeader()
+    {
+        TerritoryFlagMenuModel model = (TerritoryFlagMenuModel)GetDialogCustomData();
+        int flagID = model.getFlagID();
         StructureRepository structureRepo = new StructureRepository();
         PCTerritoryFlagEntity flag = structureRepo.GetPCTerritoryFlagByID(flagID);
         int vanityCount = structureRepo.GetNumberOfStructuresInTerritory(flagID, true, false);
@@ -103,7 +113,6 @@ public class TerritoryFlag extends DialogBase implements IDialogHandler {
                 + ColorToken.Green() + "Special Slots: " + ColorToken.End() + specialCount + " / " + flag.getBlueprint().getSpecialCount() + "\n"
                 + "Please select an option.";
         SetPageHeader("MainPage", header);
-
     }
 
     @Override
@@ -175,10 +184,38 @@ public class TerritoryFlag extends DialogBase implements IDialogHandler {
                 LoadTransferOwnershipResponses();
                 ChangePage("TransferOwnershipPage");
                 break;
-            case 3: // Raze Territory
+            case 3: // Toggle owner name
+                ToggleOwnerName();
+                break;
+            case 4: // Raze Territory
                 ChangePage("RazeTerritoryPage");
                 break;
         }
+    }
+
+    private void ToggleOwnerName()
+    {
+        TerritoryFlagMenuModel model = (TerritoryFlagMenuModel)GetDialogCustomData();
+        StructureRepository structureRepo = new StructureRepository();
+        PCTerritoryFlagEntity flag = structureRepo.GetPCTerritoryFlagByID(model.getFlagID());
+
+        flag.setShowOwnerName(!flag.showOwnerName());
+
+        if(flag.showOwnerName())
+        {
+            PlayerRepository playerRepo = new PlayerRepository();
+            PlayerEntity owner = playerRepo.GetByPlayerID(flag.getPlayerID());
+            floatingTextStringOnCreature("Now displaying owner's name on this territory marker.", GetPC(), false);
+            setName(GetDialogTarget(), owner.getCharacterName() + "'s Territory");
+        }
+        else
+        {
+            floatingTextStringOnCreature("No longer displaying owner's name on this territory marker.", GetPC(), false);
+            setName(GetDialogTarget(), "Claimed Territory");
+        }
+
+        structureRepo.Save(flag);
+        BuildMainPageHeader();
     }
 
     private void HandleManagePermissionsResponse(int responseID)
@@ -269,16 +306,16 @@ public class TerritoryFlag extends DialogBase implements IDialogHandler {
             }
         }
 
-        for(NWObject oPC : NWScript.getPCs())
+        for(NWObject oPC : getPCs())
         {
-            if(!oPC.equals(GetPC()) && !NWScript.getIsDM(oPC)) {
+            if(!oPC.equals(GetPC()) && !getIsDM(oPC)) {
                 PlayerGO pcGO = new PlayerGO(oPC);
                 String message = "Add Permissions: ";
                 if (existingUUIDs.contains(pcGO.getUUID())) {
                     message = "Manage Permissions: ";
                 }
 
-                page.addResponse(message + NWScript.getName(oPC, false), true, pcGO.getUUID());
+                page.addResponse(message + getName(oPC, false), true, pcGO.getUUID());
             }
         }
 
@@ -453,7 +490,7 @@ public class TerritoryFlag extends DialogBase implements IDialogHandler {
                 if(model.isConfirmingTerritoryRaze())
                 {
                     StructureSystem.RazeTerritory(GetDialogTarget());
-                    NWScript.floatingTextStringOnCreature(ColorToken.Red() + "Territory razed!" + ColorToken.End(), GetPC(), false);
+                    floatingTextStringOnCreature(ColorToken.Red() + "Territory razed!" + ColorToken.End(), GetPC(), false);
                     EndConversation();
                 }
                 else
@@ -477,12 +514,12 @@ public class TerritoryFlag extends DialogBase implements IDialogHandler {
         DialogPage page = GetPageByName("TransferOwnershipPage");
         page.getResponses().clear();
 
-        for(NWObject player : NWScript.getPCs())
+        for(NWObject player : getPCs())
         {
-            if(!player.equals(GetPC()) && !NWScript.getIsDM(player))
+            if(!player.equals(GetPC()) && !getIsDM(player))
             {
                 PlayerGO pcGO = new PlayerGO(player);
-                page.addResponse("Transfer Ownership: " + NWScript.getName(player, false), true, pcGO.getUUID());
+                page.addResponse("Transfer Ownership: " + getName(player, false), true, pcGO.getUUID());
             }
         }
 

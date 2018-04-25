@@ -66,7 +66,15 @@ public class StructureSystem {
 
             NWObject territoryFlag = createObject(ObjectType.PLACEABLE, flag.getBlueprint().getResref(), location, false, "");
             setLocalInt(territoryFlag, TerritoryFlagIDVariableName, flag.getPcTerritoryFlagID());
-            setName(territoryFlag, playerEntity.getCharacterName() + "'s Territory");
+
+            if(flag.showOwnerName())
+            {
+                setName(territoryFlag, playerEntity.getCharacterName() + "'s Territory");
+            }
+            else
+            {
+                setName(territoryFlag, "Claimed Territory");
+            }
 
             for(PCTerritoryFlagStructureEntity structure : flag.getStructures())
             {
@@ -469,6 +477,7 @@ public class StructureSystem {
             pcFlag.setLocationY(entity.getLocationY());
             pcFlag.setLocationZ(entity.getLocationZ());
             pcFlag.setPlayerID(entity.getPlayerID());
+            pcFlag.setShowOwnerName(true);
 
             repo.Save(pcFlag);
             setLocalInt(structurePlaceable, TerritoryFlagIDVariableName, pcFlag.getPcTerritoryFlagID());
@@ -557,6 +566,7 @@ public class StructureSystem {
         PCTerritoryFlagEntity entity = repo.GetPCTerritoryFlagByID(pcFlagID);
         entity.getPermissions().clear();
         entity.setPlayerID(newOwnerUUID);
+        entity.setShowOwnerName(true);
         repo.Save(entity);
 
         setName(oFlag, playerEntity.getCharacterName() + "'s Territory");

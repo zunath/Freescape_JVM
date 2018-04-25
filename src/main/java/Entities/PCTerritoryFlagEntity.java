@@ -53,6 +53,9 @@ public class PCTerritoryFlagEntity {
     @Fetch(value = FetchMode.SUBSELECT)
     private List<ConstructionSiteEntity> constructionSites;
 
+    @Column(name = "ShowOwnerName")
+    private boolean showOwnerName;
+
     public int getPcTerritoryFlagID() {
         return pcTerritoryFlagID;
     }
@@ -147,5 +150,13 @@ public class PCTerritoryFlagEntity {
 
     public void setConstructionSites(List<ConstructionSiteEntity> constructionSites) {
         this.constructionSites = constructionSites;
+    }
+
+    public boolean showOwnerName() {
+        return showOwnerName;
+    }
+
+    public void setShowOwnerName(boolean showOwnerName) {
+        this.showOwnerName = showOwnerName;
     }
 }
