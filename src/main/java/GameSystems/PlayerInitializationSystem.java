@@ -60,6 +60,10 @@ public class PlayerInitializationSystem {
             NWObject dyeKit = createItemOnObject("tk_omnidye", oPC, 1, "");
             setItemCursedFlag(dyeKit, true);
 
+            NWObject shovel = createItemOnObject("basic_shovel", oPC, 1, "");
+            setName(shovel, getName(oPC, false) + "'s Shovel");
+            setItemCursedFlag(shovel, true);
+
             int numberOfFeats = NWNX_Creature.GetFeatCount(oPC);
             for(int currentFeat = numberOfFeats; currentFeat >= 0; currentFeat--)
             {
