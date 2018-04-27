@@ -16,17 +16,17 @@ public class TossAccuracy implements IPerk {
 
     @Override
     public int ManaCost(NWObject oPC, int baseManaCost) {
-        return 0;
+        return baseManaCost;
     }
 
     @Override
     public float CastingTime(NWObject oPC, float baseCastingTime) {
-        return 0;
+        return baseCastingTime;
     }
 
     @Override
     public float CooldownTime(NWObject oPC, float baseCooldownTime) {
-        return 0;
+        return baseCooldownTime;
     }
 
     @Override

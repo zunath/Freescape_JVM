@@ -42,7 +42,7 @@ public class CircleKick implements IPerk {
 
     @Override
     public void OnPurchased(NWObject oPC, int newLevel) {
-
+        ApplyFeatChanges(oPC, null);
     }
 
     @Override

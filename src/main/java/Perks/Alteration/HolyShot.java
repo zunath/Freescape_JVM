@@ -79,12 +79,10 @@ public class HolyShot implements IPerk {
         int intelligence = getAbilityModifier(Ability.INTELLIGENCE, oPC);
 
         float damageMultiplier = 1.0f + (intelligence * 0.2f) + (wisdom * 0.1f);
-        damage = (int)((float)damage * damageMultiplier);
+        damage = (int)(damage * damageMultiplier);
 
-        Scheduler.assign(oPC, () -> {
-            NWEffect vfx = effectVisualEffect(VfxBeam.HOLY, false);
-            applyEffectToObject(DurationType.INSTANT, vfx, oTarget, 0.0f);
-        });
+        NWEffect vfx = effectBeam(VfxBeamSilent.HOLY, oPC, BodyNode.CHEST, false);
+        applyEffectToObject(DurationType.TEMPORARY, vfx, oTarget, 1.5f);
 
         SkillSystem.RegisterPCToNPCForSkill(oPC, oTarget, SkillID.AlterationMagic);
         applyEffectToObject(DurationType.INSTANT, effectDamage(damage, DamageType.MAGICAL, DamagePower.NORMAL), oTarget, 0.0f);
