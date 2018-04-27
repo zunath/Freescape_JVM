@@ -107,4 +107,5 @@ public class PerkID {
     public static final int WoodArmorBlueprints = 104;
     public static final int LightArmorBlueprints = 105;
     public static final int SeedPicker = 106;
+    public static final int TwinBladeMastery = 107;
 }
