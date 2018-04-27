@@ -32,13 +32,15 @@ public class WaterJug implements IScriptEventHandler {
             return;
         }
 
-        int charges = getItemCharges(item) - 1;
+        int charges = getItemCharges(item);
 
         if(charges <= 0)
         {
             sendMessageToPC(oPC, "There's no water in that jug!");
             return;
         }
+
+        charges--;
 
         int remainingTicks = growingPlant.getRemainingTicks();
 
