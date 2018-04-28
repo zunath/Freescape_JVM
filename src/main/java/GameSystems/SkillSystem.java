@@ -445,14 +445,26 @@ public class SkillSystem {
         if(!getIsPC(pc) || getIsDM(pc) || getIsDMPossessed(pc)) return;
         if(skillID <= 0) return;
 
-        NWObject[] members = getFactionMembers(pc, true);
-        for(NWObject member: members)
-        {
-            NWObject target = getAttackTarget(member);
-            if(!getIsObjectValid(target)) continue;
-            if(!getArea(target).equals(getArea(pc))) continue;
+        NWObject[] factionMembers = getFactionMembers(pc, true);
+        ArrayList<NWObject> members = new ArrayList<>(Arrays.asList(factionMembers));
 
-            RegisterPCToNPCForSkill(pc, target, skillID);
+        int nth = 1;
+        NWObject creature = getNearestCreature(CreatureType.IS_ALIVE, 1, pc, nth, CreatureType.PLAYER_CHAR, 0, -1, -1);
+        while(getIsObjectValid(creature))
+        {
+            if(getDistanceBetween(pc, creature) > 20.0f) break;
+
+            NWObject target = getAttackTarget(creature);
+            if(getIsObjectValid(target) && members.contains(target))
+            {
+                if(getIsObjectValid(target) && getArea(target).equals(getArea(pc)))
+                {
+                    RegisterPCToNPCForSkill(pc, creature, skillID);
+                }
+            }
+
+            nth++;
+            creature = getNearestCreature(CreatureType.IS_ALIVE, 1, pc, nth, CreatureType.PLAYER_CHAR, 0, -1, -1);
         }
     }
 

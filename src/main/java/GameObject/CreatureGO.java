@@ -3,6 +3,8 @@ package GameObject;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.NWScript;
 
+import java.util.UUID;
+
 public class CreatureGO {
     private NWObject npc;
 
@@ -20,7 +22,15 @@ public class CreatureGO {
     }
 
     public String getGlobalUUID() {
-        return NWScript.getLocalString(npc, "CREATURE_GLOBAL_UUID");
+        String uuid = NWScript.getLocalString(npc, "CREATURE_GLOBAL_UUID");
+
+        if(uuid.equals(""))
+        {
+            uuid = UUID.randomUUID().toString();
+            setGlobalUUID(uuid);
+        }
+
+        return uuid;
     }
 
     public void setGlobalUUID(String uuid) {
