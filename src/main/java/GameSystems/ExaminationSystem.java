@@ -16,7 +16,7 @@ import static org.nwnx.nwnx2.jvm.NWScript.*;
 
 public class ExaminationSystem {
 
-    public static void OnModuleExamine(NWObject examiner, NWObject target)
+    public static boolean OnModuleExamine(NWObject examiner, NWObject target)
     {
         String backupDescription = getLocalString(target, "BACKUP_DESCRIPTION");
 
@@ -25,7 +25,7 @@ public class ExaminationSystem {
             setDescription(target, backupDescription, false);
         }
 
-        if(!getIsDM(examiner) || !getIsPC(target) || getIsDM(target) || getIsDMPossessed(target)) return;
+        if(!getIsDM(examiner) || !getIsPC(target) || getIsDM(target) || getIsDMPossessed(target)) return false;
 
         backupDescription = getDescription(target, false, true);
         setLocalString(target, "BACKUP_DESCRIPTION", backupDescription);
@@ -53,7 +53,7 @@ public class ExaminationSystem {
             description.append(skill.getSkill().getName()).append(" rank ").append(skill.getRank()).append("\n");
         }
 
-        description.append("\n\n").append(ColorToken.Green()).append("Perks: ").append(ColorToken.End());
+        description.append("\n\n").append(ColorToken.Green()).append("Perks: ").append(ColorToken.End()).append("\n\n");
 
         PerkRepository perkRepo = new PerkRepository();
         List<PCPerkHeaderEntity> pcPerks = perkRepo.GetPCPerksForMenuHeader(pcGO.getUUID());
@@ -65,6 +65,8 @@ public class ExaminationSystem {
 
         description.append("\n\n").append(ColorToken.Green()).append("Description: \n\n").append(ColorToken.End()).append(backupDescription).append("\n");
         setDescription(target, description.toString(), false);
+
+        return true;
     }
 
 }
