@@ -170,6 +170,8 @@ public class OnDamaged implements IScriptEventHandler {
 
         if(resourceCount <= 0)
         {
+            SpawnSeed(objSelf, oPC);
+
             NWObject prop = getLocalObject(objSelf, "RESOURCE_PROP_OBJ");
             if(getIsObjectValid(prop))
             {
@@ -179,6 +181,27 @@ public class OnDamaged implements IScriptEventHandler {
             destroyObject(objSelf, 0.0f);
         }
     }
+
+    private static void SpawnSeed(NWObject objSelf, NWObject oPC)
+    {
+        NWLocation location = getLocation(objSelf);
+        String resourceSeedResref = getLocalString(objSelf, "RESOURCE_SEED_RESREF");
+
+        if(!resourceSeedResref.equals(""))
+        {
+            createObject(ObjectType.ITEM, resourceSeedResref, location, false, "");
+
+            int perkLevel = PerkSystem.GetPCPerkLevel(oPC, PerkID.SeedSearcher);
+            if(perkLevel <= 0) return;
+
+            if(ThreadLocalRandom.current().nextInt(100) + 1 <= perkLevel * 10)
+            {
+                createObject(ObjectType.ITEM, resourceSeedResref, location, false, "");
+            }
+        }
+
+    }
+
     private static float CalculateXPDeltaModifier(int difficultyRating, int skillRank)
     {
         int delta = difficultyRating - skillRank;

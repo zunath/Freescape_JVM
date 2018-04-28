@@ -51,7 +51,7 @@ public class OnClientEnter implements IScriptEventHandler {
         ServerConfigurationEntity config = ServerConfigurationRepository.GetServerConfiguration();
 
         final NWObject oPC = getEnteringObject();
-        final String message = ColorToken.Green() + "Welcome to " + config.getServerName() + "!\n\nMOTD:" + ColorToken.White() +  config.getMessageOfTheDay() + ColorToken.End();
+        final String message = ColorToken.Green() + "Welcome to " + config.getServerName() + "!\n\nMOTD: " + ColorToken.White() +  config.getMessageOfTheDay() + ColorToken.End();
 
         Scheduler.delay(oPC, 6500, () -> sendMessageToPC(oPC, message));
     }
