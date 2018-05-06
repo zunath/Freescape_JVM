@@ -76,7 +76,7 @@ public class PlayerGO {
         entity.setCurrentHunger(150);
         entity.setCurrentHungerTick(300);
         entity.setMaxMana(0);
-        entity.setCurrentMana(10);
+        entity.setCurrentMana(0);
         entity.setCurrentManaTick(20);
         entity.setHitPoints(NWScript.getMaxHitPoints(_pc));
         entity.setRegenerationTick(20);

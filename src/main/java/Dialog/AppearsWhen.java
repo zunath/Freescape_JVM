@@ -18,7 +18,6 @@ public class AppearsWhen implements IScriptEventHandler {
         int nodeID = NWScript.getLocalInt(oNPC, "APPEARS_WHEN_NODE");
         int currentSelectionNumber = nodeID + 1;
         int nodeType = NWScript.getLocalInt(oNPC, "APPEARS_WHEN_TYPE");
-        int gender = NWScript.getGender(oPC);
         boolean displayNode = false;
         String newNodeText = "";
         int dialogOffset = (DialogManager.NumberOfResponsesPerPage + 1) * (dialog.getDialogNumber() - 1);

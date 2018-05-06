@@ -1,6 +1,5 @@
 package Dialog;
 
-@SuppressWarnings("UnusedDeclaration")
 public class DialogResponse {
     private String text;
     private boolean isActive;

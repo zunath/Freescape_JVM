@@ -3,7 +3,6 @@ package Dialog;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("UnusedDeclaration")
 public class DialogPage {
 
     private String header;

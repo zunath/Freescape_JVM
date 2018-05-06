@@ -4,7 +4,6 @@ import org.nwnx.nwnx2.jvm.NWObject;
 
 import java.util.HashMap;
 
-@SuppressWarnings("UnusedDeclaration")
 public class PlayerDialog {
     private HashMap<String, DialogPage> dialogPages;
     private String currentPageName;
