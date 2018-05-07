@@ -3,6 +3,7 @@ package GameSystems;
 import Data.Repository.FarmingRepository;
 import Entities.GrowingPlantEntity;
 import Entities.PlantEntity;
+import GameObject.ItemGO;
 import Helper.ColorToken;
 import org.nwnx.nwnx2.jvm.NWLocation;
 import org.nwnx.nwnx2.jvm.NWObject;
@@ -63,6 +64,39 @@ public class FarmingSystem {
         growingPlant.setActive(false);
 
         farmRepo.Save(growingPlant);
+    }
+
+    public static void HarvestPlant(NWObject oPC, NWObject shovel, NWObject plant)
+    {
+        int growingPlantID = getLocalInt(plant, "GROWING_PLANT_ID");
+        if(growingPlantID <= 0) return;
+
+        int charges = getItemCharges(shovel);
+        if(charges <= 0)
+        {
+            sendMessageToPC(oPC, "Your shovel is broken.");
+            return;
+        }
+
+        FarmingRepository farmRepo = new FarmingRepository();
+        GrowingPlantEntity growingPlant = farmRepo.GetGrowingPlantByID(growingPlantID);
+        PlantEntity plantEntity = growingPlant.getPlant();
+
+        if(plantEntity.getSeedResref().equals(""))
+        {
+            sendMessageToPC(oPC, "That plant cannot be harvested.");
+            return;
+        }
+
+        ItemGO itemGO = new ItemGO(shovel);
+        itemGO.ReduceItemCharges();
+        growingPlant.setActive(false);
+        farmRepo.Save(growingPlant);
+
+        createItemOnObject(plantEntity.getSeedResref(), oPC, 1, "");
+        destroyObject(plant, 0.0f);
+
+        floatingTextStringOnCreature("You harvest the plant.", oPC, false);
     }
 
 }

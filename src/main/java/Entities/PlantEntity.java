@@ -25,6 +25,9 @@ public class PlantEntity  {
     @Column(name = "Level")
     private int level;
 
+    @Column(name = "SeedResref")
+    private String seedResref;
+
     public int getPlantID() {
         return plantID;
     }
@@ -71,5 +74,13 @@ public class PlantEntity  {
 
     public void setLevel(int level) {
         this.level = level;
+    }
+
+    public String getSeedResref() {
+        return seedResref;
+    }
+
+    public void setSeedResref(String seedResref) {
+        this.seedResref = seedResref;
     }
 }

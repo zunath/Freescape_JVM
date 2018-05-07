@@ -14,6 +14,7 @@ public class Shovel implements IScriptEventHandler {
     public void runScript(NWObject oPC) {
         NWObject oItem = getItemActivated();
         NWLocation targetLocation = getItemActivatedTargetLocation();
+        NWObject targetObject = getItemActivatedTarget();
         NWObject area = getArea(oPC);
         boolean farmingDisabled = getLocalInt(area, "FARMING_DISABLED") == 1;
 
@@ -25,6 +26,7 @@ public class Shovel implements IScriptEventHandler {
 
         setLocalObject(oPC, "SHOVEL_ITEM", oItem);
         setLocalLocation(oPC, "SHOVEL_TARGET_LOCATION", targetLocation);
+        setLocalObject(oPC, "SHOVEL_TARGET_OBJECT", targetObject);
         Scheduler.assignNow(oPC, () -> NWScript.clearAllActions(false));
         DialogManager.startConversation(oPC, oPC, "Shovel");
     }
