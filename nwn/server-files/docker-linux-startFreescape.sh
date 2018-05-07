@@ -1,7 +1,7 @@
 #!/bin/sh
 
 docker run --rm -it \
--p 5151:5151/udp \
+-p 5151:5151/udp -p 8000:8000 \
 -e NWN_PORT=5151 \
 -v $(pwd):/nwn/home \
 -e NWN_SERVERNAME="\"Freescape\"" \

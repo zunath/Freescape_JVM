@@ -1,5 +1,5 @@
 docker run --rm -it ^
--p 5121:5121 -p 5121:5121/udp ^
+-p 5121:5121 -p 5121:5121/udp -p 8000:8000 ^
 -e NWN_PORT=5121 ^
 -v c:/nwn-ee:/nwn/home ^
 -e NWN_SERVERNAME="Freescape" ^
