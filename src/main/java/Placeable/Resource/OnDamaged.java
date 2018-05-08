@@ -1,8 +1,11 @@
 package Placeable.Resource;
 
 import Common.IScriptEventHandler;
+import Data.Repository.PlayerRepository;
 import Data.Repository.SkillRepository;
 import Entities.PCSkillEntity;
+import Entities.PlayerEntity;
+import Enumerations.BackgroundID;
 import Enumerations.PerkID;
 import Enumerations.SkillID;
 import GameObject.ItemGO;
@@ -32,7 +35,10 @@ public class OnDamaged implements IScriptEventHandler {
         }
 
         PlayerGO pcGO = new PlayerGO(oPC);
+        PlayerRepository playerRepo = new PlayerRepository();
         SkillRepository skillRepo = new SkillRepository();
+        PlayerEntity pcEntity = playerRepo.GetByPlayerID(pcGO.getUUID());
+
         NWObject oWeapon = getLastWeaponUsed(oPC);
         ItemGO weaponGO = new ItemGO(oWeapon);
         NWLocation location = getLocation(oPC);
@@ -63,6 +69,12 @@ public class OnDamaged implements IScriptEventHandler {
             perkChanceBonus = PerkSystem.GetPCPerkLevel(oPC, PerkID.Lumberjack) * 5 + lucky;
             secondResourceChance = PerkSystem.GetPCPerkLevel(oPC, PerkID.PrecisionLogging) * 10;
             hasteChance = PerkSystem.GetPCPerkLevel(oPC, PerkID.SpeedyLogger) * 10 + lucky;
+
+            if(pcEntity.getBackgroundID() == BackgroundID.Lumberjack)
+            {
+                hasteChance += 10;
+            }
+
             hasBaggerPerk = PerkSystem.GetPCPerkLevel(oPC, PerkID.WoodBagger) > 0;
         }
         else if(activityID == 2) // Mining
@@ -77,6 +89,12 @@ public class OnDamaged implements IScriptEventHandler {
             perkChanceBonus = PerkSystem.GetPCPerkLevel(oPC, PerkID.Miner) * 5 + lucky;
             secondResourceChance = PerkSystem.GetPCPerkLevel(oPC, PerkID.PrecisionMining) * 10;
             hasteChance = PerkSystem.GetPCPerkLevel(oPC, PerkID.SpeedyMiner) * 10 + lucky;
+
+            if(pcEntity.getBackgroundID() == BackgroundID.Miner)
+            {
+                hasteChance += 10;
+            }
+
             hasBaggerPerk = PerkSystem.GetPCPerkLevel(oPC, PerkID.OreBagger) > 0;
         }
         else return;

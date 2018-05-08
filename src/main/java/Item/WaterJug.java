@@ -2,11 +2,18 @@ package Item;
 
 import Common.IScriptEventHandler;
 import Data.Repository.FarmingRepository;
+import Data.Repository.PlayerRepository;
 import Entities.GrowingPlantEntity;
 import Entities.PCSkillEntity;
+import Entities.PlayerEntity;
+import Enumerations.BackgroundID;
 import Enumerations.SkillID;
+import GameObject.PlayerGO;
 import GameSystems.SkillSystem;
 import org.nwnx.nwnx2.jvm.NWObject;
+
+import java.util.concurrent.ThreadLocalRandom;
+
 import static org.nwnx.nwnx2.jvm.NWScript.*;
 
 public class WaterJug implements IScriptEventHandler {
@@ -40,7 +47,14 @@ public class WaterJug implements IScriptEventHandler {
             return;
         }
 
-        charges--;
+        PlayerRepository playerRepo = new PlayerRepository();
+        PlayerGO pcGO = new PlayerGO(oPC);
+        PlayerEntity pcEntity = playerRepo.GetByPlayerID(pcGO.getUUID());
+
+        // Farmers get a 5% chance to not expend a charge.
+        if (pcEntity.getBackgroundID() != BackgroundID.Farmer || ThreadLocalRandom.current().nextInt(100) + 1 > 5) {
+            charges--;
+        }
 
         int remainingTicks = growingPlant.getRemainingTicks();
 

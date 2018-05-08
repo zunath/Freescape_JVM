@@ -61,6 +61,11 @@ public class BackgroundSystem {
         String pcName = getName(oPC, false);
         PlayerEntity pcEntity = playerRepo.GetByPlayerID(pcGO.getUUID());
 
+        String item1Resref = "";
+        int item1Quantity = 1;
+        String item2Resref = "";
+        int item2Quantity = 1;
+
         switch(backgroundID)
         {
             case BackgroundID.Weaponsmith:
@@ -70,9 +75,7 @@ public class BackgroundSystem {
                 PerkSystem.DoPerkUpgrade(oPC, PerkID.LightArmorBlueprints);
                 break;
             case BackgroundID.Knight:
-                NWObject armor = createItemOnObject("bkg_knightarmor", oPC, 1, "");
-                setItemCursedFlag(armor, true);
-                setName(armor, pcName + "'s Knight Armor");
+                item1Resref = "bkg_knightarmor";
                 break;
             case BackgroundID.Wizard:
                 PerkSystem.DoPerkUpgrade(oPC, PerkID.FireBlast);
@@ -81,22 +84,14 @@ public class BackgroundSystem {
                 PerkSystem.DoPerkUpgrade(oPC, PerkID.Recover);
                 break;
             case BackgroundID.Archer:
-                NWObject bow = createItemOnObject("bkg_archerbow", oPC, 1, "");
-                setItemCursedFlag(bow, true);
-                setName(bow, pcName + "'s Archer Bow");
-
-                NWObject arrows = createItemOnObject("nw_wamar001", oPC, 99, "");
-                setItemCursedFlag(arrows, true);
-                setName(arrows, pcName + "'s Archer Arrows");
+                item1Resref = "bkg_archerbow";
+                item2Resref = "nw_wamar001";
+                item2Quantity = 99;
                 break;
             case BackgroundID.Crossbowman:
-                NWObject crossbow = createItemOnObject("bkg_cbmcrbow", oPC, 1, "");
-                setItemCursedFlag(crossbow, true);
-                setName(crossbow, pcName + "'s Crossbowman Crossbow");
-
-                NWObject bolts = createItemOnObject("nw_wambo001", oPC, 99, "");
-                setItemCursedFlag(bolts, true);
-                setName(bolts, pcName + "'s Crossbowman Bolts");
+                item1Resref = "bkg_cbmcrbow";
+                item2Resref = "nw_wambo001";
+                item2Quantity = 99;
                 break;
             case BackgroundID.Chef:
                 PerkSystem.DoPerkUpgrade(oPC, PerkID.FoodRecipes);
@@ -111,7 +106,52 @@ public class BackgroundSystem {
                 pcEntity.setUnallocatedSP(pcEntity.getUnallocatedSP()+3);
                 playerRepo.save(pcEntity);
                 break;
+            case BackgroundID.Guard:
+                item1Resref = "bkg_guardlgswd";
+                item2Resref = "bkg_guardshld";
+                break;
+            case BackgroundID.Berserker:
+                item1Resref = "bkg_bersgswd";
+                break;
+            case BackgroundID.TwinBladeSpecialist:
+                item1Resref = "bkg_spectwinbld";
+                break;
+            case BackgroundID.MartialArtist:
+                item1Resref = "bkg_mrtlglove";
+                item2Resref = "bkg_mtlshuriken";
+                item2Quantity = 50;
+                break;
+            case BackgroundID.Miner:
+                PerkSystem.DoPerkUpgrade(oPC, PerkID.Miner);
+                PerkSystem.DoPerkUpgrade(oPC, PerkID.Miner);
+                break;
+            case BackgroundID.Lumberjack:
+                PerkSystem.DoPerkUpgrade(oPC, PerkID.Lumberjack);
+                PerkSystem.DoPerkUpgrade(oPC, PerkID.Lumberjack);
+                break;
+            case BackgroundID.ConstructionBuilder:
+                PerkSystem.DoPerkUpgrade(oPC, PerkID.VanityBlueprints);
+                break;
+            case BackgroundID.Medic:
+                PerkSystem.DoPerkUpgrade(oPC, PerkID.HealingKitExpert);
+                PerkSystem.DoPerkUpgrade(oPC, PerkID.ImmediateImprovement);
+                break;
+            case BackgroundID.Farmer:
+                PerkSystem.DoPerkUpgrade(oPC, PerkID.ExpertFarmer);
+                break;
+        }
 
+        if(!item1Resref.equals(""))
+        {
+            NWObject oItem1 = createItemOnObject(item1Resref, oPC, item1Quantity, "");
+            setItemCursedFlag(oItem1, true);
+            setName(oItem1, pcName + "'s " + getName(oItem1, false));
+        }
+        if(!item2Resref.equals(""))
+        {
+            NWObject oItem2 = createItemOnObject(item2Resref, oPC, item2Quantity, "");
+            setItemCursedFlag(oItem2, true);
+            setName(oItem2, pcName + "'s " + getName(oItem2, false));
         }
 
         SkillSystem.ApplyStatChanges(oPC, null);

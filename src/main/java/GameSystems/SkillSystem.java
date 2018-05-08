@@ -630,6 +630,23 @@ public class SkillSystem {
             dexBonus++;
             wisBonus++;
         }
+        if(pcEntity.getBackgroundID() == BackgroundID.Guard || pcEntity.getBackgroundID() == BackgroundID.Berserker)
+        {
+            strBonus++;
+            conBonus++;
+        }
+
+        if(pcEntity.getBackgroundID() == BackgroundID.TwinBladeSpecialist)
+        {
+            dexBonus++;
+            conBonus++;
+        }
+
+        if(pcEntity.getBackgroundID() == BackgroundID.MartialArtist)
+        {
+            strBonus++;
+            dexBonus++;
+        }
 
         // Apply attributes
         NWNX_Creature.SetRawAbilityScore(oPC, Ability.STRENGTH, (int)strBonus + pcEntity.getStrBase());

@@ -1,15 +1,23 @@
 package Conversation;
 
+import Data.Repository.PlayerRepository;
 import Dialog.DialogBase;
 import Dialog.DialogPage;
 import Dialog.IDialogHandler;
 import Dialog.PlayerDialog;
+import Entities.PlayerEntity;
+import Enumerations.BackgroundID;
 import Enumerations.SkillID;
+import GameObject.ItemGO;
+import GameObject.PlayerGO;
 import GameSystems.FarmingSystem;
 import GameSystems.SkillSystem;
+import Helper.ItemHelper;
 import org.nwnx.nwnx2.jvm.NWLocation;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.constants.ObjectType;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 import static org.nwnx.nwnx2.jvm.NWScript.*;
 
@@ -84,17 +92,16 @@ public class Shovel extends DialogBase implements IDialogHandler {
 
     private void DigAHole()
     {
+        PlayerRepository playerRepo = new PlayerRepository();
+        PlayerGO pcGO = new PlayerGO(GetPC());
+        PlayerEntity pcEntity = playerRepo.GetByPlayerID(pcGO.getUUID());
         NWObject shovel = getLocalObject(GetPC(), "SHOVEL_ITEM");
         NWLocation targetLocation = getLocalLocation(GetPC(), "SHOVEL_TARGET_LOCATION");
-        int charges = getItemCharges(shovel) - 1;
 
-        if(charges <= 0)
-        {
-            destroyObject(shovel, 0.0f);
-        }
-        else
-        {
-            setItemCharges(shovel, charges);
+        // Farmers get a 5% chance to not expend a charge.
+        if (pcEntity.getBackgroundID() != BackgroundID.Farmer || ThreadLocalRandom.current().nextInt(100) + 1 > 5) {
+            ItemGO shovelGO = new ItemGO(shovel);
+            shovelGO.ReduceItemCharges();
         }
 
         createObject(ObjectType.PLACEABLE, "farm_small_hole", targetLocation, false, "");

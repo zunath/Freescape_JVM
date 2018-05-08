@@ -2,9 +2,12 @@ package Placeable.StructureSystem.ConstructionSite;
 
 
 import Common.IScriptEventHandler;
+import Data.Repository.PlayerRepository;
 import Data.Repository.StructureRepository;
 import Entities.ConstructionSiteComponentEntity;
 import Entities.ConstructionSiteEntity;
+import Entities.PlayerEntity;
+import Enumerations.BackgroundID;
 import Enumerations.PerkID;
 import Enumerations.SkillID;
 import GameObject.ItemGO;
@@ -134,12 +137,22 @@ public class OnAttacked implements IScriptEventHandler {
             }
 
             // Speedy Builder - Grants haste for 8 seconds
-            int perkChance = PerkSystem.GetPCPerkLevel(oPC, PerkID.SpeedyBuilder) * 10;
-            if(perkChance > 0)
+            int hasteChance = PerkSystem.GetPCPerkLevel(oPC, PerkID.SpeedyBuilder) * 10;
+
+            if(hasteChance > 0)
             {
-                perkChance += PerkSystem.GetPCPerkLevel(oPC, PerkID.Lucky) * 2;
+                hasteChance += PerkSystem.GetPCPerkLevel(oPC, PerkID.Lucky) * 2;
             }
-            if(ThreadLocalRandom.current().nextInt(100) + 1 <= perkChance)
+
+            PlayerGO pcGO = new PlayerGO(oPC);
+            PlayerRepository playerRepo = new PlayerRepository();
+            PlayerEntity pcEntity = playerRepo.GetByPlayerID(pcGO.getUUID());
+            if(pcEntity.getBackgroundID() == BackgroundID.ConstructionBuilder)
+            {
+                hasteChance += 10;
+            }
+
+            if(ThreadLocalRandom.current().nextInt(100) + 1 <= hasteChance)
             {
                 NWScript.applyEffectToObject(DurationType.TEMPORARY, NWScript.effectHaste(), oPC, 8.0f);
             }

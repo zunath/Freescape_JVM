@@ -1,6 +1,9 @@
 package Item.FirstAid;
 
+import Data.Repository.PlayerRepository;
 import Entities.PCSkillEntity;
+import Entities.PlayerEntity;
+import Enumerations.BackgroundID;
 import Enumerations.PerkID;
 import Enumerations.SkillID;
 import GameObject.ItemGO;
@@ -88,7 +91,17 @@ public class HealingKit implements IActionItem {
 
     @Override
     public boolean ReducesItemCharge(NWObject user, NWObject item, NWObject target, Object customdata) {
+        PlayerRepository playerRepo = new PlayerRepository();
+        PlayerGO pcGO = new PlayerGO(user);
+        PlayerEntity pcEntity = playerRepo.GetByPlayerID(pcGO.getUUID());
         int consumeChance = PerkSystem.GetPCPerkLevel(user, PerkID.FrugalMedic) * 10;
+
+        if(pcEntity.getBackgroundID() == BackgroundID.Medic)
+        {
+            consumeChance += 5;
+        }
+
+
         return ThreadLocalRandom.current().nextInt(100) + 1 > consumeChance;
     }
 
