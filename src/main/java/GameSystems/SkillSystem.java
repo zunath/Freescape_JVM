@@ -6,10 +6,7 @@ import Common.Constants;
 import Data.Repository.PlayerRepository;
 import Data.Repository.SkillRepository;
 import Entities.*;
-import Enumerations.CustomAttributeType;
-import Enumerations.CustomItemType;
-import Enumerations.PerkID;
-import Enumerations.SkillID;
+import Enumerations.*;
 import GameObject.*;
 import NWNX.NWNX_Creature;
 import com.sun.tools.javac.util.Pair;
@@ -628,6 +625,12 @@ public class SkillSystem {
         if(wisBonus > MaxAttributeBonus) wisBonus = MaxAttributeBonus;
         if(chaBonus > MaxAttributeBonus) chaBonus = MaxAttributeBonus;
 
+        if(pcEntity.getBackgroundID() == BackgroundID.Archer || pcEntity.getBackgroundID() == BackgroundID.Crossbowman)
+        {
+            dexBonus++;
+            wisBonus++;
+        }
+
         // Apply attributes
         NWNX_Creature.SetRawAbilityScore(oPC, Ability.STRENGTH, (int)strBonus + pcEntity.getStrBase());
         NWNX_Creature.SetRawAbilityScore(oPC, Ability.DEXTERITY, (int)dexBonus + pcEntity.getDexBase());
@@ -662,6 +665,9 @@ public class SkillSystem {
         int hp = 30 + getAbilityModifier(Ability.CONSTITUTION, oPC)  * 5;
         hp += PerkSystem.GetPCPerkLevel(oPC, PerkID.Health) * 5;
         hp += equippedItemHPBonus;
+        if(pcEntity.getBackgroundID() == BackgroundID.Knight)
+            hp += 10;
+
         if(hp > 255) hp = 255;
         if(hp < 20) hp = 20;
         NWNX_Creature.SetMaxHitPointsByLevel(oPC, 1, hp);
@@ -679,6 +685,9 @@ public class SkillSystem {
                 getAbilityModifier(Ability.CHARISMA, oPC)) * 5;
         mana += PerkSystem.GetPCPerkLevel(oPC, PerkID.Mana) * 5;
         mana += equippedItemManaBonus;
+        if(pcEntity.getBackgroundID() == BackgroundID.Wizard || pcEntity.getBackgroundID() == BackgroundID.Cleric)
+            mana += 10;
+
         if(mana < 0) mana = 0;
         pcEntity.setMaxMana(mana);
 

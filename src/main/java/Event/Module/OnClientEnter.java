@@ -32,6 +32,7 @@ public class OnClientEnter implements IScriptEventHandler {
         ActivityLoggingSystem.OnModuleClientEnter();
         ApplyScriptEvents(oPC);
         MapPinSystem.OnClientEnter();
+        BackgroundSystem.OnModuleEnter();
     }
 
     private void ApplyGhostwalk()

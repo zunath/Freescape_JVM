@@ -52,6 +52,7 @@ public class DataAccess {
         // Link all DB entities to the configuration here.
         _configuration.addAnnotatedClass(ActivePlayerEntity.class);
         _configuration.addAnnotatedClass(AuthorizedDMEntity.class);
+        _configuration.addAnnotatedClass(BackgroundEntity.class);
         _configuration.addAnnotatedClass(BaseItemTypeEntity.class);
         _configuration.addAnnotatedClass(BuildPrivacyEntity.class);
         _configuration.addAnnotatedClass(ChatChannelEntity.class);

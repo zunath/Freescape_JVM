@@ -39,6 +39,7 @@ SELECT pc.PlayerID ,
        pc.WISBase,
        pc.CHABase,
        pc.TotalSPAcquired,
-       pc.DisplayHelmet
+       pc.DisplayHelmet,
+       pc.BackgroundID
 FROM dbo.PlayerCharacters pc
 WHERE pc.PlayerID = :playerID

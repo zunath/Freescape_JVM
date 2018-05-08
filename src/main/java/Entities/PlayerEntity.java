@@ -98,6 +98,9 @@ public class PlayerEntity {
     @Column(name = "DisplayHelmet")
     private boolean displayHelmet;
 
+    @Column(name = "BackgroundID")
+    private int backgroundID;
+
     public PlayerEntity()
     {
 
@@ -445,5 +448,13 @@ public class PlayerEntity {
 
     public void setDisplayHelmet(boolean displayHelmet) {
         this.displayHelmet = displayHelmet;
+    }
+
+    public int getBackgroundID() {
+        return backgroundID;
+    }
+
+    public void setBackgroundID(int backgroundID) {
+        this.backgroundID = backgroundID;
     }
 }

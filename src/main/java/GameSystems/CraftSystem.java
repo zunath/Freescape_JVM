@@ -1,10 +1,13 @@
 package GameSystems;
 
 import Data.Repository.CraftRepository;
+import Data.Repository.PlayerRepository;
 import Data.Repository.SkillRepository;
 import Entities.CraftBlueprintEntity;
 import Entities.CraftComponentEntity;
 import Entities.PCSkillEntity;
+import Entities.PlayerEntity;
+import Enumerations.BackgroundID;
 import Enumerations.CraftDeviceID;
 import Enumerations.PerkID;
 import Enumerations.SkillID;
@@ -188,7 +191,8 @@ public class CraftSystem {
         CraftBlueprintEntity blueprint = craftRepo.GetBlueprintByID(blueprintID);
         PCSkillEntity pcSkill = skillRepo.GetPCSkillByID(pcGO.getUUID(), blueprint.getSkill().getSkillID());
 
-        int pcEffectiveLevel = CalculatePCEffectiveLevel(device, pcSkill.getRank());
+        int pcEffectiveLevel = CalculatePCEffectiveLevel(pcGO, device, pcSkill.getRank());
+
 
         float chance = CalculateChanceToCreateItem(pcEffectiveLevel, blueprint.getLevel());
         float roll = ThreadLocalRandom.current().nextFloat() * 100.0f;
@@ -352,11 +356,13 @@ public class CraftSystem {
         return percentage;
     }
 
-    private static int CalculatePCEffectiveLevel(NWObject device, int skillRank)
+    private static int CalculatePCEffectiveLevel(PlayerGO pcGO, NWObject device, int skillRank)
     {
+        PlayerRepository playerRepo = new PlayerRepository();
         int deviceID = getLocalInt(device, "CRAFT_DEVICE_ID");
         NWObject tools = getLocalObject(device, "CRAFT_DEVICE_TOOLS");
         int effectiveLevel = skillRank;
+        PlayerEntity player = playerRepo.GetByPlayerID(pcGO.getUUID());
 
         if(getIsObjectValid(tools))
         {
@@ -373,6 +379,30 @@ public class CraftSystem {
             }
 
             effectiveLevel += toolBonus;
+        }
+
+        switch (deviceID)
+        {
+            case CraftDeviceID.ArmorsmithBench:
+                if(player.getBackgroundID() == BackgroundID.Armorsmith)
+                    effectiveLevel++;
+                break;
+            case CraftDeviceID.Cookpot:
+                if(player.getBackgroundID() == BackgroundID.Chef)
+                    effectiveLevel++;
+                break;
+            case CraftDeviceID.MetalworkingBench:
+                if(player.getBackgroundID() == BackgroundID.Metalworker)
+                    effectiveLevel++;
+                break;
+            case CraftDeviceID.WeaponsmithBench:
+                if(player.getBackgroundID() == BackgroundID.Weaponsmith)
+                    effectiveLevel++;
+                break;
+            case CraftDeviceID.WoorkworkingBench:
+                if(player.getBackgroundID() == BackgroundID.Woodworker)
+                    effectiveLevel++;
+                break;
         }
 
         return effectiveLevel;

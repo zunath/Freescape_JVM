@@ -88,7 +88,7 @@ public class PerkID {
     public static final int ForageExpert = 85;
     public static final int WoodWeaponBlueprints = 86;
     public static final int HeavyArmorBlueprints = 87;
-    public static final int ComponentBlueprints = 88;
+    public static final int MetalworkingComponentBlueprints = 88;
     public static final int SeedSearcher = 89;
     public static final int CarefulForager = 90;
     public static final int FarmingEfficiency = 91;

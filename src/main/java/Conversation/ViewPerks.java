@@ -9,6 +9,7 @@ import Data.Repository.SkillRepository;
 import Dialog.*;
 import Entities.*;
 import GameObject.PlayerGO;
+import GameSystems.PerkSystem;
 import GameSystems.SkillSystem;
 import Helper.ColorToken;
 import Helper.ScriptHelper;
@@ -147,10 +148,10 @@ public class ViewPerks extends DialogBase implements IDialogHandler {
         String currentBonus = "N/A";
         String nextBonus = "N/A";
         String price = "N/A";
-        PerkLevelEntity currentPerkLevel = FindPerkLevel(perk.getLevels(), rank);
-        PerkLevelEntity nextPerkLevel = FindPerkLevel(perk.getLevels(), rank+1);
+        PerkLevelEntity currentPerkLevel = PerkSystem.FindPerkLevel(perk.getLevels(), rank);
+        PerkLevelEntity nextPerkLevel = PerkSystem.FindPerkLevel(perk.getLevels(), rank+1);
 
-        if(CanPerkBeUpgraded(perk, pcPerk, player))
+        if(PerkSystem.CanPerkBeUpgraded(perk, pcPerk, player))
         {
             SetResponseVisible("PerkDetailsPage", 1, true);
         }
@@ -223,38 +224,6 @@ public class ViewPerks extends DialogBase implements IDialogHandler {
 
     }
 
-    private PerkLevelEntity FindPerkLevel(List<PerkLevelEntity> levels, int findLevel)
-    {
-        for(PerkLevelEntity lvl: levels)
-        {
-            if(lvl.getLevel() == findLevel)
-            {
-                return lvl;
-            }
-        }
-        return null;
-    }
-
-    private boolean CanPerkBeUpgraded(PerkEntity perk, PCPerksEntity pcPerk, PlayerEntity player)
-    {
-        SkillRepository skillRepo = new SkillRepository();
-        int rank = pcPerk == null ? 0 : pcPerk.getPerkLevel();
-        int maxRank = perk.getLevels().size();
-        if(rank+1 > maxRank) return false;
-
-        PerkLevelEntity level = FindPerkLevel(perk.getLevels(), rank+1);
-        if(level == null) return false;
-
-        if(player.getUnallocatedSP() < level.getPrice()) return false;
-
-        for(PerkLevelSkillRequirementEntity req: level.getSkillRequirements())
-        {
-            PCSkillEntity pcSkill = skillRepo.GetPCSkillByID(player.getPCID(), req.getSkill().getSkillID());
-            if(pcSkill.getRank() < req.getRequiredRank()) return false;
-        }
-
-        return true;
-    }
 
     @Override
     public void DoAction(NWObject oPC, String pageName, int responseID) {
@@ -342,7 +311,7 @@ public class ViewPerks extends DialogBase implements IDialogHandler {
                 if(vm.isConfirmingPurchase())
                 {
                     SetResponseText("PerkDetailsPage", 1, "Purchase Upgrade");
-                    DoPerkUpgrade();
+                    PerkSystem.DoPerkUpgrade(GetPC(), vm.getSelectedPerkID());
                     vm.setConfirmingPurchase(false);
                     BuildPerkDetails();
                 }
@@ -358,83 +327,6 @@ public class ViewPerks extends DialogBase implements IDialogHandler {
                 BuildPerkList();
                 ChangePage("PerkListPage");
                 break;
-        }
-    }
-
-    private void DoPerkUpgrade()
-    {
-        PerkMenuViewModel vm = (PerkMenuViewModel)GetDialogCustomData();
-        PerkRepository perkRepo = new PerkRepository();
-        PlayerRepository playerRepo = new PlayerRepository();
-
-        PlayerGO pcGO = new PlayerGO(GetPC());
-        PerkEntity perk = perkRepo.GetPerkByID(vm.getSelectedPerkID());
-        PCPerksEntity pcPerk = perkRepo.GetPCPerkByID(pcGO.getUUID(), vm.getSelectedPerkID());
-        PlayerEntity player = playerRepo.GetByPlayerID(pcGO.getUUID());
-
-        if(CanPerkBeUpgraded(perk, pcPerk, player))
-        {
-            if(pcPerk == null)
-            {
-                pcPerk = new PCPerksEntity();
-                DateTime dt = new DateTime(DateTimeZone.UTC);
-                pcPerk.setAcquiredDate(new Timestamp(dt.getMillis()));
-                pcPerk.setPerk(perk);
-                pcPerk.setPlayerID(pcGO.getUUID());
-                pcPerk.setPerkLevel(0);
-            }
-
-            PerkLevelEntity nextPerkLevel = FindPerkLevel(perk.getLevels(), pcPerk.getPerkLevel()+1);
-            if(nextPerkLevel == null) return;
-
-            pcPerk.setPerkLevel(pcPerk.getPerkLevel() + 1);
-            player.setUnallocatedSP(player.getUnallocatedSP() - nextPerkLevel.getPrice());
-
-            perkRepo.Save(pcPerk);
-            playerRepo.save(player);
-
-            // If a perk is activatable, create the item on the PC.
-            // Remove any existing cast spell unique power properties and add the correct one based on the DB flag.
-            if(perk.getItemResref() != null && !perk.getItemResref().equals(""))
-            {
-                if(!NWScript.getIsObjectValid(NWScript.getItemPossessedBy(GetPC(), perk.getItemResref())))
-                {
-                    NWObject spellItem = NWScript.createItemOnObject(perk.getItemResref(), GetPC(), 1, "");
-                    NWScript.setItemCursedFlag(spellItem, true);
-                    NWScript.setLocalInt(spellItem, "ACTIVATION_PERK_ID", perk.getPerkID());
-
-                    for(NWItemProperty ip: NWScript.getItemProperties(spellItem))
-                    {
-                        int ipType = NWScript.getItemPropertyType(ip);
-                        int ipSubType = NWScript.getItemPropertySubType(ip);
-                        if(ipType == ItemProperty.CAST_SPELL &&
-                                (ipSubType == Ip.CONST_CASTSPELL_UNIQUE_POWER ||
-                                        ipSubType == Ip.CONST_CASTSPELL_UNIQUE_POWER_SELF_ONLY ||
-                                        ipSubType == Ip.CONST_CASTSPELL_ACTIVATE_ITEM ))
-                        {
-                            NWScript.removeItemProperty(spellItem, ip);
-                        }
-                    }
-
-                    NWItemProperty ip;
-                    if(perk.isTargetSelfOnly()) ip = NWScript.itemPropertyCastSpell(IpConst.CASTSPELL_UNIQUE_POWER_SELF_ONLY, IpConstCastspell.NUMUSES_UNLIMITED_USE);
-                    else ip = NWScript.itemPropertyCastSpell(IpConst.CASTSPELL_UNIQUE_POWER, IpConstCastspell.NUMUSES_UNLIMITED_USE);
-
-                    XP2.IPSafeAddItemProperty(spellItem, ip, 0.0f, AddItemPropertyPolicy.ReplaceExisting, false, false);
-                }
-
-                NWScript.setName(NWScript.getItemPossessedBy(GetPC(), perk.getItemResref()), perk.getName() + " (Lvl. " + pcPerk.getPerkLevel() + ")");
-            }
-
-            NWScript.sendMessageToPC(GetPC(),ColorToken.Green() + "Perk Purchased: " + perk.getName() + " (Lvl. " + pcPerk.getPerkLevel() + ")");
-
-            IPerk perkScript = (IPerk) ScriptHelper.GetClassByName("Perks." + perk.getJavaScriptName());
-            if(perkScript == null) return;
-            perkScript.OnPurchased(GetPC(), pcPerk.getPerkLevel());
-        }
-        else
-        {
-            NWScript.floatingTextStringOnCreature(ColorToken.Red() + "You cannot purchase the perk at this time." + ColorToken.End(), GetPC(), false);
         }
     }
 
