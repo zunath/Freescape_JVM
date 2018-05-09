@@ -20,6 +20,8 @@ public class StorageItemEntity {
     private String itemResref;
     @Column(name = "ItemObject")
     private byte[] itemObject;
+    @Column(name = "GlobalID")
+    private String globalID;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "StorageContainerID")
@@ -73,4 +75,11 @@ public class StorageItemEntity {
         this.storageContainer = storageContainer;
     }
 
+    public String getGlobalID() {
+        return globalID;
+    }
+
+    public void setGlobalID(String globalID) {
+        this.globalID = globalID;
+    }
 }

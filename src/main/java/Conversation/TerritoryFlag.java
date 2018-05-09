@@ -105,12 +105,16 @@ public class TerritoryFlag extends DialogBase implements IDialogHandler {
         int flagID = model.getFlagID();
         StructureRepository structureRepo = new StructureRepository();
         PCTerritoryFlagEntity flag = structureRepo.GetPCTerritoryFlagByID(flagID);
-        int vanityCount = structureRepo.GetNumberOfStructuresInTerritory(flagID, true, false);
-        int specialCount = structureRepo.GetNumberOfStructuresInTerritory(flagID, false, true);
+        int vanityCount = structureRepo.GetNumberOfStructuresInTerritory(flagID, true, false, false, false);
+        int specialCount = structureRepo.GetNumberOfStructuresInTerritory(flagID, false, true, false, false);
+        int resourceCount = structureRepo.GetNumberOfStructuresInTerritory(flagID, false, false, true, false);
+        int buildingCount = structureRepo.GetNumberOfStructuresInTerritory(flagID, false, false, false, true);
 
         String header = ColorToken.Green() + "Territory Management Menu" + ColorToken.End() + "\n\n"
                 + ColorToken.Green() + "Vanity Slots: " + ColorToken.End() + vanityCount + " / " + flag.getBlueprint().getVanityCount() + "\n"
                 + ColorToken.Green() + "Special Slots: " + ColorToken.End() + specialCount + " / " + flag.getBlueprint().getSpecialCount() + "\n"
+                + ColorToken.Green() + "Resource Slots: " + ColorToken.End() + resourceCount + " / " + flag.getBlueprint().getResourceCount() + "\n"
+                + ColorToken.Green() + "Building Slots: " + ColorToken.End() + buildingCount + " / " + flag.getBlueprint().getBuildingCount() + "\n"
                 + "Please select an option.";
         SetPageHeader("MainPage", header);
     }

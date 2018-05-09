@@ -18,7 +18,12 @@ SELECT sb.StructureBlueprintID ,
        sb.GivesSkillXP,
        sb.IsVanity,
        sb.IsSpecial,
-       sb.CraftTierLevel
+       sb.CraftTierLevel,
+       sb.ResourceCount,
+       sb.BuildingCount,
+       sb.IsResource,
+       sb.IsBuilding,
+       sb.ResourceResref
 FROM dbo.StructureBlueprints sb
 OUTER APPLY dbo.fn_GetPlayerEffectivePerkLevel(:playerID, sb.PerkID, @rank) pcp
 WHERE sb.IsActive = 1
@@ -27,3 +32,5 @@ WHERE sb.IsActive = 1
 	AND ISNULL(pcp.Level, 0) >= sb.RequiredPerkLevel
 	AND sb.IsVanity = :isVanity
 	AND sb.IsSpecial = :isSpecial
+    AND sb.IsResource = :isResource
+    AND sb.IsBuilding = :isBuilding

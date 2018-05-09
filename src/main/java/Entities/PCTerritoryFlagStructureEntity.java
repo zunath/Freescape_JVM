@@ -52,7 +52,6 @@ public class PCTerritoryFlagStructureEntity {
     @Fetch(value = FetchMode.SUBSELECT)
     private List<PCTerritoryFlagStructureItemEntity> items;
 
-
     public int getPcTerritoryFlagStructureID() {
         return pcTerritoryFlagStructureID;
     }
@@ -148,4 +147,5 @@ public class PCTerritoryFlagStructureEntity {
     public void setCustomName(String customName) {
         this.customName = customName;
     }
+
 }

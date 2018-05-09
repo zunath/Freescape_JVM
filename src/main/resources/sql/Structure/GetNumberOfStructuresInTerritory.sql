@@ -1,6 +1,9 @@
 DECLARE @flagID INT = :flagID
 DECLARE @IsVanity BIT = :isVanity
 DECLARE @IsSpecial BIT = :isSpecial
+DECLARE @IsResource BIT = :isResource
+DECLARE @IsBuilding BIT = :isBuilding
+
 SELECT
 (
 	SELECT COUNT(1) AS Count
@@ -9,6 +12,8 @@ SELECT
 	WHERE cs.PCTerritoryFlagID = @flagID
 		AND sb.IsVanity = @IsVanity
 		AND sb.IsSpecial = @IsSpecial
+		AND sb.IsResource = @IsResource
+		AND sb.IsBuilding = @IsBuilding
 ) + (
 	SELECT COUNT(1) AS Count
 	FROM dbo.PCTerritoryFlagsStructures pctfs
@@ -16,4 +21,6 @@ SELECT
 	WHERE pctfs.PCTerritoryFlagID = @flagID
 		AND sb.IsVanity = @IsVanity
 		AND sb.IsSpecial = @IsSpecial
+		AND sb.IsResource = @IsResource
+		AND sb.IsBuilding = @IsBuilding
 )

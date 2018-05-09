@@ -25,7 +25,12 @@ SELECT pctf.PCTerritoryFlagID ,
        sb.GivesSkillXP,
        sb.IsVanity,
        sb.IsSpecial,
-       sb.CraftTierLevel
+       sb.CraftTierLevel,
+       sb.ResourceCount,
+       sb.BuildingCount,
+       sb.IsResource,
+       sb.IsBuilding,
+       sb.ResourceResref
 FROM dbo.PCTerritoryFlags pctf
 JOIN dbo.StructureBlueprints sb ON sb.StructureBlueprintID = pctf.StructureBlueprintID
 WHERE pctf.LocationAreaTag = :areaTag

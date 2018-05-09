@@ -73,6 +73,21 @@ public class StructureBlueprintEntity {
     @Column(name = "CraftTierLevel")
     private int craftTierLevel;
 
+    @Column(name = "ResourceCount")
+    private int resourceCount;
+
+    @Column(name = "BuildingCount")
+    private int buildingCount;
+
+    @Column(name = "IsResource")
+    private boolean isResource;
+
+    @Column(name = "IsBuilding")
+    private boolean isBuilding;
+
+    @Column(name = "ResourceResref")
+    private String resourceResref;
+
     public int getStructureBlueprintID() {
         return structureBlueprintID;
     }
@@ -239,5 +254,45 @@ public class StructureBlueprintEntity {
 
     public void setCraftTierLevel(int craftTierLevel) {
         this.craftTierLevel = craftTierLevel;
+    }
+
+    public int getResourceCount() {
+        return resourceCount;
+    }
+
+    public void setResourceCount(int resourceCount) {
+        this.resourceCount = resourceCount;
+    }
+
+    public int getBuildingCount() {
+        return buildingCount;
+    }
+
+    public void setBuildingCount(int buildingCount) {
+        this.buildingCount = buildingCount;
+    }
+
+    public boolean isResource() {
+        return isResource;
+    }
+
+    public void setResource(boolean resource) {
+        isResource = resource;
+    }
+
+    public boolean isBuilding() {
+        return isBuilding;
+    }
+
+    public void setBuilding(boolean building) {
+        isBuilding = building;
+    }
+
+    public String getResourceResref() {
+        return resourceResref;
+    }
+
+    public void setResourceResref(String resourceResref) {
+        this.resourceResref = resourceResref;
     }
 }

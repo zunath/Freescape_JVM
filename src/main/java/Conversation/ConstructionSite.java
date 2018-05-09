@@ -331,17 +331,27 @@ public class ConstructionSite extends DialogBase implements IDialogHandler {
         page.getResponses().clear();
 
         PCTerritoryFlagEntity flag = repo.GetPCTerritoryFlagByID(model.getFlagID());
-        int vanityCount = repo.GetNumberOfStructuresInTerritory(model.getFlagID(), true, false);
-        int specialCount = repo.GetNumberOfStructuresInTerritory(model.getFlagID(), false, true);
+        int vanityCount = repo.GetNumberOfStructuresInTerritory(model.getFlagID(), true, false, false, false);
+        int specialCount = repo.GetNumberOfStructuresInTerritory(model.getFlagID(), false, true, false, false);
+        int resourceCount = repo.GetNumberOfStructuresInTerritory(model.getFlagID(), false, false, true, false);
+        int buildingCount = repo.GetNumberOfStructuresInTerritory(model.getFlagID(), false, false, false, true);
 
-        ArrayList<StructureCategoryEntity> categories = new ArrayList<>(repo.GetStructureCategoriesByType(pcGO.getUUID(), model.isTerritoryFlag(), false, false));
+        ArrayList<StructureCategoryEntity> categories = new ArrayList<>(repo.GetStructureCategoriesByType(pcGO.getUUID(), model.isTerritoryFlag(), false, false, false, false));
         if(flag != null && vanityCount < flag.getBlueprint().getVanityCount())
         {
-            categories.addAll(repo.GetStructureCategoriesByType(pcGO.getUUID(), model.isTerritoryFlag(), true, false));
+            categories.addAll(repo.GetStructureCategoriesByType(pcGO.getUUID(), model.isTerritoryFlag(), true, false, false, false));
         }
         if(flag != null && specialCount < flag.getBlueprint().getSpecialCount())
         {
-            categories.addAll(repo.GetStructureCategoriesByType(pcGO.getUUID(), model.isTerritoryFlag(), false, true));
+            categories.addAll(repo.GetStructureCategoriesByType(pcGO.getUUID(), model.isTerritoryFlag(), false, true, false, false));
+        }
+        if(flag != null && resourceCount < flag.getBlueprint().getResourceCount())
+        {
+            categories.addAll(repo.GetStructureCategoriesByType(pcGO.getUUID(), model.isTerritoryFlag(), false, false, true, false));
+        }
+        if(flag != null && buildingCount < flag.getBlueprint().getBuildingCount())
+        {
+            categories.addAll(repo.GetStructureCategoriesByType(pcGO.getUUID(), model.isTerritoryFlag(), false, false, false, true));
         }
 
         for(StructureCategoryEntity category : categories)
@@ -365,17 +375,27 @@ public class ConstructionSite extends DialogBase implements IDialogHandler {
         int rank = pcSkill.getRank();
 
         PCTerritoryFlagEntity flag = repo.GetPCTerritoryFlagByID(model.getFlagID());
-        int vanityCount = repo.GetNumberOfStructuresInTerritory(model.getFlagID(), true, false);
-        int specialCount = repo.GetNumberOfStructuresInTerritory(model.getFlagID(), false, true);
+        int vanityCount = repo.GetNumberOfStructuresInTerritory(model.getFlagID(), true, false, false, false);
+        int specialCount = repo.GetNumberOfStructuresInTerritory(model.getFlagID(), false, true, false, false);
+        int resourceCount = repo.GetNumberOfStructuresInTerritory(model.getFlagID(), false, false, true, false);
+        int buildingCount = repo.GetNumberOfStructuresInTerritory(model.getFlagID(), false, false, false, true);
 
-        ArrayList<StructureBlueprintEntity> blueprints = new ArrayList<>(repo.GetStructuresByCategoryAndType(pcGO.getUUID(), model.getCategoryID(), false, false)); // Territory markers
+        ArrayList<StructureBlueprintEntity> blueprints = new ArrayList<>(repo.GetStructuresByCategoryAndType(pcGO.getUUID(), model.getCategoryID(), false, false, false, false)); // Territory markers
         if(flag != null && vanityCount < flag.getBlueprint().getVanityCount())
         {
-            blueprints.addAll(repo.GetStructuresByCategoryAndType(pcGO.getUUID(), model.getCategoryID(), true, false)); // Vanity
+            blueprints.addAll(repo.GetStructuresByCategoryAndType(pcGO.getUUID(), model.getCategoryID(), true, false, false, false)); // Vanity
         }
         if(flag != null && specialCount < flag.getBlueprint().getSpecialCount())
         {
-            blueprints.addAll(repo.GetStructuresByCategoryAndType(pcGO.getUUID(), model.getCategoryID(), false, true)); // Special
+            blueprints.addAll(repo.GetStructuresByCategoryAndType(pcGO.getUUID(), model.getCategoryID(), false, true, false, false)); // Special
+        }
+        if(flag != null && resourceCount < flag.getBlueprint().getResourceCount())
+        {
+            blueprints.addAll(repo.GetStructuresByCategoryAndType(pcGO.getUUID(), model.getCategoryID(), false, false, true, false)); // Resource
+        }
+        if(flag != null && buildingCount < flag.getBlueprint().getBuildingCount())
+        {
+            blueprints.addAll(repo.GetStructuresByCategoryAndType(pcGO.getUUID(), model.getCategoryID(), false, true, false, true)); // Building
         }
 
         for(StructureBlueprintEntity entity : blueprints)
@@ -585,7 +605,6 @@ public class ConstructionSite extends DialogBase implements IDialogHandler {
         else
         {
             StructureSystem.SelectBlueprint(GetPC(), GetDialogTarget(), model.getBlueprintID());
-            floatingTextStringOnCreature("Blueprint set. Equip a hammer and 'bash' the construction site to build.", GetPC(), false);
             EndConversation();
         }
     }

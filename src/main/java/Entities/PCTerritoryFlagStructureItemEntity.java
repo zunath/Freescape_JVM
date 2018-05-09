@@ -28,6 +28,9 @@ public class PCTerritoryFlagStructureItemEntity {
     @JoinColumn(name = "PCStructureID")
     private PCTerritoryFlagStructureEntity structure;
 
+    @Column(name = "GlobalID")
+    private String globalID;
+
     public int getPcStructureItemID() {
         return pcStructureItemID;
     }
@@ -74,5 +77,13 @@ public class PCTerritoryFlagStructureItemEntity {
 
     public void setStructure(PCTerritoryFlagStructureEntity structure) {
         this.structure = structure;
+    }
+
+    public String getGlobalID() {
+        return globalID;
+    }
+
+    public void setGlobalID(String globalID) {
+        this.globalID = globalID;
     }
 }

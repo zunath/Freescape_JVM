@@ -3,6 +3,7 @@ package Data.Repository;
 import Data.DataContext;
 import Data.SqlParameter;
 import Entities.*;
+import org.hibernate.loader.custom.sql.SQLQueryParser;
 
 import java.util.List;
 
@@ -69,7 +70,12 @@ public class StructureRepository {
         }
     }
 
-    public List<StructureCategoryEntity> GetStructureCategoriesByType(String uuid, boolean isTerritoryFlagCategory, boolean isVanity, boolean isSpecial)
+    public List<StructureCategoryEntity> GetStructureCategoriesByType(String uuid,
+                                                                      boolean isTerritoryFlagCategory,
+                                                                      boolean isVanity,
+                                                                      boolean isSpecial,
+                                                                      boolean isResource,
+                                                                      boolean isBuilding)
     {
         try(DataContext context = new DataContext())
         {
@@ -77,11 +83,18 @@ public class StructureRepository {
                     new SqlParameter("isTerritoryFlagCategory", isTerritoryFlagCategory),
                     new SqlParameter("playerID", uuid),
                     new SqlParameter("isVanity", isVanity),
-                    new SqlParameter("isSpecial", isSpecial));
+                    new SqlParameter("isSpecial", isSpecial),
+                    new SqlParameter("isResource", isResource),
+                    new SqlParameter("isBuilding", isBuilding));
         }
     }
 
-    public List<StructureBlueprintEntity> GetStructuresByCategoryAndType(String uuid, int structureCategoryID, boolean isVanity, boolean isSpecial)
+    public List<StructureBlueprintEntity> GetStructuresByCategoryAndType(String uuid,
+                                                                         int structureCategoryID,
+                                                                         boolean isVanity,
+                                                                         boolean isSpecial,
+                                                                         boolean isResource,
+                                                                         boolean isBuilding)
     {
         try(DataContext context = new DataContext())
         {
@@ -89,7 +102,9 @@ public class StructureRepository {
                     new SqlParameter("structureCategoryID", structureCategoryID),
                     new SqlParameter("playerID", uuid),
                     new SqlParameter("isVanity", isVanity),
-                    new SqlParameter("isSpecial", isSpecial));
+                    new SqlParameter("isSpecial", isSpecial),
+                    new SqlParameter("isResource", isResource),
+                    new SqlParameter("isBuilding", isBuilding));
         }
     }
 
@@ -150,14 +165,20 @@ public class StructureRepository {
         }
     }
 
-    public int GetNumberOfStructuresInTerritory(int flagID, boolean isVanity, boolean isSpecial)
+    public int GetNumberOfStructuresInTerritory(int flagID,
+                                                boolean isVanity,
+                                                boolean isSpecial,
+                                                boolean isResource,
+                                                boolean isBuilding)
     {
         try(DataContext context = new DataContext())
         {
             return context.executeSQLSingle("Structure/GetNumberOfStructuresInTerritory",
                     new SqlParameter("flagID", flagID),
                     new SqlParameter("isVanity", isVanity),
-                    new SqlParameter("isSpecial", isSpecial));
+                    new SqlParameter("isSpecial", isSpecial),
+                    new SqlParameter("isResource", isResource),
+                    new SqlParameter("isBuilding", isBuilding));
         }
     }
 
@@ -170,6 +191,15 @@ public class StructureRepository {
         }
     }
 
+
+    public void DeleteContainerItemByGlobalID(String uuid)
+    {
+        try(DataContext context = new DataContext())
+        {
+            context.executeUpdateOrDelete("Structure/DeleteContainerItemByGlobalID",
+                    new SqlParameter("globalID", uuid));
+        }
+    }
 
     public void Save(Object entity)
     {

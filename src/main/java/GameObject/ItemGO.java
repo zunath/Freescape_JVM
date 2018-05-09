@@ -1,11 +1,13 @@
 package GameObject;
 
+import Common.Constants;
 import org.nwnx.nwnx2.jvm.NWItemProperty;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.NWScript;
 import org.nwnx.nwnx2.jvm.constants.BaseItem;
 
 import java.util.Arrays;
+import java.util.UUID;
 
 import static org.nwnx.nwnx2.jvm.NWScript.*;
 
@@ -42,6 +44,20 @@ public class ItemGO {
 
     public void setScript(String script) {
         this.script = script;
+    }
+
+
+    public String getUUID()
+    {
+        String uuid = getLocalString(item, "GLOBAL_ID");
+
+        if(uuid.equals(""))
+        {
+            uuid = UUID.randomUUID().toString();
+            setLocalString(item, "GLOBAL_ID", uuid);
+        }
+
+        return uuid;
     }
 
     public void stripAllItemProperties()

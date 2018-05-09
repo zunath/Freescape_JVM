@@ -1,60 +1,86 @@
 package Placeable.StructureSystem.PersistentStorage;
 
-import Entities.PCTerritoryFlagStructureEntity;
-import Entities.PCTerritoryFlagStructureItemEntity;
-import Helper.ColorToken;
 import Common.IScriptEventHandler;
 import Data.Repository.StructureRepository;
+import Entities.PCTerritoryFlagStructureEntity;
+import Entities.PCTerritoryFlagStructureItemEntity;
+import GameObject.ItemGO;
+import Helper.ColorToken;
 import org.nwnx.nwnx2.jvm.NWObject;
-import org.nwnx.nwnx2.jvm.NWScript;
 import org.nwnx.nwnx2.jvm.SCORCO;
-import org.nwnx.nwnx2.jvm.Scheduler;
+import org.nwnx.nwnx2.jvm.constants.InventoryDisturbType;
+
+import static org.nwnx.nwnx2.jvm.NWScript.*;
 
 @SuppressWarnings("unused")
 public class OnDisturbed implements IScriptEventHandler {
     @Override
-    public void runScript(NWObject objSelf) {
-        final NWObject oPC = NWScript.getLastDisturbed();
-        final NWObject item = NWScript.getInventoryDisturbItem();
-        int structureID = NWScript.getLocalInt(objSelf, "STRUCTURE_TEMP_STRUCTURE_ID");
+    public void runScript(NWObject container) {
+        NWObject oPC = getLastDisturbed();
+        NWObject item = getInventoryDisturbItem();
+        int disturbType = getInventoryDisturbType();
+
+        ItemGO itemGO = new ItemGO(item);
+        int structureID = getLocalInt(container, "STRUCTURE_TEMP_STRUCTURE_ID");
         StructureRepository repo = new StructureRepository();
         PCTerritoryFlagStructureEntity entity = repo.GetPCStructureByID(structureID);
-        int itemCount = 0;
-        boolean reachedLimit = false;
+        int itemCount = CountItems(container);
+        String itemResref = getResRef(item);
 
-        entity.getItems().clear();
-        for(final NWObject inventory : NWScript.getItemsInInventory(objSelf))
+        if(disturbType == InventoryDisturbType.ADDED)
         {
-            itemCount++;
-
-            if(itemCount <= entity.getBlueprint().getItemStorageCount())
+            if(itemCount > entity.getBlueprint().getItemStorageCount())
             {
-                PCTerritoryFlagStructureItemEntity itemEntity = new PCTerritoryFlagStructureItemEntity();
-                itemEntity.setItemName(NWScript.getName(inventory, false));
-                itemEntity.setItemObject(SCORCO.saveObject(inventory));
-                itemEntity.setItemResref(NWScript.getResRef(inventory));
-                itemEntity.setItemTag((NWScript.getTag(inventory)));
-                itemEntity.setStructure(entity);
-
-                entity.getItems().add(itemEntity);
+                ReturnItem(oPC, item);
+                sendMessageToPC(oPC, ColorToken.Red() + "No more items can be placed inside." + ColorToken.End());
+            }
+            // Only specific types of items can be stored in resource bundles
+            else if(!entity.getBlueprint().getResourceResref().equals("") && !itemResref.equals(entity.getBlueprint().getResourceResref()))
+            {
+                ReturnItem(oPC, item);
+                sendMessageToPC(oPC, ColorToken.Red() + "That item cannot be stored here." + ColorToken.End());
             }
             else
             {
-                reachedLimit = true;
+                PCTerritoryFlagStructureItemEntity itemEntity = new PCTerritoryFlagStructureItemEntity();
+                itemEntity.setItemName(getName(item, false));
+                itemEntity.setItemResref(itemResref);
+                itemEntity.setItemTag((getTag(item)));
+                itemEntity.setStructure(entity);
+                itemEntity.setGlobalID(itemGO.getUUID());
+                itemEntity.setItemObject(SCORCO.saveObject(item));
 
-                Scheduler.assign(objSelf, () -> NWScript.actionGiveItem(inventory, oPC));
+                entity.getItems().add(itemEntity);
+                repo.Save(entity);
             }
         }
-
-        if(reachedLimit)
+        else if(disturbType == InventoryDisturbType.REMOVED)
         {
-            NWScript.sendMessageToPC(oPC, ColorToken.Red() + "No more items can be placed inside." + ColorToken.End());
-        }
-        else
-        {
-            NWScript.sendMessageToPC(oPC, ColorToken.White() + "Item Limit: "  + itemCount + " / " + ColorToken.End() + ColorToken.Red() + entity.getBlueprint().getItemStorageCount() + ColorToken.End());
+            repo.DeleteContainerItemByGlobalID(itemGO.getUUID());
         }
 
-        repo.Save(entity);
+        sendMessageToPC(oPC, ColorToken.White() + "Item Limit: "  + itemCount + " / " + ColorToken.End() + ColorToken.Red() + entity.getBlueprint().getItemStorageCount() + ColorToken.End());
+
     }
+
+    private void ReturnItem(NWObject oPC, NWObject oItem)
+    {
+        copyItem(oItem, oPC, true);
+        destroyObject(oItem, 0.0f);
+    }
+
+    private int CountItems(NWObject container)
+    {
+        int count = 0;
+
+        NWObject item = getFirstItemInInventory(container);
+        while(getIsObjectValid(item))
+        {
+            count++;
+            item = getNextItemInInventory(container);
+        }
+
+        return count;
+    }
+
 }

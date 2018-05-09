@@ -16,6 +16,15 @@ public class StorageRepository {
         }
     }
 
+    public void DeleteStorageItemByGlobalID(String uuid)
+    {
+        try(DataContext context = new DataContext())
+        {
+            context.executeUpdateOrDelete("Storage/DeleteStorageItemByGlobalID",
+                    new SqlParameter("globalID", uuid));
+        }
+    }
+
     public void Save(StorageContainerEntity entity)
     {
         try(DataContext context = new DataContext())

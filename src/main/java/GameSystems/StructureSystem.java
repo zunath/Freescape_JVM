@@ -91,6 +91,10 @@ public class StructureSystem {
                 {
                     setName(structurePlaceable, structure.getCustomName());
                 }
+                else if(!structure.getBlueprint().getResourceResref().equals(""))
+                {
+                    setName(structurePlaceable, structure.getBlueprint().getName());
+                }
 
                 if(structure.getBlueprint().getItemStorageCount() > 0)
                 {
@@ -213,10 +217,14 @@ public class StructureSystem {
             return 1;
         }
 
-        int vanityCount = repo.GetNumberOfStructuresInTerritory(pcTerritoryFlagID, true, false);
-        int specialCount = repo.GetNumberOfStructuresInTerritory(pcTerritoryFlagID, false, true);
+        int vanityCount = repo.GetNumberOfStructuresInTerritory(pcTerritoryFlagID, true, false, false, false);
+        int specialCount = repo.GetNumberOfStructuresInTerritory(pcTerritoryFlagID, false, true, false, false);
+        int resourceCount = repo.GetNumberOfStructuresInTerritory(pcTerritoryFlagID, false, false, true, false);
+        int buildingCount = repo.GetNumberOfStructuresInTerritory(pcTerritoryFlagID, false, false, false, true);
         if(vanityCount >= entity.getBlueprint().getVanityCount() &&
-                specialCount >= entity.getBlueprint().getSpecialCount())
+                specialCount >= entity.getBlueprint().getSpecialCount() &&
+                resourceCount >= entity.getBlueprint().getResourceCount() &&
+                buildingCount >= entity.getBlueprint().getBuildingCount())
         {
             return 2;
         }
@@ -325,6 +333,16 @@ public class StructureSystem {
         repo.Save(entity);
         SetConstructionSiteID(constructionSite, entity.getConstructionSiteID());
         setName(constructionSite, "Construction Site: " + entity.getBlueprint().getName());
+
+        // If blueprint doesn't have any components, instantly create the structure
+        if(blueprint.getComponents().isEmpty())
+        {
+            StructureSystem.CompleteStructure(constructionSite);
+        }
+        else
+        {
+            floatingTextStringOnCreature("Blueprint set. Equip a hammer and 'bash' the construction site to build.", oPC, false);
+        }
     }
 
     public static void MoveStructure(NWObject oPC, NWLocation location)
@@ -500,7 +518,15 @@ public class StructureSystem {
 
             if(entity.getBlueprint().getItemStorageCount() > 0)
             {
-                setName(structurePlaceable, getName(structurePlaceable, false) + " (" + entity.getBlueprint().getItemStorageCount() + " items)");
+                if(entity.getBlueprint().getResourceResref().equals(""))
+                {
+                    setName(structurePlaceable, getName(structurePlaceable, false) + " (" + entity.getBlueprint().getItemStorageCount() + " items)");
+                }
+                else
+                {
+                    setName(structurePlaceable, entity.getBlueprint().getName() + " (" + entity.getBlueprint().getItemStorageCount() + " items)");
+                }
+
             }
         }
 
@@ -651,10 +677,14 @@ public class StructureSystem {
         //              Site must be razed otherwise player would go over the cap.
         if(constructionSiteID <= 0)
         {
-            int vanityCount = repo.GetNumberOfStructuresInTerritory(flagID, true, false);
-            int specialCount = repo.GetNumberOfStructuresInTerritory(flagID, false, true);
+            int vanityCount = repo.GetNumberOfStructuresInTerritory(flagID, true, false, false, false);
+            int specialCount = repo.GetNumberOfStructuresInTerritory(flagID, false, true, false, false);
+            int resourceCount = repo.GetNumberOfStructuresInTerritory(flagID, false, false, true, false);
+            int buildingCount = repo.GetNumberOfStructuresInTerritory(flagID, false, false, false, true);
             if(vanityCount >= flagEntity.getBlueprint().getVanityCount() &&
-                    specialCount >= flagEntity.getBlueprint().getSpecialCount())
+                    specialCount >= flagEntity.getBlueprint().getSpecialCount() &&
+                    resourceCount >= flagEntity.getBlueprint().getResourceCount() &&
+                    buildingCount >= flagEntity.getBlueprint().getBuildingCount())
             {
                 return false;
             }

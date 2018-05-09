@@ -1,32 +1,38 @@
 package GameSystems;
 
+import Data.Repository.StorageRepository;
 import Entities.StorageContainerEntity;
 import Entities.StorageItemEntity;
+import GameObject.ItemGO;
 import Helper.ColorToken;
-import Data.Repository.StorageRepository;
-import org.nwnx.nwnx2.jvm.*;
+import org.nwnx.nwnx2.jvm.NWLocation;
+import org.nwnx.nwnx2.jvm.NWObject;
+import org.nwnx.nwnx2.jvm.SCORCO;
+import org.nwnx.nwnx2.jvm.constants.InventoryDisturbType;
+
+import static org.nwnx.nwnx2.jvm.NWScript.*;
 
 public class StorageSystem {
 
     public static void OnChestOpened(NWObject oChest)
     {
-        NWObject oArea = NWScript.getArea(oChest);
-        int containerID = NWScript.getLocalInt(oChest, "STORAGE_CONTAINER_ID");
+        NWObject oArea = getArea(oChest);
+        int containerID = getLocalInt(oChest, "STORAGE_CONTAINER_ID");
         if(containerID <= 0) return;
 
         StorageRepository repo = new StorageRepository();
         StorageContainerEntity entity = repo.GetByContainerID(containerID);
-        NWLocation chestLocation = NWScript.getLocation(oChest);
-        boolean chestLoaded = NWScript.getLocalInt(oChest, "STORAGE_CONTAINER_LOADED") == 1;
+        NWLocation chestLocation = getLocation(oChest);
+        boolean chestLoaded = getLocalInt(oChest, "STORAGE_CONTAINER_LOADED") == 1;
 
         if(chestLoaded) return;
 
         if(entity == null)
         {
             entity = new StorageContainerEntity();
-            entity.setAreaName(NWScript.getName(oArea, false));
-            entity.setAreaResref(NWScript.getResRef(oArea));
-            entity.setAreaTag(NWScript.getTag(oArea));
+            entity.setAreaName(getName(oArea, false));
+            entity.setAreaResref(getResRef(oArea));
+            entity.setAreaTag(getTag(oArea));
             entity.setStorageContainerID(containerID);
 
             repo.Save(entity);
@@ -37,59 +43,71 @@ public class StorageSystem {
             SCORCO.loadObject(item.getItemObject(), chestLocation, oChest);
         }
 
-        NWScript.setLocalInt(oChest, "STORAGE_CONTAINER_LOADED", 1);
+        setLocalInt(oChest, "STORAGE_CONTAINER_LOADED", 1);
     }
 
     public static void OnChestDisturbed(NWObject oChest)
     {
-        int containerID = NWScript.getLocalInt(oChest, "STORAGE_CONTAINER_ID");
+        int containerID = getLocalInt(oChest, "STORAGE_CONTAINER_ID");
         if(containerID <= 0) return;
 
-        final NWObject oPC = NWScript.getLastDisturbed();
-        StorageRepository repo = new StorageRepository();
-        StorageContainerEntity entity = repo.GetByContainerID(containerID);
-        entity.getStorageItems().clear();
-
-        int itemCount = 0;
-        int itemLimit = NWScript.getLocalInt(oChest, "STORAGE_CONTAINER_ITEM_LIMIT");
-        boolean reachedLimit = false;
-
+        NWObject oPC = getLastDisturbed();
+        NWObject oItem = getInventoryDisturbItem();
+        ItemGO itemGO = new ItemGO(oItem);
+        int disturbType = getInventoryDisturbType();
+        int itemCount = CountItems(oChest);
+        int itemLimit = getLocalInt(oChest, "STORAGE_CONTAINER_ITEM_LIMIT");
         if(itemLimit <= 0) itemLimit = 20;
 
-        for(final NWObject item : NWScript.getItemsInInventory(oChest))
+        StorageRepository repo = new StorageRepository();
+        StorageContainerEntity entity = repo.GetByContainerID(containerID);
+
+        if(disturbType == InventoryDisturbType.ADDED)
         {
-            itemCount++;
-
-            if(itemCount <= itemLimit)
+            if(itemCount > itemLimit)
             {
-                StorageItemEntity itemEntity = new StorageItemEntity();
-                itemEntity.setItemName(NWScript.getName(item, false));
-                itemEntity.setItemTag(NWScript.getTag(item));
-                itemEntity.setItemResref(NWScript.getResRef(item));
-                itemEntity.setItemObject(SCORCO.saveObject(item));
-                itemEntity.setStorageContainer(entity);
-
-                entity.getStorageItems().add(itemEntity);
+                ReturnItem(oPC, oItem);
+                sendMessageToPC(oPC, ColorToken.Red() + "No more items can be placed inside." + ColorToken.End());
             }
             else
             {
-                reachedLimit = true;
+                StorageItemEntity itemEntity = new StorageItemEntity();
+                itemEntity.setItemName(getName(oItem, false));
+                itemEntity.setItemTag(getTag(oItem));
+                itemEntity.setItemResref(getResRef(oItem));
+                itemEntity.setGlobalID(itemGO.getUUID());
+                itemEntity.setItemObject(SCORCO.saveObject(oItem));
+                itemEntity.setStorageContainer(entity);
 
-                Scheduler.assign(oChest, () -> NWScript.actionGiveItem(item, oPC));
+                entity.getStorageItems().add(itemEntity);
+                repo.Save(entity);
             }
         }
-
-
-        if(reachedLimit)
+        else if(disturbType == InventoryDisturbType.REMOVED)
         {
-            NWScript.sendMessageToPC(oPC, ColorToken.Red() + "No more items can be placed inside." + ColorToken.End());
-        }
-        else
-        {
-            NWScript.sendMessageToPC(oPC, ColorToken.White() + "Item Limit: "  + itemCount + " / " + ColorToken.End() + ColorToken.Red() + itemLimit + ColorToken.End());
+            repo.DeleteStorageItemByGlobalID(itemGO.getUUID());
         }
 
-        repo.Save(entity);
+        sendMessageToPC(oPC, ColorToken.White() + "Item Limit: "  + itemCount + " / " + ColorToken.End() + ColorToken.Red() + itemLimit + ColorToken.End());
     }
 
+    private static void ReturnItem(NWObject oPC, NWObject oItem)
+    {
+        copyItem(oItem, oPC, true);
+        destroyObject(oItem, 0.0f);
+    }
+
+    private static int CountItems(NWObject container)
+    {
+        int count = 0;
+
+        NWObject item = getFirstItemInInventory(container);
+        while(getIsObjectValid(item))
+        {
+            count++;
+            item = getNextItemInInventory(container);
+        }
+
+        return count;
+    }
 }

@@ -14,6 +14,8 @@ WHERE sc.StructureCategoryID IN (
 		AND (sb2.Level <= pcs.Rank+2)
 		AND sb2.IsVanity = :isVanity
 		AND sb2.IsSpecial = :isSpecial
+		AND sb2.IsResource = :isResource
+		AND sb2.IsBuilding = :isBuilding
 		AND ((pcp.PerkLevelID IS NOT NULL OR sb2.PerkID IS NULL) OR (pcp.Level >= sb2.RequiredPerkLevel))
 )
 ORDER BY sc.Name ASC
