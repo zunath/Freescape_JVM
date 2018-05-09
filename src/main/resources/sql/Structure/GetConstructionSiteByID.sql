@@ -7,6 +7,7 @@ SELECT cs.ConstructionSiteID ,
        cs.LocationX ,
        cs.LocationY ,
        cs.LocationZ ,
-       cs.LocationOrientation
+       cs.LocationOrientation,
+       cs.BuildingInteriorID
 FROM dbo.ConstructionSites cs
 WHERE cs.ConstructionSiteID = :constructionSiteID

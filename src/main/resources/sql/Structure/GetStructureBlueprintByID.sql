@@ -22,6 +22,7 @@ SELECT sb.StructureBlueprintID ,
        sb.BuildingCount,
        sb.IsResource,
        sb.IsBuilding,
-       sb.ResourceResref
+       sb.ResourceResref,
+       sb.BuildingCategoryID
 FROM dbo.StructureBlueprints sb
 WHERE sb.StructureBlueprintID = :structureBlueprintID

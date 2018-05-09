@@ -45,6 +45,9 @@ public class ConstructionSiteEntity {
     @Fetch(value = FetchMode.SUBSELECT)
     private List<ConstructionSiteComponentEntity> components;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "BuildingInteriorID")
+    private BuildingInteriorEntity buildingInterior;
 
     public int getConstructionSiteID() {
         return constructionSiteID;
@@ -124,5 +127,13 @@ public class ConstructionSiteEntity {
 
     public void setComponents(List<ConstructionSiteComponentEntity> components) {
         this.components = components;
+    }
+
+    public BuildingInteriorEntity getBuildingInterior() {
+        return buildingInterior;
+    }
+
+    public void setBuildingInterior(BuildingInteriorEntity buildingInterior) {
+        this.buildingInterior = buildingInterior;
     }
 }

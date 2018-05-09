@@ -52,6 +52,10 @@ public class PCTerritoryFlagStructureEntity {
     @Fetch(value = FetchMode.SUBSELECT)
     private List<PCTerritoryFlagStructureItemEntity> items;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "BuildingInteriorID")
+    private BuildingInteriorEntity buildingInterior;
+
     public int getPcTerritoryFlagStructureID() {
         return pcTerritoryFlagStructureID;
     }
@@ -148,4 +152,11 @@ public class PCTerritoryFlagStructureEntity {
         this.customName = customName;
     }
 
+    public BuildingInteriorEntity getBuildingInterior() {
+        return buildingInterior;
+    }
+
+    public void setBuildingInterior(BuildingInteriorEntity buildingInterior) {
+        this.buildingInterior = buildingInterior;
+    }
 }

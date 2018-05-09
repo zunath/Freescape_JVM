@@ -88,6 +88,10 @@ public class StructureBlueprintEntity {
     @Column(name = "ResourceResref")
     private String resourceResref;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "BuildingCategoryID")
+    private BuildingCategoryEntity buildingCategory;
+
     public int getStructureBlueprintID() {
         return structureBlueprintID;
     }
@@ -294,5 +298,13 @@ public class StructureBlueprintEntity {
 
     public void setResourceResref(String resourceResref) {
         this.resourceResref = resourceResref;
+    }
+
+    public BuildingCategoryEntity getBuildingCategory() {
+        return buildingCategory;
+    }
+
+    public void setBuildingCategory(BuildingCategoryEntity buildingCategory) {
+        this.buildingCategory = buildingCategory;
     }
 }

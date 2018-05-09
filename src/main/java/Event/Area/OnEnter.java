@@ -6,6 +6,7 @@ import Common.IScriptEventHandler;
 import Data.Repository.PlayerRepository;
 import GameSystems.DeathSystem;
 import GameSystems.KeyItemSystem;
+import GameSystems.LocationSystem;
 import GameSystems.MigrationSystem;
 import org.nwnx.nwnx2.jvm.*;
 import org.nwnx.nwnx2.jvm.constants.*;
@@ -21,8 +22,7 @@ public class OnEnter implements IScriptEventHandler {
         NWObject oPC = getEnteringObject();
         MigrationSystem.OnAreaEnter(oPC);
 
-        LoadLocation(oPC, oArea);
-        SaveLocation(oPC, oArea);
+        LocationSystem.OnAreaEnter(oArea);
         ApplySanctuaryEffects(oPC);
         AdjustCamera(oPC);
 
@@ -74,51 +74,6 @@ public class OnEnter implements IScriptEventHandler {
         final NWLocation location = getLocation(oPC);
 
         Scheduler.delay(oPC, 3500, () -> CheckForMovement(oPC, location));
-    }
-
-    private void SaveLocation(NWObject oPC, NWObject oArea)
-    {
-        if(!getIsPC(oPC) || getIsDM(oPC) || getIsDMPossessed(oPC)) return;
-
-        String sTag = getTag(oArea);
-        if(!sTag.equals("ooc_area"))
-        {
-            PlayerGO pcGO = new PlayerGO(oPC);
-            NWLocation location = getLocation(oPC);
-            PlayerRepository repo = new PlayerRepository();
-            PlayerEntity entity = repo.GetByPlayerID(pcGO.getUUID());
-            entity.setLocationAreaTag(sTag);
-            entity.setLocationX(location.getX());
-            entity.setLocationY(location.getY());
-            entity.setLocationZ(location.getZ());
-            entity.setLocationOrientation(getFacing(oPC));
-
-            repo.save(entity);
-
-            if(entity.getRespawnAreaTag().equals(""))
-            {
-                DeathSystem.BindSoul(oPC, false);
-            }
-        }
-    }
-
-    private void LoadLocation(NWObject oPC, NWObject oArea)
-    {
-        if(!getIsPC(oPC) || getIsDM(oPC) || getIsDMPossessed(oPC)) return;
-
-        if(getTag(oArea).equals("ooc_area"))
-        {
-            PlayerGO pcGO = new PlayerGO(oPC);
-            PlayerEntity entity = new PlayerRepository().GetByPlayerID(pcGO.getUUID());
-            NWObject area = getObjectByTag(entity.getLocationAreaTag(), 0);
-            final NWLocation location = new NWLocation(area,
-                    entity.getLocationX(),
-                    entity.getLocationY(),
-                    entity.getLocationZ(),
-                    entity.getLocationOrientation());
-
-            Scheduler.assign(oPC, () -> actionJumpToLocation(location));
-        }
     }
 
     private void ShowMap(NWObject oPC, NWObject oArea)

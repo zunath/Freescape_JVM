@@ -201,6 +201,42 @@ public class StructureRepository {
         }
     }
 
+    public BuildingInteriorEntity GetDefaultBuildingInteriorByCategoryID(int buildingCategoryID)
+    {
+        try(DataContext context = new DataContext())
+        {
+            return context.executeSQLSingle("Structure/GetDefaultBuildingInteriorByCategoryID", BuildingInteriorEntity.class,
+                    new SqlParameter("buildingCategoryID", buildingCategoryID));
+        }
+    }
+
+    public List<BuildingInteriorEntity> GetBuildingInteriorsByCategoryID(int buildingCategoryID)
+    {
+        try(DataContext context = new DataContext())
+        {
+            return context.executeSQLList("Structure/GetBuildingInteriorsByCategoryID", BuildingInteriorEntity.class,
+                    new SqlParameter("buildingCategoryID", buildingCategoryID));
+        }
+    }
+
+    public BuildingInteriorEntity GetBuildingInteriorByID(int buildingInteriorID)
+    {
+        try(DataContext context = new DataContext())
+        {
+            return context.executeSQLSingle("Structure/GetBuildingInteriorByID", BuildingInteriorEntity.class,
+                    new SqlParameter("buildingInteriorID", buildingInteriorID));
+        }
+    }
+
+    public PCTerritoryFlagEntity GetPCTerritoryFlagByBuildingStructureID(int buildingStructureID)
+    {
+        try(DataContext context = new DataContext())
+        {
+            return context.executeSQLSingle("Structure/GetPCTerritoryFlagByBuildingStructureID", PCTerritoryFlagEntity.class,
+                    new SqlParameter("buildingStructureID", buildingStructureID));
+        }
+    }
+
     public void Save(Object entity)
     {
         try(DataContext context = new DataContext())

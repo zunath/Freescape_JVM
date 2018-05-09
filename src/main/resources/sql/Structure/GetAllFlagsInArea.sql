@@ -9,6 +9,7 @@ SELECT pctf.PCTerritoryFlagID ,
        pctf.LocationOrientation ,
        pctf.BuildPrivacySettingID ,
        pctf.ShowOwnerName,
+       pctf.BuildingPCStructureID,
        sb.StructureBlueprintID ,
        sb.StructureCategoryID ,
        sb.Name ,
@@ -30,7 +31,8 @@ SELECT pctf.PCTerritoryFlagID ,
        sb.BuildingCount,
        sb.IsResource,
        sb.IsBuilding,
-       sb.ResourceResref
+       sb.ResourceResref,
+       sb.BuildingCategoryID
 FROM dbo.PCTerritoryFlags pctf
 JOIN dbo.StructureBlueprints sb ON sb.StructureBlueprintID = pctf.StructureBlueprintID
 WHERE pctf.LocationAreaTag = :areaTag

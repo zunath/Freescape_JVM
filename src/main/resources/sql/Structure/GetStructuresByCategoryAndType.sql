@@ -23,7 +23,8 @@ SELECT sb.StructureBlueprintID ,
        sb.BuildingCount,
        sb.IsResource,
        sb.IsBuilding,
-       sb.ResourceResref
+       sb.ResourceResref,
+       sb.BuildingCategoryID
 FROM dbo.StructureBlueprints sb
 OUTER APPLY dbo.fn_GetPlayerEffectivePerkLevel(:playerID, sb.PerkID, @rank) pcp
 WHERE sb.IsActive = 1

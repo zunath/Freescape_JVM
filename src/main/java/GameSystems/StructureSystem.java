@@ -44,16 +44,7 @@ public class StructureSystem {
         List<ConstructionSiteEntity> constructionSites = repo.GetAllConstructionSites();
         for(ConstructionSiteEntity entity : constructionSites)
         {
-            NWObject oArea = getObjectByTag(entity.getLocationAreaTag(), 0);
-            NWVector position = vector((float) entity.getLocationX(), (float) entity.getLocationY(), (float) entity.getLocationZ());
-            NWLocation location = location(oArea, position, (float) entity.getLocationOrientation());
-
-            NWObject constructionSite = createObject(ObjectType.PLACEABLE, ConstructionSiteResref, location, false, "");
-            setLocalInt(constructionSite, ConstructionSiteIDVariableName, entity.getConstructionSiteID());
-            setName(constructionSite, "Construction Site: " + entity.getBlueprint().getName());
-
-            NWEffect eGhostWalk = effectCutsceneGhost();
-            applyEffectToObject(Duration.TYPE_PERMANENT, eGhostWalk, constructionSite, 0.0f);
+            CreateConstructionSiteFromEntity(entity);
         }
 
         List<PCTerritoryFlagEntity> territoryFlags = repo.GetAllTerritoryFlags();
@@ -78,30 +69,54 @@ public class StructureSystem {
 
             for(PCTerritoryFlagStructureEntity structure : flag.getStructures())
             {
-                oArea = getObjectByTag(structure.getLocationAreaTag(), 0);
-                position = vector((float) structure.getLocationX(), (float) structure.getLocationY(), (float) structure.getLocationZ());
-                location = location(oArea, position, (float) structure.getLocationOrientation());
-
-                NWObject structurePlaceable = createObject(ObjectType.PLACEABLE, structure.getBlueprint().getResref(), location, false, "");
-                setLocalInt(structurePlaceable, StructureIDVariableName, structure.getPcTerritoryFlagStructureID());
-                setPlotFlag(structurePlaceable, true);
-                setUseableFlag(structurePlaceable, structure.isUseable());
-
-                if(!structure.getCustomName().equals(""))
-                {
-                    setName(structurePlaceable, structure.getCustomName());
-                }
-                else if(!structure.getBlueprint().getResourceResref().equals(""))
-                {
-                    setName(structurePlaceable, structure.getBlueprint().getName());
-                }
-
-                if(structure.getBlueprint().getItemStorageCount() > 0)
-                {
-                    setName(structurePlaceable, getName(structurePlaceable, false) + " (" + structure.getBlueprint().getItemStorageCount() + " items)");
-                }
+                CreateStructureFromEntity(structure);
             }
 
+        }
+    }
+
+    public static void CreateConstructionSiteFromEntity(ConstructionSiteEntity entity)
+    {
+        NWObject oArea = getObjectByTag(entity.getLocationAreaTag(), 0);
+        NWVector position = vector((float) entity.getLocationX(), (float) entity.getLocationY(), (float) entity.getLocationZ());
+        NWLocation location = location(oArea, position, (float) entity.getLocationOrientation());
+
+        NWObject constructionSite = createObject(ObjectType.PLACEABLE, ConstructionSiteResref, location, false, "");
+        setLocalInt(constructionSite, ConstructionSiteIDVariableName, entity.getConstructionSiteID());
+        setName(constructionSite, "Construction Site: " + entity.getBlueprint().getName());
+
+        NWEffect eGhostWalk = effectCutsceneGhost();
+        applyEffectToObject(Duration.TYPE_PERMANENT, eGhostWalk, constructionSite, 0.0f);
+    }
+
+    public static void CreateStructureFromEntity(PCTerritoryFlagStructureEntity structure)
+    {
+        NWObject oArea = getObjectByTag(structure.getLocationAreaTag(), 0);
+        NWVector position = vector((float) structure.getLocationX(), (float) structure.getLocationY(), (float) structure.getLocationZ());
+        NWLocation location = location(oArea, position, (float) structure.getLocationOrientation());
+
+        NWObject structurePlaceable = createObject(ObjectType.PLACEABLE, structure.getBlueprint().getResref(), location, false, "");
+        setLocalInt(structurePlaceable, StructureIDVariableName, structure.getPcTerritoryFlagStructureID());
+        setPlotFlag(structurePlaceable, true);
+        setUseableFlag(structurePlaceable, structure.isUseable());
+
+        if(!structure.getCustomName().equals(""))
+        {
+            setName(structurePlaceable, structure.getCustomName());
+        }
+        else if(!structure.getBlueprint().getResourceResref().equals(""))
+        {
+            setName(structurePlaceable, structure.getBlueprint().getName());
+        }
+
+        if(structure.getBlueprint().getItemStorageCount() > 0)
+        {
+            setName(structurePlaceable, getName(structurePlaceable, false) + " (" + structure.getBlueprint().getItemStorageCount() + " items)");
+        }
+
+        if(structure.getBlueprint().isBuilding())
+        {
+            CreateBuildingDoor(location, structure.getPcTerritoryFlagStructureID());
         }
     }
 
@@ -156,8 +171,11 @@ public class StructureSystem {
 
     // Assumption: There will never be an overlap of two or more territory flags' areas of influence.
     // If no territory flags own the location, NWObject.INVALID is returned.
+    // If area is a building interior, the area itself will be treated as a flag.
     public static NWObject GetTerritoryFlagOwnerOfLocation(NWLocation location)
     {
+        if(GetTerritoryFlagID(location.getArea()) > 0) return location.getArea();
+
         StructureRepository repo = new StructureRepository();
         String areaTag = getTag(location.getArea());
         List<PCTerritoryFlagEntity> areaFlags = repo.GetAllFlagsInArea(areaTag);
@@ -203,6 +221,8 @@ public class StructureSystem {
 
     public static int CanPCBuildInLocation(NWObject oPC, NWLocation targetLocation, int permissionCheck)
     {
+        if(getLocalInt(targetLocation.getArea(), "BUILDING_DISABLED") == 1) return 0;
+
         StructureRepository repo = new StructureRepository();
         NWObject flag = GetTerritoryFlagOwnerOfLocation(targetLocation);
         NWLocation flagLocation = getLocation(flag);
@@ -211,11 +231,14 @@ public class StructureSystem {
         PlayerGO pcGO = new PlayerGO(oPC);
         float distance = getDistanceBetweenLocations(flagLocation, targetLocation);
 
-        if(flag.equals(NWObject.INVALID) ||
-                distance > entity.getBlueprint().getMaxBuildDistance())
+        // No territory flag found, or the distance is too far from the nearest territory flag.
+        // Only for non-building areas.
+        if((flag.equals(NWObject.INVALID) ||
+                distance > entity.getBlueprint().getMaxBuildDistance()))
         {
             return 1;
         }
+
 
         int vanityCount = repo.GetNumberOfStructuresInTerritory(pcTerritoryFlagID, true, false, false, false);
         int specialCount = repo.GetNumberOfStructuresInTerritory(pcTerritoryFlagID, false, true, false, false);
@@ -248,6 +271,7 @@ public class StructureSystem {
         NWLocation location = getLocation(oCheck);
         NWObject flag = GetTerritoryFlagOwnerOfLocation(location);
 
+        if(flag.equals(location.getArea())) return true;
         if(flag.equals(NWObject.INVALID)) return false;
 
         float distance = getDistanceBetween(oCheck, flag);
@@ -295,6 +319,21 @@ public class StructureSystem {
         return getLocalInt(flag, TerritoryFlagIDVariableName);
     }
 
+    private static float GetAdjustedFacing(float facing)
+    {
+        while(facing > 360.0f)
+        {
+            facing = facing - 360.0f;
+        }
+
+        return  facing;
+    }
+
+    private static float GetAdjustedFacing(NWLocation location)
+    {
+        return GetAdjustedFacing(location.getFacing());
+    }
+
     public static void SelectBlueprint(NWObject oPC, NWObject constructionSite, int blueprintID)
     {
         PlayerGO pcGO = new PlayerGO(oPC);
@@ -306,7 +345,7 @@ public class StructureSystem {
         StructureBlueprintEntity blueprint = repo.GetStructureBlueprintByID(blueprintID);
 
         entity.setLocationAreaTag(areaTag);
-        entity.setLocationOrientation(location.getFacing());
+        entity.setLocationOrientation(GetAdjustedFacing(location));
         entity.setLocationX(location.getX());
         entity.setLocationY(location.getY());
         entity.setLocationZ(location.getZ());
@@ -328,6 +367,19 @@ public class StructureSystem {
             NWObject flag = GetTerritoryFlagOwnerOfLocation(location);
             PCTerritoryFlagEntity flagEntity = repo.GetPCTerritoryFlagByID(GetTerritoryFlagID(flag));
             entity.setPcTerritoryFlag(flagEntity);
+        }
+
+        // Buildings - get the default interior and assign it to the construction site.
+        if(blueprint.isBuilding())
+        {
+            if(blueprint.getBuildingCategory() == null)
+            {
+                floatingTextStringOnCreature("ERROR: Unable to locate building category for this blueprint. Please inform an admin.", oPC, false);
+                return;
+            }
+
+            BuildingInteriorEntity defaultInterior = repo.GetDefaultBuildingInteriorByCategoryID(blueprint.getBuildingCategory().getBuildingCategoryID());
+            entity.setBuildingInterior(defaultInterior);
         }
 
         repo.Save(entity);
@@ -401,7 +453,7 @@ public class StructureSystem {
             }
             else
             {
-                entity.setLocationOrientation(location.getFacing());
+                entity.setLocationOrientation(GetAdjustedFacing(location));
                 entity.setLocationX(location.getX());
                 entity.setLocationY(location.getY());
                 entity.setLocationZ(location.getZ());
@@ -420,7 +472,7 @@ public class StructureSystem {
             }
             else
             {
-                entity.setLocationOrientation(location.getFacing());
+                entity.setLocationOrientation(GetAdjustedFacing(location));
                 entity.setLocationX(location.getX());
                 entity.setLocationY(location.getY());
                 entity.setLocationZ(location.getZ());
@@ -496,6 +548,7 @@ public class StructureSystem {
             pcFlag.setLocationZ(entity.getLocationZ());
             pcFlag.setPlayerID(entity.getPlayerID());
             pcFlag.setShowOwnerName(true);
+            pcFlag.setBuildingPCStructureID(null);
 
             repo.Save(pcFlag);
             setLocalInt(structurePlaceable, TerritoryFlagIDVariableName, pcFlag.getPcTerritoryFlagID());
@@ -512,6 +565,7 @@ public class StructureSystem {
             pcStructure.setPcTerritoryFlag(entity.getPcTerritoryFlag());
             pcStructure.setIsUseable(entity.getBlueprint().isUseable());
             pcStructure.setCustomName("");
+            pcStructure.setBuildingInterior(entity.getBuildingInterior());
 
             repo.Save(pcStructure);
             setLocalInt(structurePlaceable, StructureIDVariableName, pcStructure.getPcTerritoryFlagStructureID());
@@ -526,13 +580,50 @@ public class StructureSystem {
                 {
                     setName(structurePlaceable, entity.getBlueprint().getName() + " (" + entity.getBlueprint().getItemStorageCount() + " items)");
                 }
+            }
 
+            if(entity.getBlueprint().isBuilding())
+            {
+                // Buildings get an entry in the territory flags table. There's no physical territory marker in-game, it's all done in the DB.
+                PCTerritoryFlagEntity pcFlag = new PCTerritoryFlagEntity();
+                pcFlag.setBlueprint(blueprint);
+                pcFlag.setLocationAreaTag("");
+                pcFlag.setLocationOrientation(0.0f);
+                pcFlag.setLocationX(0.0f);
+                pcFlag.setLocationY(0.0f);
+                pcFlag.setLocationZ(0.0f);
+                pcFlag.setPlayerID(entity.getPlayerID());
+                pcFlag.setShowOwnerName(false);
+                pcFlag.setBuildingPCStructureID(pcStructure.getPcTerritoryFlagStructureID());
+
+                repo.Save(pcFlag);
+                CreateBuildingDoor(location, pcStructure.getPcTerritoryFlagStructureID());
             }
         }
 
         repo.Delete(entity);
 
         return structurePlaceable;
+    }
+
+    private static void CreateBuildingDoor(NWLocation houseLocation, int structureID)
+    {
+        float facing = GetAdjustedFacing(houseLocation.getFacing() + 146.31f);
+        float x = houseLocation.getX();
+        float y = houseLocation.getY();
+        float z = houseLocation.getZ();
+
+        // Adjust X and Y positions
+        float mod = (float)(Math.sqrt(13.0f) * Math.sin(facing));
+        x = x + mod;
+
+        mod = (float)(Math.sqrt(13.0f) * Math.cos(facing));
+        y = y - mod;
+
+        NWVector position = vector(x, y, z);
+        NWLocation doorLocation = location(houseLocation.getArea(), position, facing);
+        NWObject door = createObject(ObjectType.PLACEABLE, "building_door", doorLocation, false, "");
+        setLocalInt(door, StructureIDVariableName, structureID);
     }
 
 
@@ -788,13 +879,62 @@ public class StructureSystem {
             return;
         }
 
-        customName += " (" + entity.getBlueprint().getItemStorageCount() + " items)";
         entity.setCustomName(customName);
 
         repo.Save(entity);
         setName(structure, customName);
 
         floatingTextStringOnCreature("New name set: " + customName, oPC, false);
+    }
+
+    public static void PreviewBuildingInterior(NWObject oPC, int buildingInteriorID)
+    {
+        StructureRepository repo = new StructureRepository();
+        BuildingInteriorEntity interior = repo.GetBuildingInteriorByID(buildingInteriorID);
+
+        NWObject area = createArea(interior.getAreaResref(), "", "PREVIEW - " + interior.getName());
+        setLocalInt(area, "BUILDING_DISABLED", 1);
+        JumpPCToBuildingInterior(oPC, area);
+    }
+
+    public static void JumpPCToBuildingInterior(NWObject oPC, NWObject area)
+    {
+        NWObject[] objects = getObjectsInArea(area);
+
+        NWObject waypoint = null;
+        NWObject exit = null;
+
+        for(NWObject obj: objects)
+        {
+            String tag = getTag(obj);
+            if(tag.equals("PLAYER_HOME_ENTRANCE"))
+            {
+                waypoint = obj;
+            }
+            else if(tag.equals("PLAYER_HOME_EXIT"))
+            {
+                exit = obj;
+            }
+        }
+
+        if(waypoint == null)
+        {
+            floatingTextStringOnCreature("ERROR: Couldn't find the building interior's entrance. Inform an admin of this issue.", oPC, false);
+            return;
+        }
+
+        if(exit == null)
+        {
+            floatingTextStringOnCreature("ERROR: Couldn't find the building interior's exit. Inform an admin of this issue.", oPC, false);
+            return;
+        }
+
+        LocationSystem.SaveLocation(oPC, getArea(oPC));
+
+        setLocalLocation(exit, "PLAYER_HOME_EXIT_LOCATION", getLocation(oPC));
+
+        NWLocation location = getLocation(waypoint);
+        Scheduler.assignNow(oPC, () -> actionJumpToLocation(location));
     }
 
 }

@@ -14,11 +14,11 @@ import Helper.ColorToken;
 import Helper.ItemHelper;
 import org.nwnx.nwnx2.jvm.NWLocation;
 import org.nwnx.nwnx2.jvm.NWObject;
-import org.nwnx.nwnx2.jvm.NWScript;
 import org.nwnx.nwnx2.jvm.Scheduler;
 import org.nwnx.nwnx2.jvm.constants.ObjectType;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.nwnx.nwnx2.jvm.NWScript.*;
 
@@ -81,6 +81,10 @@ public class ConstructionSite extends DialogBase implements IDialogHandler {
                 "Raze & Recover Resources"
         );
 
+        DialogPage changeLayoutPage = new DialogPage(
+                "Please select a new interior layout for your building."
+        );
+
         dialog.addPage("MainPage", mainPage);
         dialog.addPage("BlueprintCategoryPage", blueprintCategoryPage);
         dialog.addPage("BlueprintListPage", blueprintListPage);
@@ -89,6 +93,7 @@ public class ConstructionSite extends DialogBase implements IDialogHandler {
         dialog.addPage("RotatePage", rotatePage);
         dialog.addPage("RazePage", razePage);
         dialog.addPage("RecoverResourcesPage", recoverResourcesPage);
+        dialog.addPage("ChangeLayoutPage", changeLayoutPage);
         return dialog;
     }
 
@@ -135,6 +140,9 @@ public class ConstructionSite extends DialogBase implements IDialogHandler {
             case "RecoverResourcesPage":
                 HandleRecoverResourcesPage(responseID);
                 break;
+            case "ChangeLayoutPage":
+                HandleChangeLayoutPageResponse(responseID);
+                break;
         }
     }
 
@@ -160,7 +168,7 @@ public class ConstructionSite extends DialogBase implements IDialogHandler {
             int flagID = StructureSystem.GetTerritoryFlagID(existingFlag);
             model.setFlagID(flagID);
             PCTerritoryFlagEntity entity = repo.GetPCTerritoryFlagByID(flagID);
-            if(distance <= entity.getBlueprint().getMaxBuildDistance())
+            if(distance <= entity.getBlueprint().getMaxBuildDistance() || getArea(site).equals(existingFlag))
             {
                 model.setIsTerritoryFlag(false);
             }
@@ -220,6 +228,14 @@ public class ConstructionSite extends DialogBase implements IDialogHandler {
             {
                 header += ColorToken.Green() + "Type: " + ColorToken.End() + "Special\n";
             }
+            if(entity.getBlueprint().isResource())
+            {
+                header += ColorToken.Green() + "Type: " + ColorToken.End() + "Resource\n";
+            }
+            if(entity.getBlueprint().isBuilding())
+            {
+                header += ColorToken.Green() + "Type: " + ColorToken.End() + "Building\n";
+            }
 
             header += ColorToken.Green() + "Level: " + ColorToken.End() + entity.getBlueprint().getLevel() + "\n";
 
@@ -242,6 +258,10 @@ public class ConstructionSite extends DialogBase implements IDialogHandler {
             {
                 header += ColorToken.Green() + "Item Storage: " + ColorToken.End() + entity.getBlueprint().getItemStorageCount() + " items" + "\n";
             }
+            if(entity.getBuildingInterior() != null)
+            {
+                header += ColorToken.Green() + "Interior Layout: " + ColorToken.End() + entity.getBuildingInterior().getName() + "\n";
+            }
 
             header += ColorToken.Green() + "Resources Required: " + ColorToken.End() + "\n\n";
 
@@ -254,6 +274,8 @@ public class ConstructionSite extends DialogBase implements IDialogHandler {
             page.addResponse("Quick Build", PlayerAuthorizationSystem.IsPCRegisteredAsDM(GetPC()));
             page.addResponse("Build", true);
             page.addResponse("Preview", true);
+            page.addResponse("Preview Interior", entity.getBuildingInterior() != null);
+            page.addResponse("Change Interior Layout", entity.getBuildingInterior() != null);
             page.addResponse("Rotate", StructureSystem.PlayerHasPermission(oPC, StructurePermission.CanRotateStructures, model.getFlagID()));
             page.addResponse("Move", StructureSystem.PlayerHasPermission(oPC, StructurePermission.CanMoveStructures, model.getFlagID()));
             page.addResponse(ColorToken.Red() + "Raze" + ColorToken.End(), StructureSystem.PlayerHasPermission(oPC, StructurePermission.CanRazeStructures, model.getFlagID()));
@@ -299,15 +321,22 @@ public class ConstructionSite extends DialogBase implements IDialogHandler {
                 case 3: // Preview
                     DoConstructionSitePreview();
                     break;
-                case 4: // Rotate
+                case 4: // Preview Interior
+                    DoBuildingInteriorPreview();
+                    break;
+                case 5: // Change Interior Layout
+                    LoadChangeLayoutResponses();
+                    ChangePage("ChangeLayoutPage");
+                    break;
+                case 6: // Rotate
                     ChangePage("RotatePage");
                     break;
-                case 5: // Move
+                case 7: // Move
                     StructureSystem.SetIsPCMovingStructure(GetPC(), GetDialogTarget(), true);
                     floatingTextStringOnCreature("Please use your build tool to select a new location for this structure.", GetPC(), false);
                     EndConversation();
                     break;
-                case 6: // Raze
+                case 8: // Raze
                     ChangePage("RazePage");
                     break;
             }
@@ -395,7 +424,7 @@ public class ConstructionSite extends DialogBase implements IDialogHandler {
         }
         if(flag != null && buildingCount < flag.getBlueprint().getBuildingCount())
         {
-            blueprints.addAll(repo.GetStructuresByCategoryAndType(pcGO.getUUID(), model.getCategoryID(), false, true, false, true)); // Building
+            blueprints.addAll(repo.GetStructuresByCategoryAndType(pcGO.getUUID(), model.getCategoryID(), false, false, false, true)); // Building
         }
 
         for(StructureBlueprintEntity entity : blueprints)
@@ -652,4 +681,58 @@ public class ConstructionSite extends DialogBase implements IDialogHandler {
                 break;
         }
     }
+
+    private void LoadChangeLayoutResponses()
+    {
+        ClearPageResponses("ChangeLayoutPage");
+
+        ConstructionSiteMenuModel model = GetModel();
+        StructureRepository repo = new StructureRepository();
+
+        StructureBlueprintEntity blueprint = repo.GetConstructionSiteByID(model.getConstructionSiteID()).getBlueprint();
+        if(!blueprint.isBuilding() || blueprint.getBuildingCategory() == null) return;
+
+        List<BuildingInteriorEntity> options = repo.GetBuildingInteriorsByCategoryID(blueprint.getBuildingCategory().getBuildingCategoryID());
+
+        for(BuildingInteriorEntity option: options)
+        {
+            AddResponseToPage("ChangeLayoutPage", option.getName(), true, option);
+        }
+
+        AddResponseToPage("ChangeLayoutPage", "Back", true);
+    }
+
+    private void HandleChangeLayoutPageResponse(int responseID)
+    {
+        StructureRepository repo = new StructureRepository();
+        DialogResponse response = GetResponseByID("ChangeLayoutPage", responseID);
+
+        if(response.getCustomData() == null)
+        {
+            ChangePage("MainPage");
+            return;
+        }
+
+        BuildingInteriorEntity interior = (BuildingInteriorEntity) response.getCustomData();
+        ConstructionSiteMenuModel model = GetModel();
+
+        ConstructionSiteEntity site = repo.GetConstructionSiteByID(model.getConstructionSiteID());
+        site.setBuildingInterior(interior);
+        repo.Save(site);
+
+        BuildMainPage();
+        ChangePage("MainPage");
+    }
+
+    private void DoBuildingInteriorPreview()
+    {
+        StructureRepository repo = new StructureRepository();
+        ConstructionSiteMenuModel model = GetModel();
+        ConstructionSiteEntity site = repo.GetConstructionSiteByID(model.getConstructionSiteID());
+
+        if(!site.getBlueprint().isBuilding() || site.getBuildingInterior() == null) return;
+
+        StructureSystem.PreviewBuildingInterior(GetPC(), site.getBuildingInterior().getBuildingInteriorID());
+    }
+
 }

@@ -1,5 +1,5 @@
 
-SELECT pctf.PCTerritoryFlagID ,
+SELECT TOP(1) pctf.PCTerritoryFlagID ,
        pctf.PlayerID ,
        pctf.StructureBlueprintID ,
        pctf.LocationAreaTag ,
@@ -7,8 +7,8 @@ SELECT pctf.PCTerritoryFlagID ,
        pctf.LocationY ,
        pctf.LocationZ ,
        pctf.LocationOrientation ,
-       pctf.BuildPrivacySettingID,
-       pctf.ShowOwnerName,
+       pctf.BuildPrivacySettingID ,
+       pctf.ShowOwnerName ,
        pctf.BuildingPCStructureID
 FROM dbo.PCTerritoryFlags pctf
-WHERE pctf.PCTerritoryFlagID = :pcTerritoryFlagID
+WHERE pctf.BuildingPCStructureID = :buildingStructureID

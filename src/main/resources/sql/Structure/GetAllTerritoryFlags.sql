@@ -9,5 +9,7 @@ SELECT pctf.PCTerritoryFlagID ,
        pctf.LocationZ ,
        pctf.LocationOrientation ,
        pctf.BuildPrivacySettingID,
-       pctf.ShowOwnerName
+       pctf.ShowOwnerName,
+       pctf.BuildingPCStructureID
 FROM dbo.PCTerritoryFlags pctf
+WHERE pctf.BuildingPCStructureID IS NULL
