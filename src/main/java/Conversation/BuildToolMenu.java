@@ -14,6 +14,8 @@ import org.nwnx.nwnx2.jvm.NWScript;
 import org.nwnx.nwnx2.jvm.Scheduler;
 import org.nwnx.nwnx2.jvm.constants.ObjectType;
 
+import static org.nwnx.nwnx2.jvm.NWScript.*;
+
 @SuppressWarnings("unused")
 public class BuildToolMenu extends DialogBase implements IDialogHandler {
 
@@ -68,8 +70,8 @@ public class BuildToolMenu extends DialogBase implements IDialogHandler {
         NWObject oPC = GetPC();
 
         BuildToolMenuModel model = new BuildToolMenuModel();
-        model.setTargetLocation(NWScript.getLocalLocation(oPC, "BUILD_TOOL_LOCATION_TARGET"));
-        NWScript.deleteLocalLocation(oPC, "BUILD_TOOL_LOCATION_TARGET");
+        model.setTargetLocation(getLocalLocation(oPC, "BUILD_TOOL_LOCATION_TARGET"));
+        deleteLocalLocation(oPC, "BUILD_TOOL_LOCATION_TARGET");
         model.setFlag(StructureSystem.GetTerritoryFlagOwnerOfLocation(model.getTargetLocation()));
         SetDialogCustomData(model);
         BuildMainMenuResponses(null);
@@ -191,13 +193,13 @@ public class BuildToolMenu extends DialogBase implements IDialogHandler {
 
         for(int current = 1; current <= 30; current++)
         {
-            NWObject structure = NWScript.getNearestObjectToLocation(ObjectType.PLACEABLE, model.getTargetLocation(), current);
-            NWLocation structureLocation = NWScript.getLocation(structure);
-            float distance = NWScript.getDistanceBetweenLocations(model.getTargetLocation(), structureLocation);
+            NWObject structure = getNearestObjectToLocation(ObjectType.PLACEABLE, model.getTargetLocation(), current);
+            NWLocation structureLocation = getLocation(structure);
+            float distance = getDistanceBetweenLocations(model.getTargetLocation(), structureLocation);
 
             if(distance > 15.0f) break;
 
-            if(StructureSystem.GetPlaceableStructureID(structure) > 0)
+            if(StructureSystem.GetPlaceableStructureID(structure) > 0 && getLocalInt(structure, "IS_BUILDING_DOOR") == 0)
             {
                 model.getNearbyStructures().add(structure);
             }
@@ -207,7 +209,7 @@ public class BuildToolMenu extends DialogBase implements IDialogHandler {
         {
             if(excludeObject == null || !excludeObject.equals(structure))
             {
-                DialogResponse response = new DialogResponse(NWScript.getName(structure, false), structure);
+                DialogResponse response = new DialogResponse(getName(structure, false), structure);
                 page.getResponses().add(response);
             }
         }
@@ -249,7 +251,7 @@ public class BuildToolMenu extends DialogBase implements IDialogHandler {
             return;
         }
 
-        NWScript.floatingTextStringOnCreature("Please use your build tool to select a new location for this structure.", GetPC(), false);
+        floatingTextStringOnCreature("Please use your build tool to select a new location for this structure.", GetPC(), false);
         StructureSystem.SetIsPCMovingStructure(GetPC(), model.getActiveStructure(), true);
         EndConversation();
     }
@@ -261,7 +263,7 @@ public class BuildToolMenu extends DialogBase implements IDialogHandler {
         int flagID = StructureSystem.GetTerritoryFlagID(model.getFlag());
         if(!StructureSystem.PlayerHasPermission(oPC, StructurePermission.CanRotateStructures, flagID))
         {
-            NWScript.floatingTextStringOnCreature("You do not have permission to rotate this structure.", oPC, false);
+            floatingTextStringOnCreature("You do not have permission to rotate this structure.", oPC, false);
             BuildMainMenuResponses(null);
             ChangePage("MainPage");
             return;
@@ -282,7 +284,23 @@ public class BuildToolMenu extends DialogBase implements IDialogHandler {
 
         repo.Save(entity);
 
-        Scheduler.assign(model.getActiveStructure(), () -> NWScript.setFacing((float)entity.getLocationOrientation()));
+        NWObject door = getLocalObject(model.getActiveStructure(), "BUILDING_ENTRANCE_DOOR");
+        boolean hasDoor = getIsObjectValid(door);
+
+        if(hasDoor)
+        {
+            destroyObject(door, 0.0f);
+        }
+
+        NWObject structure = model.getActiveStructure();
+        Scheduler.assign(structure, () -> {
+            setFacing((float)entity.getLocationOrientation());
+            if(hasDoor)
+            {
+                NWObject newDoor = StructureSystem.CreateBuildingDoor(getLocation(structure),structureID);
+                setLocalObject(structure, "BUILDING_ENTRANCE_DOOR", newDoor);
+            }
+        });
     }
 
     private void HandleRazeStructure()
@@ -293,7 +311,7 @@ public class BuildToolMenu extends DialogBase implements IDialogHandler {
 
         if(!StructureSystem.PlayerHasPermission(oPC, StructurePermission.CanRazeStructures, flagID))
         {
-            NWScript.floatingTextStringOnCreature("You do not have permission to raze this structure.", oPC, false);
+            floatingTextStringOnCreature("You do not have permission to raze this structure.", oPC, false);
             BuildMainMenuResponses(null);
             ChangePage("MainPage");
             return;
@@ -310,8 +328,9 @@ public class BuildToolMenu extends DialogBase implements IDialogHandler {
             entity.setActive(false);
             repo.Save(entity);
 
-            NWScript.destroyObject(NWScript.getLocalObject(model.getActiveStructure(), "GateBlock"), 0.0f);
-            NWScript.destroyObject(model.getActiveStructure(), 0.0f);
+            destroyObject(getLocalObject(model.getActiveStructure(), "GateBlock"), 0.0f);
+            destroyObject(getLocalObject(model.getActiveStructure(), "BUILDING_ENTRANCE_DOOR"), 0.0f);
+            destroyObject(model.getActiveStructure(), 0.0f);
 
             BuildMainMenuResponses(model.getActiveStructure());
             ChangePage("MainPage");

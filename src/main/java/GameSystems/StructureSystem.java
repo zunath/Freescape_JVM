@@ -122,7 +122,8 @@ public class StructureSystem {
 
         if(structure.getBlueprint().isBuilding())
         {
-            CreateBuildingDoor(location, structure.getPcTerritoryFlagStructureID());
+            NWObject door = CreateBuildingDoor(location, structure.getPcTerritoryFlagStructureID());
+            setLocalObject(structurePlaceable, "BUILDING_ENTRANCE_DOOR", door);
         }
     }
 
@@ -493,8 +494,20 @@ public class StructureSystem {
             floatingTextStringOnCreature("Unable to move structure to that location. New location must be within range of the territory marker it is attached to.", oPC, false);
             return;
         }
+
+
+        NWObject door = getLocalObject(target, "BUILDING_ENTRANCE_DOOR");
+        boolean hasDoor = getIsObjectValid(door);
+
         NWObject copy = createObject(ObjectType.PLACEABLE, getResRef(target), location, false, "");
         setName(copy, getName(target, false));
+
+        if(hasDoor)
+        {
+            destroyObject(door, 0.0f);
+            door = CreateBuildingDoor(getLocation(copy), structureID);
+            setLocalObject(copy, "BUILDING_ENTRANCE_DOOR", door);
+        }
 
         if(constructionSiteID > 0) SetConstructionSiteID(copy, constructionSiteID);
         else if (structureID > 0) SetPlaceableStructureID(copy, structureID);
@@ -616,7 +629,7 @@ public class StructureSystem {
         return structurePlaceable;
     }
 
-    private static void CreateBuildingDoor(NWLocation houseLocation, int structureID)
+    public static NWObject CreateBuildingDoor(NWLocation houseLocation, int structureID)
     {
         float facing = GetAdjustedFacing(houseLocation.getFacing() + 146.31f);
         float x = houseLocation.getX();
@@ -634,6 +647,9 @@ public class StructureSystem {
         NWLocation doorLocation = location(houseLocation.getArea(), position, facing);
         NWObject door = createObject(ObjectType.PLACEABLE, "building_door", doorLocation, false, "");
         setLocalInt(door, StructureIDVariableName, structureID);
+        setLocalInt(door, "IS_BUILDING_DOOR", 1);
+
+        return door;
     }
 
 
