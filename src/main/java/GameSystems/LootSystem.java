@@ -41,19 +41,34 @@ public class LootSystem {
 
     public static void OnCreatureDeath(NWObject creature)
     {
-        int lootTableID = getLocalInt(creature, "LOOT_TABLE_ID");
-
-        if(lootTableID <= 0) return;
-
-        ItemModel model = PickRandomItemFromLootTable(lootTableID);
-        if(model == null) return;
-
-        int spawnQuantity = model.getQuantity() > 1 ? ThreadLocalRandom.current().nextInt(1, model.getQuantity()) : 1;
-
-        for(int x = 1; x <= spawnQuantity; x++)
+        int lootTableNumber = 1;
+        int lootTableID = getLocalInt(creature, "LOOT_TABLE_ID_" + lootTableNumber);
+        while(lootTableID > 0)
         {
-            createItemOnObject(model.getResref(), creature, 1, "");
-        }
+            int chance = getLocalInt(creature, "LOOT_TABLE_CHANCE_" + lootTableNumber);
+            if(chance <= 0 || chance > 100) chance = 100;
 
+            int attempts = getLocalInt(creature, "LOOT_TABLE_ATTEMPTS_" + lootTableNumber);
+            if(attempts <= 0) attempts = 1;
+
+            for(int a = 1; a <= attempts; a++)
+            {
+                if(ThreadLocalRandom.current().nextInt(100) + 1 <= chance)
+                {
+                    ItemModel model = PickRandomItemFromLootTable(lootTableID);
+                    if(model == null) continue;
+
+                    int spawnQuantity = model.getQuantity() > 1 ? ThreadLocalRandom.current().nextInt(1, model.getQuantity()) : 1;
+
+                    for(int x = 1; x <= spawnQuantity; x++)
+                    {
+                        createItemOnObject(model.getResref(), creature, 1, "");
+                    }
+                }
+            }
+
+            lootTableNumber++;
+            lootTableID = getLocalInt(creature, "LOOT_TABLE_ID_" + lootTableNumber);
+        }
     }
 }
