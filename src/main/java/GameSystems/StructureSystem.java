@@ -911,7 +911,7 @@ public class StructureSystem {
             {
                 waypoint = obj;
             }
-            else if(tag.equals("PLAYER_HOME_EXIT"))
+            else if(tag.equals("building_exit"))
             {
                 exit = obj;
             }
