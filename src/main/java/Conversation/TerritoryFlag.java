@@ -1,15 +1,17 @@
 package Conversation;
 
-import Dialog.*;
-import Entities.*;
-import GameObject.PlayerGO;
-import Helper.ColorToken;
 import Conversation.ViewModels.TerritoryFlagMenuModel;
 import Data.Repository.PlayerRepository;
 import Data.Repository.StructureRepository;
+import Dialog.*;
+import Entities.PCTerritoryFlagEntity;
+import Entities.PCTerritoryFlagPermissionEntity;
+import Entities.PlayerEntity;
+import Entities.TerritoryFlagPermissionEntity;
+import GameObject.PlayerGO;
 import GameSystems.StructureSystem;
+import Helper.ColorToken;
 import org.nwnx.nwnx2.jvm.NWObject;
-import org.nwnx.nwnx2.jvm.NWScript;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +50,9 @@ public class TerritoryFlag extends DialogBase implements IDialogHandler {
                 ColorToken.Green() + "Manage Player Permissions" + ColorToken.End() + "\n\n" +
                         "Permissions enable other players to perform actions in this territory.\n\n" +
                         "If you use this feature please be sure to set the territory's privacy setting to " +
-                        "'Friends Only' or else the changes you make here won't have any effect."
+                        "'Friends Only' or else the changes you make here won't have any effect.\n\n" +
+                        "Permissions set on a territory affect all structures and buildings within the territory. " +
+                        "Permissions set on a building affect all structures within that individual building."
         );
 
         DialogPage managePlayerPermissionsPage = new DialogPage(
@@ -91,11 +95,36 @@ public class TerritoryFlag extends DialogBase implements IDialogHandler {
 
     @Override
     public void Initialize() {
-        int flagID = StructureSystem.GetTerritoryFlagID(GetDialogTarget());
         TerritoryFlagMenuModel model = new TerritoryFlagMenuModel();
-        model.setFlagID(flagID);
-        SetDialogCustomData(model);
 
+        // Buildings - get flag ID from the area
+        if(getLocalInt(GetDialogTarget(), "IS_BUILDING_DOOR") == 1)
+        {
+            StructureRepository repo = new StructureRepository();
+            PCTerritoryFlagEntity flag;
+            int structureID = StructureSystem.GetPlaceableStructureID(GetDialogTarget());
+            if(structureID <= 0)
+            {
+                model.setFlagID(getLocalInt(getArea(GetDialogTarget()), "TERRITORY_FLAG_ID"));
+            }
+            else
+            {
+                flag  = repo.GetPCTerritoryFlagByBuildingStructureID(structureID);
+                model.setFlagID(flag.getPcTerritoryFlagID());
+            }
+
+            // Razing is disabled for buildings
+            SetResponseVisible("MainPage", 4, false); // Raze territory
+        }
+        // Regular territories - get flag ID from the territory flag object
+        else
+        {
+            int flagID = StructureSystem.GetTerritoryFlagID(GetDialogTarget());
+            model.setFlagID(flagID);
+            model.setFlagMarker(GetDialogTarget());
+        }
+
+        SetDialogCustomData(model);
         BuildMainPageHeader();
     }
 
@@ -165,9 +194,9 @@ public class TerritoryFlag extends DialogBase implements IDialogHandler {
 
     private String BuildChangePrivacyHeader()
     {
+        TerritoryFlagMenuModel model = GetModel();
         StructureRepository repo = new StructureRepository();
-        int flagID = StructureSystem.GetTerritoryFlagID(GetDialogTarget());
-        PCTerritoryFlagEntity entity = repo.GetPCTerritoryFlagByID(flagID);
+        PCTerritoryFlagEntity entity = repo.GetPCTerritoryFlagByID(model.getFlagID());
 
         String header = ColorToken.Green() + "Current Build Privacy: " + ColorToken.End() + entity.getBuildPrivacy().getName() + "\n\n";
         header += ColorToken.Green() + "Owner Only: " + ColorToken.End() + "Only the owner of this territory may build and manipulate structures at this territory.\n";
@@ -209,13 +238,31 @@ public class TerritoryFlag extends DialogBase implements IDialogHandler {
         {
             PlayerRepository playerRepo = new PlayerRepository();
             PlayerEntity owner = playerRepo.GetByPlayerID(flag.getPlayerID());
-            floatingTextStringOnCreature("Now displaying owner's name on this territory marker.", GetPC(), false);
-            setName(GetDialogTarget(), owner.getCharacterName() + "'s Territory");
+
+            // Building
+            if(model.getFlagMarker() == null)
+            {
+                floatingTextStringOnCreature("Now displaying owner's name on this building.", GetPC(), false);
+            }
+            // Territory Marker
+            else
+            {
+                floatingTextStringOnCreature("Now displaying owner's name on this territory marker.", GetPC(), false);
+                setName(model.getFlagMarker(), owner.getCharacterName() + "'s Territory");
+            }
+
         }
         else
         {
-            floatingTextStringOnCreature("No longer displaying owner's name on this territory marker.", GetPC(), false);
-            setName(GetDialogTarget(), "Claimed Territory");
+            if(model.getFlagMarker() == null)
+            {
+                floatingTextStringOnCreature("No longer displaying owner's name on this building.", GetPC(), false);
+            }
+            else
+            {
+                floatingTextStringOnCreature("No longer displaying owner's name on this territory marker.", GetPC(), false);
+                setName(model.getFlagMarker(), "Claimed Territory");
+            }
         }
 
         structureRepo.Save(flag);
@@ -488,12 +535,15 @@ public class TerritoryFlag extends DialogBase implements IDialogHandler {
     private void HandleRazeTerritoryResponse(int responseID)
     {
         TerritoryFlagMenuModel model = GetModel();
+        // Safety check to ensure buildings aren't able to be razed.
+        if(model.getFlagMarker() == null) return;
+
         switch (responseID)
         {
             case 1: // Confirm / REALLY CONFIRM
                 if(model.isConfirmingTerritoryRaze())
                 {
-                    StructureSystem.RazeTerritory(GetDialogTarget());
+                    StructureSystem.RazeTerritory(model.getFlagMarker());
                     floatingTextStringOnCreature(ColorToken.Red() + "Territory razed!" + ColorToken.End(), GetPC(), false);
                     EndConversation();
                 }
@@ -561,12 +611,23 @@ public class TerritoryFlag extends DialogBase implements IDialogHandler {
     private void HandleConfirmTransferOwnershipResponse(int responseID)
     {
         TerritoryFlagMenuModel model = GetModel();
+
         switch (responseID)
         {
             case 1: // Confirm / REALLY CONFIRM
                 if(model.isConfirmingTransferTerritory())
                 {
-                    StructureSystem.TransferTerritoryOwnership(GetDialogTarget(), model.getTransferUUID());
+                    // Buildings
+                    if(model.getFlagMarker() == null)
+                    {
+                        StructureSystem.TransferBuildingOwnership(getArea(GetDialogTarget()), model.getTransferUUID());
+                    }
+                    // Territories
+                    else
+                    {
+                        StructureSystem.TransferTerritoryOwnership(model.getFlagMarker(), model.getTransferUUID());
+                    }
+
                     EndConversation();
                 }
                 else

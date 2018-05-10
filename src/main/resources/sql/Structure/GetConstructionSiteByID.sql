@@ -8,6 +8,7 @@ SELECT cs.ConstructionSiteID ,
        cs.LocationY ,
        cs.LocationZ ,
        cs.LocationOrientation,
-       cs.BuildingInteriorID
+       cs.BuildingInteriorID,
+       cs.IsActive
 FROM dbo.ConstructionSites cs
 WHERE cs.ConstructionSiteID = :constructionSiteID

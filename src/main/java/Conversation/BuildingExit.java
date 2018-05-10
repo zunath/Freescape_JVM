@@ -1,16 +1,19 @@
 package Conversation;
 
+import Data.Repository.StructureRepository;
 import Dialog.DialogBase;
 import Dialog.DialogPage;
 import Dialog.IDialogHandler;
 import Dialog.PlayerDialog;
+import Entities.BuildingOwnerEntity;
+import GameObject.PlayerGO;
+import GameSystems.StructureSystem;
 import org.nwnx.nwnx2.jvm.NWLocation;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.Scheduler;
 import org.nwnx.nwnx2.jvm.constants.ObjectType;
 
 import static org.nwnx.nwnx2.jvm.NWScript.*;
-import static org.nwnx.nwnx2.jvm.NWScript.destroyArea;
 
 public class BuildingExit extends DialogBase implements IDialogHandler {
     @Override
@@ -19,7 +22,8 @@ public class BuildingExit extends DialogBase implements IDialogHandler {
         DialogPage mainPage = new DialogPage(
                 "Please select an option.",
                 "Exit the building",
-                "Peek outside"
+                "Peek outside",
+                "Adjust Building Permissions"
         );
 
         dialog.addPage("MainPage", mainPage);
@@ -28,7 +32,22 @@ public class BuildingExit extends DialogBase implements IDialogHandler {
 
     @Override
     public void Initialize() {
+        NWObject oPC = GetPC();
+        PlayerGO pcGO = new PlayerGO(oPC);
+        NWObject door = GetDialogTarget();
+        NWLocation location = getLocation(door);
+        StructureRepository repo = new StructureRepository();
+        NWObject flag = StructureSystem.GetTerritoryFlagOwnerOfLocation(location);
+        int territoryFlagID = StructureSystem.GetTerritoryFlagID(flag);
+        int structureID = StructureSystem.GetPlaceableStructureID(door);
 
+        // Only territory owner or building owner may adjust permissions.
+        BuildingOwnerEntity owners = repo.GetBuildingOwners(territoryFlagID, structureID);
+        if(!pcGO.getUUID().equals(owners.getTerritoryOwner()) &&
+                pcGO.getUUID().equals(owners.getBuildingOwner()))
+        {
+            SetResponseVisible("MainPage", 3, false);
+        }
     }
 
     @Override
@@ -50,6 +69,9 @@ public class BuildingExit extends DialogBase implements IDialogHandler {
                 break;
             case 2: // Peek outside
                 DoPeekOutside();
+                break;
+            case 3: // Adjust building permissions
+                SwitchConversation("TerritoryFlag");
                 break;
         }
     }

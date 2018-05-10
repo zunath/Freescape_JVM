@@ -8,5 +8,6 @@ public class StructurePermission {
     public static final int CanMoveStructures = 4;
     public static final int CanRotateStructures = 5;
     public static final int CanAccessPersistentStorage = 6;
+    public static final int CanEnterBuildings = 7;
     public static final int CanRenameStructures = 8;
 }

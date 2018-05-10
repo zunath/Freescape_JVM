@@ -56,6 +56,7 @@ public class DataAccess {
         _configuration.addAnnotatedClass(BaseItemTypeEntity.class);
         _configuration.addAnnotatedClass(BuildingCategoryEntity.class);
         _configuration.addAnnotatedClass(BuildingInteriorEntity.class);
+        _configuration.addAnnotatedClass(BuildingOwnerEntity.class);
         _configuration.addAnnotatedClass(BuildPrivacyEntity.class);
         _configuration.addAnnotatedClass(ChatChannelEntity.class);
         _configuration.addAnnotatedClass(ChatLogEntity.class);

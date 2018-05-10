@@ -631,20 +631,23 @@ public class StructureSystem {
 
     public static NWObject CreateBuildingDoor(NWLocation houseLocation, int structureID)
     {
-        float facing = GetAdjustedFacing(houseLocation.getFacing() + 146.31f);
+        float facing = houseLocation.getFacing();
         float x = houseLocation.getX();
         float y = houseLocation.getY();
         float z = houseLocation.getZ();
 
-        // Adjust X and Y positions
-        float mod = (float)(Math.sqrt(13.0f) * Math.sin(facing));
-        x = x + mod;
+        // Adjust the position for the door
+        facing = facing + 146.31f;
+        if(facing > 360.0f) facing = facing - 360.0f;
 
-        mod = (float)(Math.sqrt(13.0f) * Math.cos(facing));
-        y = y - mod;
+        double mod = Math.sqrt(13.0f) * Math.sin(facing);
+        x = x + (float)mod;
+
+        mod = Math.sqrt(13.0f) * Math.cos(facing);
+        y = y - (float)mod;
 
         NWVector position = vector(x, y, z);
-        NWLocation doorLocation = location(houseLocation.getArea(), position, facing);
+        NWLocation doorLocation = location(houseLocation.getArea(), position, houseLocation.getFacing());
         NWObject door = createObject(ObjectType.PLACEABLE, "building_door", doorLocation, false, "");
         setLocalInt(door, StructureIDVariableName, structureID);
         setLocalInt(door, "IS_BUILDING_DOOR", 1);
@@ -729,6 +732,19 @@ public class StructureSystem {
             }
         }
     }
+
+    public static void TransferBuildingOwnership(NWObject oArea, String newOwnerUUID)
+    {
+        StructureRepository repo = new StructureRepository();
+        int pcFlagID = GetTerritoryFlagID(oArea);
+
+        PCTerritoryFlagEntity entity = repo.GetPCTerritoryFlagByID(pcFlagID);
+        entity.getPermissions().clear();
+        entity.setPlayerID(newOwnerUUID);
+        entity.setShowOwnerName(true);
+        repo.Save(entity);
+    }
+
 
     public static void RazeConstructionSite(NWObject oPC, NWObject site, boolean recoverMaterials)
     {
@@ -964,6 +980,7 @@ public class StructureSystem {
         LocationSystem.SaveLocation(oPC, getArea(oPC));
 
         setLocalLocation(exit, "PLAYER_HOME_EXIT_LOCATION", getLocation(oPC));
+        setLocalInt(exit, "IS_BUILDING_DOOR", 1);
 
         NWLocation location = getLocation(waypoint);
         Scheduler.assignNow(oPC, () -> actionJumpToLocation(location));

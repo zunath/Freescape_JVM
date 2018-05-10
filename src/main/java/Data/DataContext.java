@@ -7,7 +7,7 @@ import org.hibernate.Transaction;
 import org.hibernate.query.NativeQuery;
 
 import javax.persistence.NoResultException;
-import java.io.*;
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
@@ -144,6 +144,22 @@ public class DataContext implements AutoCloseable {
         try
         {
             NativeQuery<T> query = buildQuery(sqlFilePath, c, params);
+            result = query.getSingleResult();
+        }
+        catch (NoResultException ex)
+        {
+            result = null;
+        }
+
+        return result;
+    }
+
+    public <T> T executeSQLSingle(String sqlFilePath, String classString, SqlParameter... params)
+    {
+        T result;
+        try
+        {
+            NativeQuery<T> query = buildQuery(sqlFilePath, classString, params);
             result = query.getSingleResult();
         }
         catch (NoResultException ex)

@@ -3,7 +3,6 @@ package Data.Repository;
 import Data.DataContext;
 import Data.SqlParameter;
 import Entities.*;
-import org.hibernate.loader.custom.sql.SQLQueryParser;
 
 import java.util.List;
 
@@ -253,6 +252,16 @@ public class StructureRepository {
         {
             context.executeUpdateOrDelete("Structure/SetTerritoryInactive",
                     new SqlParameter("flagID", flagID));
+        }
+    }
+
+    public BuildingOwnerEntity GetBuildingOwners(int territoryFlagID, int buildingStructureID)
+    {
+        try(DataContext context = new DataContext())
+        {
+            return context.executeSQLSingle("Structure/GetBuildingOwners", "BuildingOwnerEntityResult",
+                    new SqlParameter("territoryFlagID", territoryFlagID),
+                    new SqlParameter("buildingStructureID", buildingStructureID));
         }
     }
 

@@ -1,13 +1,24 @@
 package Conversation.ViewModels;
 
+import org.nwnx.nwnx2.jvm.NWObject;
+
 public class TerritoryFlagMenuModel {
 
+    private NWObject flagMarker;
     private int flagID;
     private boolean isConfirmingTerritoryRaze;
     private String transferUUID;
     private boolean isConfirmingTransferTerritory;
     private String activePermissionsUUID;
     private boolean isAddingPermission;
+
+    public NWObject getFlagMarker() {
+        return flagMarker;
+    }
+
+    public void setFlagMarker(NWObject flagMarker) {
+        this.flagMarker = flagMarker;
+    }
 
     public int getFlagID() {
         return flagID;
