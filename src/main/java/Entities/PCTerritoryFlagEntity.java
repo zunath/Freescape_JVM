@@ -59,6 +59,9 @@ public class PCTerritoryFlagEntity {
     @Column(name = "BuildingPCStructureID")
     private Integer buildingPCStructureID;
 
+    @Column(name = "IsActive")
+    private boolean isActive;
+
     public int getPcTerritoryFlagID() {
         return pcTerritoryFlagID;
     }
@@ -163,11 +166,19 @@ public class PCTerritoryFlagEntity {
         this.showOwnerName = showOwnerName;
     }
 
-    public Integer isBuildingPCStructureID() {
+    public Integer getBuildingPCStructureID() {
         return buildingPCStructureID;
     }
 
     public void setBuildingPCStructureID(Integer buildingPCStructureID) {
         this.buildingPCStructureID = buildingPCStructureID;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
     }
 }

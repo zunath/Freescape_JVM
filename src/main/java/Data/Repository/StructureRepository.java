@@ -237,6 +237,25 @@ public class StructureRepository {
         }
     }
 
+    public void UpdateBuildingTerritoryFlagsOwner(String newOwnerUUID, int flagID)
+    {
+        try(DataContext context = new DataContext())
+        {
+            context.executeUpdateOrDelete("Structure/UpdateBuildingTerritoryFlagsOwner",
+                    new SqlParameter("newOwnerPlayerID", newOwnerUUID),
+                    new SqlParameter("flagID", flagID));
+        }
+    }
+
+    public void SetTerritoryInactive(int flagID)
+    {
+        try(DataContext context = new DataContext())
+        {
+            context.executeUpdateOrDelete("Structure/SetTerritoryInactive",
+                    new SqlParameter("flagID", flagID));
+        }
+    }
+
     public void Save(Object entity)
     {
         try(DataContext context = new DataContext())

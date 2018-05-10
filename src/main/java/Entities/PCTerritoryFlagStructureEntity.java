@@ -56,6 +56,9 @@ public class PCTerritoryFlagStructureEntity {
     @JoinColumn(name = "BuildingInteriorID")
     private BuildingInteriorEntity buildingInterior;
 
+    @Column(name = "IsActive")
+    private boolean isActive;
+
     public int getPcTerritoryFlagStructureID() {
         return pcTerritoryFlagStructureID;
     }
@@ -158,5 +161,13 @@ public class PCTerritoryFlagStructureEntity {
 
     public void setBuildingInterior(BuildingInteriorEntity buildingInterior) {
         this.buildingInterior = buildingInterior;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
     }
 }

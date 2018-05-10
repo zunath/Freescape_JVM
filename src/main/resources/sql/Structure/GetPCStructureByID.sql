@@ -10,6 +10,7 @@ SELECT pctfs.PCTerritoryFlagStructureID ,
        pctfs.LocationOrientation ,
        pctfs.CreateDate,
        pctfs.CustomName,
-       pctfs.BuildingInteriorID
+       pctfs.BuildingInteriorID,
+       pctfs.IsActive
 FROM dbo.PCTerritoryFlagsStructures pctfs
 WHERE pctfs.PCTerritoryFlagStructureID = :pcTerritoryFlagStructureID

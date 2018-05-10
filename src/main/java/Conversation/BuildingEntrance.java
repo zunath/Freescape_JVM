@@ -98,11 +98,17 @@ public class BuildingEntrance extends DialogBase implements IDialogHandler {
             // Load structures & construction sites
             for(ConstructionSiteEntity entity: flag.getConstructionSites())
             {
-                StructureSystem.CreateConstructionSiteFromEntity(entity);
+                if(entity.isActive())
+                {
+                    StructureSystem.CreateConstructionSiteFromEntity(entity);
+                }
             }
             for(PCTerritoryFlagStructureEntity entity: flag.getStructures())
             {
-                StructureSystem.CreateStructureFromEntity(entity);
+                if(entity.isActive())
+                {
+                    StructureSystem.CreateStructureFromEntity(entity);
+                }
             }
 
         }

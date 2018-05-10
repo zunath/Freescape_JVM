@@ -8,8 +8,10 @@ SELECT cs.ConstructionSiteID ,
        cs.LocationY ,
        cs.LocationZ ,
        cs.LocationOrientation,
-       cs.BuildingInteriorID
+       cs.BuildingInteriorID,
+       cs.IsActive
 FROM dbo.ConstructionSites cs
 LEFT JOIN dbo.PCTerritoryFlags pctf ON pctf.PCTerritoryFlagID = cs.PCTerritoryFlagID
-WHERE cs.PCTerritoryFlagID IS NULL
-	OR pctf.BuildingPCStructureID IS NULL
+WHERE (cs.PCTerritoryFlagID IS NULL
+	OR (pctf.BuildingPCStructureID IS NULL AND pctf.IsActive = 1))
+	AND cs.IsActive = 1

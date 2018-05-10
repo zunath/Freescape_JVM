@@ -307,7 +307,8 @@ public class BuildToolMenu extends DialogBase implements IDialogHandler {
             SetResponseText("RazeStructurePage", 1, ColorToken.Red() + "Raze Structure" + ColorToken.End());
             StructureRepository repo = new StructureRepository();
             PCTerritoryFlagStructureEntity entity = repo.GetPCStructureByID(structureID);
-            repo.Delete(entity);
+            entity.setActive(false);
+            repo.Save(entity);
 
             NWScript.destroyObject(NWScript.getLocalObject(model.getActiveStructure(), "GateBlock"), 0.0f);
             NWScript.destroyObject(model.getActiveStructure(), 0.0f);

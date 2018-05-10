@@ -49,6 +49,9 @@ public class ConstructionSiteEntity {
     @JoinColumn(name = "BuildingInteriorID")
     private BuildingInteriorEntity buildingInterior;
 
+    @Column(name = "IsActive")
+    private boolean isActive;
+
     public int getConstructionSiteID() {
         return constructionSiteID;
     }
@@ -135,5 +138,13 @@ public class ConstructionSiteEntity {
 
     public void setBuildingInterior(BuildingInteriorEntity buildingInterior) {
         this.buildingInterior = buildingInterior;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
     }
 }

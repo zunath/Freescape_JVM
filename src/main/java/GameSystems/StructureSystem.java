@@ -44,7 +44,10 @@ public class StructureSystem {
         List<ConstructionSiteEntity> constructionSites = repo.GetAllConstructionSites();
         for(ConstructionSiteEntity entity : constructionSites)
         {
-            CreateConstructionSiteFromEntity(entity);
+            if(entity.isActive())
+            {
+                CreateConstructionSiteFromEntity(entity);
+            }
         }
 
         List<PCTerritoryFlagEntity> territoryFlags = repo.GetAllTerritoryFlags();
@@ -69,7 +72,10 @@ public class StructureSystem {
 
             for(PCTerritoryFlagStructureEntity structure : flag.getStructures())
             {
-                CreateStructureFromEntity(structure);
+                if(structure.isActive())
+                {
+                    CreateStructureFromEntity(structure);
+                }
             }
 
         }
@@ -352,6 +358,7 @@ public class StructureSystem {
         entity.setPlayerID(pcGO.getUUID());
         entity.setBlueprint(blueprint);
         entity.setComponents(new ArrayList<>());
+        entity.setActive(true);
 
         for(StructureComponentEntity comp: blueprint.getComponents())
         {
@@ -549,6 +556,7 @@ public class StructureSystem {
             pcFlag.setPlayerID(entity.getPlayerID());
             pcFlag.setShowOwnerName(true);
             pcFlag.setBuildingPCStructureID(null);
+            pcFlag.setActive(true);
 
             repo.Save(pcFlag);
             setLocalInt(structurePlaceable, TerritoryFlagIDVariableName, pcFlag.getPcTerritoryFlagID());
@@ -595,13 +603,15 @@ public class StructureSystem {
                 pcFlag.setPlayerID(entity.getPlayerID());
                 pcFlag.setShowOwnerName(false);
                 pcFlag.setBuildingPCStructureID(pcStructure.getPcTerritoryFlagStructureID());
+                pcFlag.setActive(true);
 
                 repo.Save(pcFlag);
                 CreateBuildingDoor(location, pcStructure.getPcTerritoryFlagStructureID());
             }
         }
 
-        repo.Delete(entity);
+        entity.setActive(false);
+        repo.Save(entity);
 
         return structurePlaceable;
     }
@@ -671,7 +681,8 @@ public class StructureSystem {
         }
 
         destroyObject(flag, 0.0f);
-        repo.Delete(entity);
+
+        repo.SetTerritoryInactive(flagID);
     }
 
     public static void TransferTerritoryOwnership(NWObject oFlag, String newOwnerUUID)
@@ -680,6 +691,10 @@ public class StructureSystem {
         StructureRepository repo = new StructureRepository();
         int pcFlagID = GetTerritoryFlagID(oFlag);
         PlayerEntity playerEntity = playerRepo.GetByPlayerID(newOwnerUUID);
+
+        // Update building territory marker owner
+        repo.UpdateBuildingTerritoryFlagsOwner(newOwnerUUID, pcFlagID);
+
         PCTerritoryFlagEntity entity = repo.GetPCTerritoryFlagByID(pcFlagID);
         entity.getPermissions().clear();
         entity.setPlayerID(newOwnerUUID);
@@ -716,7 +731,8 @@ public class StructureSystem {
                 }
             }
 
-            repo.Delete(entity);
+            entity.setActive(false);
+            repo.Save(entity);
         }
         destroyObject(site, 0.0f);
     }
