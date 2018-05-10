@@ -246,7 +246,7 @@ public class StructureSystem {
             return 1;
         }
 
-
+        // Max number of structures reached for this territory.
         TerritoryStructureCountEntity counts = repo.GetNumberOfStructuresInTerritory(pcTerritoryFlagID);
         if(counts.getVanityCount() >= entity.getBlueprint().getVanityCount() &&
                 counts.getSpecialCount() >= entity.getBlueprint().getSpecialCount() &&
@@ -256,7 +256,17 @@ public class StructureSystem {
             return 2;
         }
 
-        if(entity.getPlayerID().equals(pcGO.getUUID()))
+        // This territory is for a building. Get the parent territory marker for later use.
+        PCTerritoryFlagEntity parentFlag = null;
+        if(entity.getBuildingPCStructureID() != null)
+        {
+            PCTerritoryFlagStructureEntity structure = repo.GetPCStructureByID(entity.getBuildingPCStructureID());
+            parentFlag = structure.getPcTerritoryFlag();
+        }
+
+        // Player is territory or building owner
+        if(entity.getPlayerID().equals(pcGO.getUUID()) ||
+                (parentFlag != null && parentFlag.getPlayerID().equals(pcGO.getUUID())))
         {
             return 1;
         }
@@ -840,18 +850,27 @@ public class StructureSystem {
 
         PlayerGO pcGO = new PlayerGO(oPC);
         StructureRepository repo = new StructureRepository();
+        PCTerritoryFlagEntity territoryFlag = repo.GetPCTerritoryFlagByID(flagID);
+        PCTerritoryFlagEntity parentFlag = null;
 
-        PCTerritoryFlagEntity entity = repo.GetPCTerritoryFlagByID(flagID);
-        int buildPrivacyID = entity.getBuildPrivacy().getBuildPrivacyTypeID();
+        if(territoryFlag.getBuildingPCStructureID() != null)
+        {
+            PCTerritoryFlagStructureEntity buildingStructure = repo.GetPCStructureByID(territoryFlag.getBuildingPCStructureID());
+            parentFlag = buildingStructure.getPcTerritoryFlag();
+        }
+
+        int buildPrivacyID = territoryFlag.getBuildPrivacy().getBuildPrivacyTypeID();
+        boolean uuidMatches = pcGO.getUUID().equals(territoryFlag.getPlayerID()) ||
+                (parentFlag != null && pcGO.getUUID().equals(parentFlag.getPlayerID()));
 
         if(buildPrivacyID == 1) // Owner Only
         {
-            return pcGO.getUUID().equals(entity.getPlayerID());
+            return uuidMatches;
         }
         else if(buildPrivacyID == 2) // Friends only
         {
             PCTerritoryFlagPermissionEntity permission = repo.GetPermissionByID(pcGO.getUUID(), permissionID, flagID);
-            return permission != null || pcGO.getUUID().equals(entity.getPlayerID());
+            return permission != null || uuidMatches;
         }
         else //noinspection RedundantIfStatement
             if(buildPrivacyID == 3) // Public
