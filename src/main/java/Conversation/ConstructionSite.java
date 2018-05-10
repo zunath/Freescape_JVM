@@ -360,25 +360,22 @@ public class ConstructionSite extends DialogBase implements IDialogHandler {
         page.getResponses().clear();
 
         PCTerritoryFlagEntity flag = repo.GetPCTerritoryFlagByID(model.getFlagID());
-        int vanityCount = repo.GetNumberOfStructuresInTerritory(model.getFlagID(), true, false, false, false);
-        int specialCount = repo.GetNumberOfStructuresInTerritory(model.getFlagID(), false, true, false, false);
-        int resourceCount = repo.GetNumberOfStructuresInTerritory(model.getFlagID(), false, false, true, false);
-        int buildingCount = repo.GetNumberOfStructuresInTerritory(model.getFlagID(), false, false, false, true);
+        TerritoryStructureCountEntity counts = repo.GetNumberOfStructuresInTerritory(model.getFlagID());
 
         ArrayList<StructureCategoryEntity> categories = new ArrayList<>(repo.GetStructureCategoriesByType(pcGO.getUUID(), model.isTerritoryFlag(), false, false, false, false));
-        if(flag != null && vanityCount < flag.getBlueprint().getVanityCount())
+        if(flag != null && counts.getVanityCount() < flag.getBlueprint().getVanityCount())
         {
             categories.addAll(repo.GetStructureCategoriesByType(pcGO.getUUID(), model.isTerritoryFlag(), true, false, false, false));
         }
-        if(flag != null && specialCount < flag.getBlueprint().getSpecialCount())
+        if(flag != null && counts.getSpecialCount() < flag.getBlueprint().getSpecialCount())
         {
             categories.addAll(repo.GetStructureCategoriesByType(pcGO.getUUID(), model.isTerritoryFlag(), false, true, false, false));
         }
-        if(flag != null && resourceCount < flag.getBlueprint().getResourceCount())
+        if(flag != null && counts.getResourceCount() < flag.getBlueprint().getResourceCount())
         {
             categories.addAll(repo.GetStructureCategoriesByType(pcGO.getUUID(), model.isTerritoryFlag(), false, false, true, false));
         }
-        if(flag != null && buildingCount < flag.getBlueprint().getBuildingCount())
+        if(flag != null && counts.getBuildingCount() < flag.getBlueprint().getBuildingCount())
         {
             categories.addAll(repo.GetStructureCategoriesByType(pcGO.getUUID(), model.isTerritoryFlag(), false, false, false, true));
         }
@@ -404,25 +401,22 @@ public class ConstructionSite extends DialogBase implements IDialogHandler {
         int rank = pcSkill.getRank();
 
         PCTerritoryFlagEntity flag = repo.GetPCTerritoryFlagByID(model.getFlagID());
-        int vanityCount = repo.GetNumberOfStructuresInTerritory(model.getFlagID(), true, false, false, false);
-        int specialCount = repo.GetNumberOfStructuresInTerritory(model.getFlagID(), false, true, false, false);
-        int resourceCount = repo.GetNumberOfStructuresInTerritory(model.getFlagID(), false, false, true, false);
-        int buildingCount = repo.GetNumberOfStructuresInTerritory(model.getFlagID(), false, false, false, true);
+        TerritoryStructureCountEntity counts = repo.GetNumberOfStructuresInTerritory(model.getFlagID());
 
         ArrayList<StructureBlueprintEntity> blueprints = new ArrayList<>(repo.GetStructuresByCategoryAndType(pcGO.getUUID(), model.getCategoryID(), false, false, false, false)); // Territory markers
-        if(flag != null && vanityCount < flag.getBlueprint().getVanityCount())
+        if(flag != null && counts.getVanityCount() < flag.getBlueprint().getVanityCount())
         {
             blueprints.addAll(repo.GetStructuresByCategoryAndType(pcGO.getUUID(), model.getCategoryID(), true, false, false, false)); // Vanity
         }
-        if(flag != null && specialCount < flag.getBlueprint().getSpecialCount())
+        if(flag != null && counts.getSpecialCount() < flag.getBlueprint().getSpecialCount())
         {
             blueprints.addAll(repo.GetStructuresByCategoryAndType(pcGO.getUUID(), model.getCategoryID(), false, true, false, false)); // Special
         }
-        if(flag != null && resourceCount < flag.getBlueprint().getResourceCount())
+        if(flag != null && counts.getResourceCount() < flag.getBlueprint().getResourceCount())
         {
             blueprints.addAll(repo.GetStructuresByCategoryAndType(pcGO.getUUID(), model.getCategoryID(), false, false, true, false)); // Resource
         }
-        if(flag != null && buildingCount < flag.getBlueprint().getBuildingCount())
+        if(flag != null && counts.getBuildingCount() < flag.getBlueprint().getBuildingCount())
         {
             blueprints.addAll(repo.GetStructuresByCategoryAndType(pcGO.getUUID(), model.getCategoryID(), false, false, false, true)); // Building
         }

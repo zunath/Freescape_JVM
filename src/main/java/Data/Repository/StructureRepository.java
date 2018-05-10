@@ -164,20 +164,12 @@ public class StructureRepository {
         }
     }
 
-    public int GetNumberOfStructuresInTerritory(int flagID,
-                                                boolean isVanity,
-                                                boolean isSpecial,
-                                                boolean isResource,
-                                                boolean isBuilding)
+    public TerritoryStructureCountEntity GetNumberOfStructuresInTerritory(int flagID)
     {
         try(DataContext context = new DataContext())
         {
-            return context.executeSQLSingle("Structure/GetNumberOfStructuresInTerritory",
-                    new SqlParameter("flagID", flagID),
-                    new SqlParameter("isVanity", isVanity),
-                    new SqlParameter("isSpecial", isSpecial),
-                    new SqlParameter("isResource", isResource),
-                    new SqlParameter("isBuilding", isBuilding));
+            return context.executeSQLSingle("Structure/GetNumberOfStructuresInTerritory", "TerritoryStructureCountResult",
+                    new SqlParameter("flagID", flagID));
         }
     }
 

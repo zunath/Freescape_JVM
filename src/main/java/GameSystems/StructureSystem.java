@@ -247,14 +247,11 @@ public class StructureSystem {
         }
 
 
-        int vanityCount = repo.GetNumberOfStructuresInTerritory(pcTerritoryFlagID, true, false, false, false);
-        int specialCount = repo.GetNumberOfStructuresInTerritory(pcTerritoryFlagID, false, true, false, false);
-        int resourceCount = repo.GetNumberOfStructuresInTerritory(pcTerritoryFlagID, false, false, true, false);
-        int buildingCount = repo.GetNumberOfStructuresInTerritory(pcTerritoryFlagID, false, false, false, true);
-        if(vanityCount >= entity.getBlueprint().getVanityCount() &&
-                specialCount >= entity.getBlueprint().getSpecialCount() &&
-                resourceCount >= entity.getBlueprint().getResourceCount() &&
-                buildingCount >= entity.getBlueprint().getBuildingCount())
+        TerritoryStructureCountEntity counts = repo.GetNumberOfStructuresInTerritory(pcTerritoryFlagID);
+        if(counts.getVanityCount() >= entity.getBlueprint().getVanityCount() &&
+                counts.getSpecialCount() >= entity.getBlueprint().getSpecialCount() &&
+                counts.getResourceCount() >= entity.getBlueprint().getResourceCount() &&
+                counts.getBuildingCount() >= entity.getBlueprint().getBuildingCount())
         {
             return 2;
         }
@@ -816,14 +813,11 @@ public class StructureSystem {
         //              Site must be razed otherwise player would go over the cap.
         if(constructionSiteID <= 0)
         {
-            int vanityCount = repo.GetNumberOfStructuresInTerritory(flagID, true, false, false, false);
-            int specialCount = repo.GetNumberOfStructuresInTerritory(flagID, false, true, false, false);
-            int resourceCount = repo.GetNumberOfStructuresInTerritory(flagID, false, false, true, false);
-            int buildingCount = repo.GetNumberOfStructuresInTerritory(flagID, false, false, false, true);
-            if(vanityCount >= flagEntity.getBlueprint().getVanityCount() &&
-                    specialCount >= flagEntity.getBlueprint().getSpecialCount() &&
-                    resourceCount >= flagEntity.getBlueprint().getResourceCount() &&
-                    buildingCount >= flagEntity.getBlueprint().getBuildingCount())
+            TerritoryStructureCountEntity counts = repo.GetNumberOfStructuresInTerritory(flagID);
+            if(counts.getVanityCount() >= flagEntity.getBlueprint().getVanityCount() &&
+                    counts.getSpecialCount() >= flagEntity.getBlueprint().getSpecialCount() &&
+                    counts.getResourceCount() >= flagEntity.getBlueprint().getResourceCount() &&
+                    counts.getBuildingCount() >= flagEntity.getBlueprint().getBuildingCount())
             {
                 return false;
             }

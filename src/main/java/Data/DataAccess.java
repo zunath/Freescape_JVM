@@ -129,6 +129,7 @@ public class DataAccess {
         _configuration.addAnnotatedClass(StructureComponentEntity.class);
         _configuration.addAnnotatedClass(StructureQuickBuildAuditEntity.class);
         _configuration.addAnnotatedClass(TerritoryFlagPermissionEntity.class);
+        _configuration.addAnnotatedClass(TerritoryStructureCountEntity.class);
         _configuration.addAnnotatedClass(TotalSkillXPEntity.class);
 
         ServiceRegistry _serviceRegistry = new StandardServiceRegistryBuilder().applySettings(
