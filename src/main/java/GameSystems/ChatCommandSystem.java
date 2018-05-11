@@ -1,5 +1,8 @@
 package GameSystems;
 
+import ChatCommands.IChatCommand;
+import Helper.ColorToken;
+import Helper.ScriptHelper;
 import NWNX.NWNX_Chat;
 import org.nwnx.nwnx2.jvm.NWObject;
 
@@ -11,13 +14,27 @@ public class ChatCommandSystem {
     {
         if(!getIsPC(sender) || getIsDM(sender) || getIsDMPossessed(sender)) return;
 
-        String message = NWNX_Chat.GetMessage().trim();
+        String message = NWNX_Chat.GetMessage().trim().toLowerCase();
 
-        if(message.equals("/stuck"))
+        // If is double slash (//) treat it as a normal message (this is used by role-players to denote OOC speech)
+        if(message.substring(0, 2).equals("//")) return;
+
+        if(!message.substring(0, 1).equals("/"))
         {
-            DeathSystem.TeleportPlayerToBindPoint(sender);
-            NWNX_Chat.SkipMessage();
-            sendMessageToPC(sender, "Alpha feature: Returning to bind point. Please report bugs on Discord/GitHub. And for the love of all that is Zunath, don't abuse this!");
+            return;
         }
+
+        String command = message.substring(1, message.length());
+        command = command.substring(0, 1).toUpperCase() + command.substring(1);
+        NWNX_Chat.SkipMessage();
+
+        IChatCommand chatCommand = (IChatCommand) ScriptHelper.GetClassByName("ChatCommands." + command);
+        if(chatCommand == null || !chatCommand.CanUse(sender))
+        {
+            sendMessageToPC(sender, ColorToken.Red() + "Command not found." + ColorToken.End());
+            return;
+        }
+
+        chatCommand.DoAction(sender);
     }
 }

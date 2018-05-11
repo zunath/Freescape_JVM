@@ -1,16 +1,15 @@
 package Conversation;
 
+import Conversation.ViewModels.BuildToolMenuModel;
+import Data.Repository.StructureRepository;
 import Dialog.*;
 import Entities.PCTerritoryFlagStructureEntity;
 import Enumerations.StructurePermission;
 import GameObject.PlayerGO;
-import Helper.ColorToken;
-import Conversation.ViewModels.BuildToolMenuModel;
-import Data.Repository.StructureRepository;
 import GameSystems.StructureSystem;
+import Helper.ColorToken;
 import org.nwnx.nwnx2.jvm.NWLocation;
 import org.nwnx.nwnx2.jvm.NWObject;
-import org.nwnx.nwnx2.jvm.NWScript;
 import org.nwnx.nwnx2.jvm.Scheduler;
 import org.nwnx.nwnx2.jvm.constants.ObjectType;
 
@@ -279,7 +278,11 @@ public class BuildToolMenu extends DialogBase implements IDialogHandler {
         }
         else
         {
-            entity.setLocationOrientation(entity.getLocationOrientation() + rotation);
+            double newOrientation = entity.getLocationOrientation() + rotation;
+            while(newOrientation >= 360.0f)
+                newOrientation -= 360.0f;
+
+            entity.setLocationOrientation(newOrientation);
         }
 
         repo.Save(entity);

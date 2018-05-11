@@ -27,6 +27,10 @@ public class ScriptHelper {
         {
             return Class.forName(className).newInstance();
         }
+        catch(ClassNotFoundException ex)
+        {
+            return null;
+        }
         catch (Exception ex)
         {
             ErrorHelper.HandleException(ex, "Unable to run GetClassByName for class name: " + className);
