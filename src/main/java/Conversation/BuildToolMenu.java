@@ -37,8 +37,8 @@ public class BuildToolMenu extends DialogBase implements IDialogHandler {
                 "Please select a rotation.",
                 "Set Facing: East",
                 "Set Facing: North",
-                "Set Facing: South",
                 "Set Facing: West",
+                "Set Facing: South",
                 "Rotate 20\u00b0",
                 "Rotate 30\u00b0",
                 "Rotate 45\u00b0",
@@ -76,6 +76,21 @@ public class BuildToolMenu extends DialogBase implements IDialogHandler {
         BuildMainMenuResponses(null);
     }
 
+    private void ToggleRotateOptions()
+    {
+        BuildToolMenuModel model = GetModel();
+
+        boolean isVisible = !model.isActiveStructureBuilding();
+        SetResponseVisible("RotateStructurePage", 5, isVisible);
+        SetResponseVisible("RotateStructurePage", 6, isVisible);
+        SetResponseVisible("RotateStructurePage", 7, isVisible);
+        SetResponseVisible("RotateStructurePage", 8, isVisible);
+        SetResponseVisible("RotateStructurePage", 9, isVisible);
+        SetResponseVisible("RotateStructurePage", 10, isVisible);
+        SetResponseVisible("RotateStructurePage", 11, isVisible);
+    }
+
+
     @Override
     public void DoAction(NWObject oPC, String pageName, int responseID) {
         switch(pageName)
@@ -87,6 +102,7 @@ public class BuildToolMenu extends DialogBase implements IDialogHandler {
                 switch(responseID)
                 {
                     case 1: // Rotate
+                        ToggleRotateOptions();
                         ChangePage("RotateStructurePage");
                         break;
                     case 2: // Move
@@ -110,10 +126,10 @@ public class BuildToolMenu extends DialogBase implements IDialogHandler {
                     case 2: // North
                         HandleRotateStructure(90.0f, true);
                         break;
-                    case 3: // South
+                    case 3: // West
                         HandleRotateStructure(180.0f, true);
                         break;
-                    case 4: // West
+                    case 4: // South
                         HandleRotateStructure(270.0f, true);
                         break;
                     case 5: // Rotate 20
@@ -229,7 +245,15 @@ public class BuildToolMenu extends DialogBase implements IDialogHandler {
         }
         else if(structure != null)
         {
+            StructureRepository repo = new StructureRepository();
+            int structureID = StructureSystem.GetPlaceableStructureID(structure);
             model.setActiveStructure(structure);
+            PCTerritoryFlagStructureEntity structureEntity = repo.GetPCStructureByID(structureID);
+            if(structureEntity.getBlueprint().isBuilding())
+            {
+                model.setActiveStructureBuilding(true);
+            }
+            else model.setActiveStructureBuilding(false);
 
             SetResponseVisible("ManipulateStructurePage", 1, StructureSystem.PlayerHasPermission(oPC, StructurePermission.CanRotateStructures, flagID));
             SetResponseVisible("ManipulateStructurePage", 2, StructureSystem.PlayerHasPermission(oPC, StructurePermission.CanMoveStructures, flagID));

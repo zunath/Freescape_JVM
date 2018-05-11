@@ -60,8 +60,8 @@ public class ConstructionSite extends DialogBase implements IDialogHandler {
                 "Please select a rotation.",
                 "Set Facing: East",
                 "Set Facing: North",
-                "Set Facing: South",
                 "Set Facing: West",
+                "Set Facing: South",
                 "Rotate 20\u00b0",
                 "Rotate 30\u00b0",
                 "Rotate 45\u00b0",
@@ -284,6 +284,27 @@ public class ConstructionSite extends DialogBase implements IDialogHandler {
         SetPageHeader("MainPage", header);
     }
 
+    private void ToggleRotateOptions()
+    {
+        ConstructionSiteMenuModel model = GetModel();
+        StructureRepository repo = new StructureRepository();
+        ConstructionSiteEntity site = repo.GetConstructionSiteByID(model.getConstructionSiteID());
+
+        boolean isVisible = true;
+        if(site != null && site.getBlueprint().isBuilding())
+        {
+            isVisible = false;
+        }
+
+        SetResponseVisible("RotatePage", 5, isVisible);
+        SetResponseVisible("RotatePage", 6, isVisible);
+        SetResponseVisible("RotatePage", 7, isVisible);
+        SetResponseVisible("RotatePage", 8, isVisible);
+        SetResponseVisible("RotatePage", 9, isVisible);
+        SetResponseVisible("RotatePage", 10, isVisible);
+        SetResponseVisible("RotatePage", 11, isVisible);
+    }
+
     private void HandleMainPageResponse(int responseID)
     {
         ConstructionSiteMenuModel model = GetModel();
@@ -329,6 +350,7 @@ public class ConstructionSite extends DialogBase implements IDialogHandler {
                     ChangePage("ChangeLayoutPage");
                     break;
                 case 6: // Rotate
+                    ToggleRotateOptions();
                     ChangePage("RotatePage");
                     break;
                 case 7: // Move
@@ -493,10 +515,10 @@ public class ConstructionSite extends DialogBase implements IDialogHandler {
             case 2: // North
                 DoRotateConstructionSite(90.0f, true);
                 break;
-            case 3: // South
+            case 3: // West
                 DoRotateConstructionSite(180.0f, true);
                 break;
-            case 4: // West
+            case 4: // South
                 DoRotateConstructionSite(270.0f, true);
                 break;
             case 5: // Rotate 20

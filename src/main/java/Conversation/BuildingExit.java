@@ -35,6 +35,7 @@ public class BuildingExit extends DialogBase implements IDialogHandler {
         NWObject oPC = GetPC();
         PlayerGO pcGO = new PlayerGO(oPC);
         NWObject door = GetDialogTarget();
+        NWObject area = getArea(door);
         NWLocation location = getLocation(door);
         StructureRepository repo = new StructureRepository();
         NWObject flag = StructureSystem.GetTerritoryFlagOwnerOfLocation(location);
@@ -48,6 +49,13 @@ public class BuildingExit extends DialogBase implements IDialogHandler {
         {
             SetResponseVisible("MainPage", 3, false);
         }
+
+        if(getLocalInt(area, "IS_BUILDING_PREVIEW") == 1)
+        {
+            SetResponseVisible("MainPage", 2, false);
+            SetResponseVisible("MainPage", 3, false);
+        }
+
     }
 
     @Override

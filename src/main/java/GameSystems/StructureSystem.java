@@ -395,6 +395,10 @@ public class StructureSystem {
 
             BuildingInteriorEntity defaultInterior = repo.GetDefaultBuildingInteriorByCategoryID(blueprint.getBuildingCategory().getBuildingCategoryID());
             entity.setBuildingInterior(defaultInterior);
+
+            // Change the construction site facing to 0.0f
+            // Houses can only be set to cardinal directions.
+            Scheduler.assign(constructionSite, () -> setFacing(0.0f));
         }
 
         repo.Save(entity);
@@ -643,17 +647,29 @@ public class StructureSystem {
         float y = houseLocation.getY();
         float z = houseLocation.getZ();
 
-        // Adjust the position for the door
-        facing = facing + 146.31f;
-        if(facing > 360.0f) facing = facing - 360.0f;
-
-        double mod = Math.sqrt(13.0f) * Math.sin(facing);
-        x = x + (float)mod;
-
-        mod = Math.sqrt(13.0f) * Math.cos(facing);
-        y = y - (float)mod;
+        if(facing == 0.0f) // east
+        {
+            x += 2.0f;
+            y += 2.9f;
+        }
+        else if(facing == 90.0f) // north
+        {
+            x -= 2.9f;
+            y += 2.0f;
+        }
+        else if(facing == 180.0f) // west
+        {
+            x -= 2.0f;
+            y -= 2.9f;
+        }
+        else if(facing == 270.0f) // south
+        {
+            x += 2.9f;
+            y -= 2.0f;
+        }
 
         NWVector position = vector(x, y, z);
+
         NWLocation doorLocation = location(houseLocation.getArea(), position, houseLocation.getFacing());
         NWObject door = createObject(ObjectType.PLACEABLE, "building_door", doorLocation, false, "");
         setLocalInt(door, StructureIDVariableName, structureID);
@@ -955,6 +971,7 @@ public class StructureSystem {
 
         NWObject area = createArea(interior.getAreaResref(), "", "PREVIEW - " + interior.getName());
         setLocalInt(area, "BUILDING_DISABLED", 1);
+        setLocalInt(area, "IS_BUILDING_PREVIEW", 1);
         JumpPCToBuildingInterior(oPC, area);
     }
 
