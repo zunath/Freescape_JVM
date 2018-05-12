@@ -33,10 +33,10 @@ public class BackgroundMenu extends DialogBase implements IDialogHandler {
     public void Initialize() {
         BackgroundViewModel model = new BackgroundViewModel();
         SetDialogCustomData(model);
-        LoadProfessionOptionsList();
+        LoadBackgroundOptionsList();
     }
 
-    private void LoadProfessionOptionsList()
+    private void LoadBackgroundOptionsList()
     {
         DialogPage page = GetPageByName("MainPage");
         List<BackgroundEntity> entities = BackgroundSystem.GetActiveBackgrounds();
@@ -74,11 +74,11 @@ public class BackgroundMenu extends DialogBase implements IDialogHandler {
         BackgroundViewModel model = GetModel();
         model.setSelectedEntity(entity);
 
-        String header = ColorToken.Green() + "Profession Name: " + ColorToken.End() + entity.getName() + "\n";
+        String header = ColorToken.Green() + "Background Name: " + ColorToken.End() + entity.getName() + "\n";
         header += ColorToken.Green() + "Description: " + ColorToken.End() + entity.getDescription() + "\n\n";
         header += ColorToken.Green() + "Bonuses:" + ColorToken.End() + "\n\n";
         header += entity.getBonuses() + "\n\n";
-        header += "Will you select this profession?";
+        header += "Will you select this background?";
 
         SetPageHeader("DetailsPage", header);
         ChangePage("DetailsPage");
@@ -91,7 +91,7 @@ public class BackgroundMenu extends DialogBase implements IDialogHandler {
 
         switch (responseID)
         {
-            case 1: // Select Profession
+            case 1: // Select Background
                 if(model.isConfirming())
                 {
                     BackgroundSystem.SelectBackground(oPC, model.getSelectedEntity());
@@ -100,13 +100,13 @@ public class BackgroundMenu extends DialogBase implements IDialogHandler {
                 else
                 {
                     model.setConfirming(true);
-                    SetResponseText("DetailsPage", 1, "CONFIRM SELECT PROFESSION");
+                    SetResponseText("DetailsPage", 1, "CONFIRM SELECT BACKGROUND");
                 }
 
                 break;
             case 2: // Back
                 model.setConfirming(false);
-                SetResponseText("DetailsPage", 1, "Select Profession");
+                SetResponseText("DetailsPage", 1, "Select Background");
                 model.setSelectedEntity(null);
                 ChangePage("MainPage");
                 break;
