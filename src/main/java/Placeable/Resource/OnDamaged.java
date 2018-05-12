@@ -11,12 +11,11 @@ import Enumerations.SkillID;
 import GameObject.ItemGO;
 import GameObject.PlayerGO;
 import GameSystems.DurabilitySystem;
-import GameSystems.FoodSystem;
 import GameSystems.PerkSystem;
 import GameSystems.SkillSystem;
+import GameSystems.SpawnSystem;
 import org.nwnx.nwnx2.jvm.NWLocation;
 import org.nwnx.nwnx2.jvm.NWObject;
-import org.nwnx.nwnx2.jvm.NWScript;
 import org.nwnx.nwnx2.jvm.constants.DurationType;
 import org.nwnx.nwnx2.jvm.constants.ObjectType;
 
@@ -189,6 +188,7 @@ public class OnDamaged implements IScriptEventHandler {
         if(resourceCount <= 0)
         {
             SpawnSeed(objSelf, oPC);
+            SpawnSystem.AddToRespawnQueue(objSelf);
 
             NWObject prop = getLocalObject(objSelf, "RESOURCE_PROP_OBJ");
             if(getIsObjectValid(prop))

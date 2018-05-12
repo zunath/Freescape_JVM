@@ -18,6 +18,15 @@ public class FarmingRepository {
         }
     }
 
+    public List<PlantEntity> GetPlantsByResref(String resref)
+    {
+        try(DataContext context = new DataContext())
+        {
+            return context.executeSQLList("Farming/GetPlantsByResref", PlantEntity.class,
+                    new SqlParameter("resref", resref));
+        }
+    }
+
     public GrowingPlantEntity GetGrowingPlantByID(int growingPlantID)
     {
         try(DataContext context = new DataContext())

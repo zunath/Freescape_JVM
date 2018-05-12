@@ -42,6 +42,7 @@ public class OnHeartbeat implements IScriptEventHandler {
         CustomEffectSystem.OnModuleHeartbeat();
 
 		ItemSystem.OnModuleHeartbeat();
+		SpawnSystem.OnModuleHeartbeat();
 		DatabaseRepository databaseRepo = new DatabaseRepository();
 		databaseRepo.KeepAlive();
 	}

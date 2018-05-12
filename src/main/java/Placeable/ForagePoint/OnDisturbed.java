@@ -4,6 +4,7 @@ import Common.IScriptEventHandler;
 import Enumerations.PerkID;
 import GameSystems.FarmingSystem;
 import GameSystems.PerkSystem;
+import GameSystems.SpawnSystem;
 import Helper.ItemHelper;
 import org.nwnx.nwnx2.jvm.NWObject;
 import org.nwnx.nwnx2.jvm.constants.InventoryDisturbType;
@@ -41,7 +42,7 @@ public class OnDisturbed implements IScriptEventHandler {
                     }
                 }
 
-
+                SpawnSystem.AddToRespawnQueue(point);
                 destroyObject(point, 0.0f);
                 FarmingSystem.RemoveGrowingPlant(point);
             }
