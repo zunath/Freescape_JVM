@@ -45,7 +45,7 @@ public class BuildingExit extends DialogBase implements IDialogHandler {
         // Only territory owner or building owner may adjust permissions.
         BuildingOwnerEntity owners = repo.GetBuildingOwners(territoryFlagID, structureID);
         if(!pcGO.getUUID().equals(owners.getTerritoryOwner()) &&
-                pcGO.getUUID().equals(owners.getBuildingOwner()))
+                !pcGO.getUUID().equals(owners.getBuildingOwner()))
         {
             SetResponseVisible("MainPage", 3, false);
         }
