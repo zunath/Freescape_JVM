@@ -26,4 +26,5 @@ public class SkillID {
     public static int Woodworking = 22;
     public static int Farming = 23;
     public static int Forage = 24;
+    public static int Alchemy = 25;
 }
