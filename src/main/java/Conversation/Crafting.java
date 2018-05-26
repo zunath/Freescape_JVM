@@ -1,9 +1,10 @@
 package Conversation;
 
-import Dialog.*;
-import Entities.*;
-import GameObject.PlayerGO;
 import Data.Repository.CraftRepository;
+import Dialog.*;
+import Entities.CraftBlueprintCategoryEntity;
+import Entities.CraftBlueprintEntity;
+import GameObject.PlayerGO;
 import GameSystems.CraftSystem;
 import Helper.ColorToken;
 import org.nwnx.nwnx2.jvm.NWObject;
@@ -103,7 +104,6 @@ public class Crafting extends DialogBase implements IDialogHandler {
 
     private void LoadBlueprintPage(int blueprintID)
     {
-        DialogPage page = GetPageByName("BlueprintPage");
         SetPageHeader("BlueprintPage", CraftSystem.BuildBlueprintHeader(GetPC(), blueprintID));
         GetResponseByID("BlueprintPage", 1).setCustomData(blueprintID);
         GetResponseByID("BlueprintPage", 2).setCustomData(blueprintID);

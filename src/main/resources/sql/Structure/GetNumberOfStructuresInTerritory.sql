@@ -1,8 +1,8 @@
 SELECT ID,
-	SUM(t.VanityCount) AS VanityCount,
-	SUM(t.SpecialCount) AS SpecialCount,
-	SUM(t.ResourceCount) AS ResourceCount,
-	SUM(t.BuildingCount) AS BuildingCount
+	ISNULL(SUM(t.VanityCount), 0) AS VanityCount,
+	ISNULL(SUM(t.SpecialCount), 0) AS SpecialCount,
+	ISNULL(SUM(t.ResourceCount), 0) AS ResourceCount,
+	ISNULL(SUM(t.BuildingCount), 0) AS BuildingCount
 FROM
 (
 	SELECT 1 AS ID,

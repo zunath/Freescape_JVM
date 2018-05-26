@@ -1,7 +1,5 @@
 package Conversation;
 
-import Bioware.AddItemPropertyPolicy;
-import Bioware.XP2;
 import Conversation.ViewModels.PerkMenuViewModel;
 import Data.Repository.PerkRepository;
 import Data.Repository.PlayerRepository;
@@ -12,19 +10,8 @@ import GameObject.PlayerGO;
 import GameSystems.PerkSystem;
 import GameSystems.SkillSystem;
 import Helper.ColorToken;
-import Helper.ScriptHelper;
-import Perks.IPerk;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.nwnx.nwnx2.jvm.NWItemProperty;
 import org.nwnx.nwnx2.jvm.NWObject;
-import org.nwnx.nwnx2.jvm.NWScript;
-import org.nwnx.nwnx2.jvm.constants.Ip;
-import org.nwnx.nwnx2.jvm.constants.IpConst;
-import org.nwnx.nwnx2.jvm.constants.IpConstCastspell;
-import org.nwnx.nwnx2.jvm.constants.ItemProperty;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 @SuppressWarnings("unused")

@@ -420,7 +420,6 @@ public class ConstructionSite extends DialogBase implements IDialogHandler {
         NWLocation location = getLocation(GetDialogTarget());
         PCSkillEntity pcSkill = SkillSystem.GetPCSkill(GetPC(), SkillID.Construction);
         if(pcSkill == null) return;
-        int rank = pcSkill.getRank();
 
         PCTerritoryFlagEntity flag = repo.GetPCTerritoryFlagByID(model.getFlagID());
         TerritoryStructureCountEntity counts = repo.GetNumberOfStructuresInTerritory(model.getFlagID());
