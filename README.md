@@ -1,3 +1,7 @@
+# This project is no longer being maintained. The code has been converted over to C#. You can find the new repo here: https://github.com/zunath/Freescape
+
+
+
 # Freescape_JVM
 Server-side Java code used in the Neverwinter Nights Freescape module.
 
